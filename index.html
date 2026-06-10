@@ -1,0 +1,413 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="theme-color" content="#174f49">
+    <title>Coro Paz en Jesús</title>
+    <link rel="manifest" href="manifest.webmanifest">
+    <link rel="icon" href="assets/icon.svg" type="image/svg+xml">
+    <link rel="stylesheet" href="styles.css">
+    <script src="app.js" defer></script>
+  </head>
+  <body>
+    <svg class="svg-sprite" aria-hidden="true" focusable="false">
+      <symbol id="icon-home" viewBox="0 0 24 24">
+        <path d="M3 10.7 12 3l9 7.7V21a1 1 0 0 1-1 1h-5v-7H9v7H4a1 1 0 0 1-1-1z"></path>
+      </symbol>
+      <symbol id="icon-music" viewBox="0 0 24 24">
+        <path d="M9 18V5l12-2v13"></path>
+        <circle cx="6" cy="18" r="3"></circle>
+        <circle cx="18" cy="16" r="3"></circle>
+      </symbol>
+      <symbol id="icon-book" viewBox="0 0 24 24">
+        <path d="M4 5.5A2.5 2.5 0 0 1 6.5 3H20v16H7a3 3 0 0 0-3 3z"></path>
+        <path d="M4 5.5V22"></path>
+        <path d="M8 7h8"></path>
+      </symbol>
+      <symbol id="icon-calendar" viewBox="0 0 24 24">
+        <rect x="3" y="4" width="18" height="17" rx="2"></rect>
+        <path d="M16 2v4M8 2v4M3 10h18"></path>
+      </symbol>
+      <symbol id="icon-users" viewBox="0 0 24 24">
+        <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path>
+        <circle cx="9" cy="7" r="4"></circle>
+        <path d="M22 21v-2a4 4 0 0 0-3-3.87"></path>
+        <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+      </symbol>
+      <symbol id="icon-box" viewBox="0 0 24 24">
+        <path d="m21 8-9-5-9 5 9 5z"></path>
+        <path d="M3 8v8l9 5 9-5V8"></path>
+        <path d="M12 13v8"></path>
+      </symbol>
+      <symbol id="icon-plus" viewBox="0 0 24 24">
+        <path d="M12 5v14M5 12h14"></path>
+      </symbol>
+      <symbol id="icon-cloud" viewBox="0 0 24 24">
+        <path d="M17.5 19H7a5 5 0 1 1 .9-9.92 6 6 0 0 1 11.3 2.04A4 4 0 0 1 17.5 19z"></path>
+      </symbol>
+      <symbol id="icon-search" viewBox="0 0 24 24">
+        <circle cx="11" cy="11" r="7"></circle>
+        <path d="m20 20-3.5-3.5"></path>
+      </symbol>
+      <symbol id="icon-image" viewBox="0 0 24 24">
+        <rect x="3" y="3" width="18" height="18" rx="2"></rect>
+        <circle cx="8.5" cy="8.5" r="1.5"></circle>
+        <path d="m21 15-5-5L5 21"></path>
+      </symbol>
+      <symbol id="icon-file" viewBox="0 0 24 24">
+        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+        <path d="M14 2v6h6"></path>
+      </symbol>
+      <symbol id="icon-refresh" viewBox="0 0 24 24">
+        <path d="M21 12a9 9 0 0 1-15.3 6.4L3 16"></path>
+        <path d="M3 21v-5h5"></path>
+        <path d="M3 12A9 9 0 0 1 18.3 5.6L21 8"></path>
+        <path d="M21 3v5h-5"></path>
+      </symbol>
+      <symbol id="icon-trash" viewBox="0 0 24 24">
+        <path d="M3 6h18"></path>
+        <path d="M8 6V4h8v2"></path>
+        <path d="M19 6 18 21H6L5 6"></path>
+      </symbol>
+      <symbol id="icon-close" viewBox="0 0 24 24">
+        <path d="M18 6 6 18M6 6l12 12"></path>
+      </symbol>
+      <symbol id="icon-check" viewBox="0 0 24 24">
+        <path d="m20 6-11 11-5-5"></path>
+      </symbol>
+      <symbol id="icon-lock" viewBox="0 0 24 24">
+        <rect x="4" y="11" width="16" height="10" rx="2"></rect>
+        <path d="M8 11V7a4 4 0 0 1 8 0v4"></path>
+      </symbol>
+      <symbol id="icon-edit" viewBox="0 0 24 24">
+        <path d="M12 20h9"></path>
+        <path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z"></path>
+      </symbol>
+      <symbol id="icon-download" viewBox="0 0 24 24">
+        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+        <path d="M7 10l5 5 5-5"></path>
+        <path d="M12 15V3"></path>
+      </symbol>
+      <symbol id="icon-upload" viewBox="0 0 24 24">
+        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+        <path d="M17 8l-5-5-5 5"></path>
+        <path d="M12 3v12"></path>
+      </symbol>
+    </svg>
+
+    <div class="app-shell">
+      <header class="app-header">
+        <button class="icon-button app-header__home" type="button" data-nav="home" aria-label="Ir al inicio" title="Inicio">
+          <svg><use href="#icon-home"></use></svg>
+        </button>
+        <div>
+          <p class="app-kicker">Aplicación del coro</p>
+          <h1>Coro Paz en Jesús</h1>
+        </div>
+        <span class="connection-pill" id="connectionStatus">Local</span>
+      </header>
+
+      <main>
+        <section class="view is-active" id="view-home" aria-labelledby="home-title">
+          <div class="hero-panel">
+            <div class="hero-panel__content">
+              <img class="hero-logo" src="assets/logo-coro.jpeg" alt="Logo Coro Paz en Jesús">
+              <p class="section-label">Organización y repertorio</p>
+              <h2 id="home-title">Coro Paz en Jesús</h2>
+              <p>Letras, notas musicales, materiales, agenda, miembros e inventario reunidos para consultarlos desde el celular.</p>
+            </div>
+          </div>
+
+          <div class="stat-strip" id="homeStats"></div>
+
+          <div class="section-head">
+            <div>
+              <p class="section-label">Menú</p>
+              <h3>Todas las secciones</h3>
+            </div>
+          </div>
+          <div class="quick-grid" id="quickGrid"></div>
+        </section>
+
+        <section class="view" id="view-songs" aria-labelledby="songs-title">
+          <div class="section-head">
+            <div>
+              <p class="section-label">Repertorio local y compartido</p>
+              <h2 id="songs-title">Canciones</h2>
+            </div>
+            <span class="counter" id="songsCount"></span>
+          </div>
+          <label class="search-box">
+            <svg><use href="#icon-search"></use></svg>
+            <input type="search" id="songSearch" placeholder="Buscar canto, tono o categoría" autocomplete="off">
+          </label>
+          <div class="song-grid" id="songGrid"></div>
+
+          <div class="section-head section-head--spaced">
+            <div>
+              <p class="section-label">PDF guardados</p>
+              <h3>Materiales del Escritorio</h3>
+            </div>
+          </div>
+          <div class="document-list" id="documentList"></div>
+        </section>
+
+        <section class="view" id="view-readings" aria-labelledby="readings-title">
+          <div class="section-head">
+            <div>
+              <p class="section-label">Textos y reflexiones</p>
+              <h2 id="readings-title">Lecturas</h2>
+            </div>
+          </div>
+          <div class="reading-list" id="readingList"></div>
+        </section>
+
+        <section class="view" id="view-events" aria-labelledby="events-title">
+          <div class="section-head">
+            <div>
+              <p class="section-label">Agenda</p>
+              <h2 id="events-title">Eventos</h2>
+            </div>
+          </div>
+          <div class="event-list" id="eventList"></div>
+        </section>
+
+        <section class="view" id="view-members" aria-labelledby="members-title">
+          <div class="section-head">
+            <div>
+              <p class="section-label">Integrantes</p>
+              <h2 id="members-title">Miembros</h2>
+            </div>
+          </div>
+          <div class="member-grid" id="memberGrid"></div>
+        </section>
+
+        <section class="view" id="view-local-inventory" aria-labelledby="local-inventory-title">
+          <div class="section-head">
+            <div>
+              <p class="section-label">Sin internet</p>
+              <h2 id="local-inventory-title">Inventario local</h2>
+            </div>
+            <button class="button button--primary" type="button" data-nav="add-local">
+              <svg><use href="#icon-plus"></use></svg>
+              Agregar
+            </button>
+          </div>
+          <div class="inventory-list" id="localInventoryList"></div>
+        </section>
+
+        <section class="view" id="view-add-local" aria-labelledby="add-local-title">
+          <div class="section-head">
+            <div>
+              <p class="section-label">Memoria del celular</p>
+              <h2 id="add-local-title">Agregar ítem local</h2>
+            </div>
+          </div>
+          <form class="form-panel" id="localItemForm">
+            <label>
+              Nombre del objeto
+              <input name="name" required maxlength="80" placeholder="Micrófono, atril, biblia">
+            </label>
+            <label>
+              Estado
+              <select name="status" required>
+                <option>Bueno</option>
+                <option>Regular</option>
+                <option>Revisar</option>
+                <option>Prestado</option>
+              </select>
+            </label>
+            <label>
+              Ubicación
+              <input name="location" required maxlength="80" placeholder="Salón, sacristía, casa de un miembro">
+            </label>
+            <label>
+              Nota
+              <textarea name="note" rows="4" maxlength="180" placeholder="Detalle opcional"></textarea>
+            </label>
+            <div class="form-actions">
+              <button class="button button--ghost" type="button" data-nav="local-inventory">Cancelar</button>
+              <button class="button button--primary" type="submit">
+                <svg><use href="#icon-check"></use></svg>
+                Guardar local
+              </button>
+            </div>
+          </form>
+        </section>
+
+        <section class="view" id="view-cloud-inventory" aria-labelledby="cloud-inventory-title">
+          <div class="section-head">
+            <div>
+              <p class="section-label">GitHub</p>
+              <h2 id="cloud-inventory-title">Actualizaciones</h2>
+            </div>
+            <button class="icon-button" type="button" id="refreshCloud" aria-label="Buscar actualizaciones" title="Actualizar">
+              <svg><use href="#icon-refresh"></use></svg>
+            </button>
+          </div>
+          <div class="cloud-config">
+            <label>
+              URL pública de datos
+              <input id="cloudEndpoint" type="url" placeholder="data/app-data.json">
+            </label>
+            <button class="button button--primary" type="button" id="saveCloudEndpoint">Guardar URL</button>
+          </div>
+          <div class="cloud-status" id="cloudStatus"></div>
+
+          <div class="section-head section-head--spaced">
+            <div>
+              <p class="section-label">Compartido</p>
+              <h3>Inventario oficial</h3>
+            </div>
+          </div>
+          <div class="inventory-list" id="cloudInventoryList"></div>
+        </section>
+
+        <section class="view" id="view-admin" aria-labelledby="admin-title">
+          <div class="section-head">
+            <div>
+              <p class="section-label">Clave requerida</p>
+              <h2 id="admin-title">Administrador</h2>
+            </div>
+            <button class="icon-button" type="button" id="adminLockButton" aria-label="Bloquear administrador" title="Bloquear">
+              <svg><use href="#icon-lock"></use></svg>
+            </button>
+          </div>
+
+          <form class="form-panel admin-lock" id="adminLock">
+            <label>
+              Clave de administrador
+              <input name="passcode" type="password" required inputmode="numeric" autocomplete="current-password" placeholder="Clave">
+            </label>
+            <button class="button button--primary" type="submit">
+              <svg><use href="#icon-lock"></use></svg>
+              Entrar
+            </button>
+          </form>
+
+          <div class="admin-panel" id="adminPanel" hidden>
+            <div class="section-head">
+              <div>
+                <p class="section-label">Canciones</p>
+                <h3>Editar repertorio</h3>
+              </div>
+              <button class="button button--ghost" type="button" id="newSongButton">
+                <svg><use href="#icon-plus"></use></svg>
+                Nueva
+              </button>
+            </div>
+
+            <form class="form-panel" id="songAdminForm">
+              <input type="hidden" name="songId">
+              <label>
+                Título
+                <input name="title" required maxlength="120" placeholder="Nombre del canto">
+              </label>
+              <label>
+                Imagen o archivo
+                <input name="image" maxlength="400" placeholder="assets/logo-coro.jpeg o https://...">
+              </label>
+              <label>
+                Categoría
+                <input name="category" maxlength="80" placeholder="Entrada, Ofertorio, Comunión">
+              </label>
+              <label>
+                Notas musicales
+                <textarea name="musicalNotes" rows="4" maxlength="800" placeholder="Tono: Do. Acordes: C - G - Am - F. Entrada: piano."></textarea>
+              </label>
+              <label>
+                Letra
+                <textarea name="lyrics" rows="10" maxlength="8000" placeholder="Escribe o corrige aquí la letra completa del canto."></textarea>
+              </label>
+              <label>
+                Notas del canto
+                <textarea name="notes" rows="4" maxlength="800" placeholder="Cuándo usarlo, voces, indicaciones del director."></textarea>
+              </label>
+              <div class="form-actions">
+                <button class="button button--primary" type="submit">
+                  <svg><use href="#icon-check"></use></svg>
+                  Guardar canción
+                </button>
+              </div>
+            </form>
+
+            <div class="admin-song-list" id="adminSongList"></div>
+
+            <div class="section-head section-head--spaced">
+              <div>
+                <p class="section-label">Publicación</p>
+                <h3>Datos compartidos</h3>
+              </div>
+            </div>
+            <div class="form-panel">
+              <label>
+                Endpoint seguro para publicar
+                <input id="adminEndpoint" type="url" placeholder="https://tu-worker.example.workers.dev/publish">
+              </label>
+              <label>
+                Clave para publicar
+                <input id="publishPasscode" type="password" autocomplete="current-password" placeholder="Clave del servidor">
+              </label>
+              <div class="admin-file-actions">
+                <button class="button button--ghost" type="button" id="exportData">
+                  <svg><use href="#icon-download"></use></svg>
+                  Exportar JSON
+                </button>
+                <label class="button button--ghost file-button">
+                  <svg><use href="#icon-upload"></use></svg>
+                  Importar JSON
+                  <input id="importDataFile" type="file" accept="application/json">
+                </label>
+                <button class="button button--ghost" type="button" id="saveAdminEndpoint">Guardar endpoint</button>
+                <button class="button button--primary" type="button" id="publishData">
+                  <svg><use href="#icon-cloud"></use></svg>
+                  Publicar
+                </button>
+              </div>
+            </div>
+          </div>
+        </section>
+      </main>
+
+      <nav class="bottom-nav" aria-label="Navegación principal">
+        <button type="button" data-nav="home" class="is-active">
+          <svg><use href="#icon-home"></use></svg>
+          Inicio
+        </button>
+        <button type="button" data-nav="songs">
+          <svg><use href="#icon-music"></use></svg>
+          Canciones
+        </button>
+        <button type="button" data-nav="events">
+          <svg><use href="#icon-calendar"></use></svg>
+          Eventos
+        </button>
+        <button type="button" data-nav="cloud-inventory">
+          <svg><use href="#icon-cloud"></use></svg>
+          GitHub
+        </button>
+        <button type="button" data-nav="admin">
+          <svg><use href="#icon-lock"></use></svg>
+          Admin
+        </button>
+      </nav>
+    </div>
+
+    <dialog class="song-dialog" id="songDialog">
+      <div class="dialog-bar">
+        <div>
+          <p class="section-label">Canción</p>
+          <h3 id="dialogTitle"></h3>
+        </div>
+        <button class="icon-button" type="button" id="closeDialog" aria-label="Cerrar visor" title="Cerrar">
+          <svg><use href="#icon-close"></use></svg>
+        </button>
+      </div>
+      <img id="dialogImage" alt="">
+      <div class="dialog-song-meta" id="dialogSongMeta"></div>
+    </dialog>
+
+    <div class="toast" id="toast" role="status" aria-live="polite"></div>
+  </body>
+</html>

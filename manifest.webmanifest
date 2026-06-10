@@ -1,0 +1,20 @@
+{
+  "name": "Coro Paz en Jesús",
+  "short_name": "Coro Paz",
+  "description": "Repertorio, letras, notas musicales, agenda e inventario del Coro Paz en Jesús.",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#f6f3ec",
+  "theme_color": "#174f49",
+  "orientation": "portrait",
+  "lang": "es",
+  "icons": [
+    {
+      "src": "assets/logo-coro.jpeg",
+      "sizes": "640x640",
+      "type": "image/jpeg",
+      "purpose": "any maskable"
+    }
+  ]
+}
