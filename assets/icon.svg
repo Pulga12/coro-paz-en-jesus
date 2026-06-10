@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" role="img" aria-label="Coro Paz en Jesús">
+  <rect width="128" height="128" rx="28" fill="#174f49"/>
+  <circle cx="64" cy="64" r="46" fill="#ffffff"/>
+  <path d="M28 68c18-8 31-21 36-39 5 18 18 31 36 39-18 8-31 21-36 39-5-18-18-31-36-39Z" fill="#1515e8"/>
+  <text x="64" y="58" text-anchor="middle" font-family="Arial, sans-serif" font-size="24" font-weight="800" fill="#ffffff">PAZ</text>
+  <text x="64" y="88" text-anchor="middle" font-family="Arial, sans-serif" font-size="13" font-weight="800" fill="#174f49">EN JESÚS</text>
+</svg>

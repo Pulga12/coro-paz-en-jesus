@@ -1,14 +1,14 @@
-# Coro Paz en Jes?s
+# Coro Paz en Jesús
 
-Aplicaci?n web instalable para celular y laptop. Incluye repertorio en letras, notas musicales, eventos, miembros, inventario y panel de administrador.
+Aplicación web instalable para celular y laptop. Incluye repertorio en letras, notas musicales, eventos, miembros, inventario y panel de administrador.
 
 ## Archivos para subir a GitHub
 
-Sube todo el contenido de esta carpeta a la ra?z del repositorio. No subas la carpeta como carpeta; sube sus archivos internos.
+Sube todo el contenido de esta carpeta a la raíz del repositorio. No subas la carpeta como carpeta; sube sus archivos internos.
 
 ## Administrador
 
-Clave: `coropazenjes?s`
+Clave: `coropazenjesús`
 
 ## Publicar en GitHub Pages
 
@@ -16,8 +16,8 @@ Clave: `coropazenjes?s`
 2. Sube estos archivos.
 3. Ve a Settings > Pages.
 4. Elige Deploy from a branch, branch main, folder /root.
-5. Abre la URL que GitHub Pages te d?.
+5. Abre la URL que GitHub Pages te dé.
 
 ## Nota
 
-Las canciones est?n guardadas como texto en `data/app-data.json`. Algunas letras fueron extra?das por OCR y pueden necesitar correcci?n desde Administrador.
+Las canciones están guardadas como texto en `data/app-data.json`. Algunas letras fueron extraídas por OCR y pueden necesitar corrección desde Administrador.
