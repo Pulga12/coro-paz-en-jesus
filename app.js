@@ -1,1062 +1,889 @@
-const APP_VERSION = "1.2.0";
-const DEFAULT_DATA_URL = "data/app-data.json";
-const ADMIN_PASSCODE = "coropazenjesús";
+const APP_VERSION = "2.0.0";
+const ADMIN_PASSWORD = "EQIP";
+const DATA_PATH = "data/app-data.json";
+const STORAGE_KEY = "coro-paz-en-jesus-data-v2";
+const ADMIN_SESSION_KEY = "coro-paz-en-jesus-admin-v2";
 
-const STORAGE_KEYS = {
-  inventory: "coroPaz.localInventory",
-  sharedData: "coroPaz.sharedData",
-  dataUrl: "coroPaz.dataUrl",
-  adminEndpoint: "coroPaz.adminEndpoint"
+const defaultData = {
+  version: APP_VERSION,
+  updatedAt: new Date().toISOString(),
+  settings: {
+    choirName: "Coro Paz en Jesus",
+    subtitle: "Aplicacion limpia para administrar repertorio, eventos, miembros, lecturas e inventario patrimonial.",
+    parishPlace: "Salon parroquial"
+  },
+  songs: [],
+  readings: [],
+  events: [],
+  members: [],
+  inventory: [],
+  documents: []
 };
 
-const NAV_ITEMS = [
-  {
-    id: "songs",
+const viewTitles = {
+  home: "Coro Paz en Jesus",
+  songs: "Canciones",
+  readings: "Lecturas",
+  events: "Eventos",
+  members: "Miembros",
+  inventory: "Inventario patrimonial",
+  admin: "Administrador"
+};
+
+const entityConfig = {
+  songs: {
     label: "Canciones",
-      description: "Repertorio, letras y notas musicales.",
-    icon: "icon-music"
+    singular: "cancion",
+    emptyTitle: "Todavia no hay canciones",
+    emptyText: "Entra al Administrador para agregar el repertorio, letras y notas musicales.",
+    fields: [
+      { name: "title", label: "Titulo", required: true },
+      { name: "category", label: "Categoria" },
+      { name: "musicalNotes", label: "Notas musicales", type: "textarea", full: true },
+      { name: "lyrics", label: "Letra", type: "textarea", full: true, tall: true },
+      { name: "notes", label: "Notas internas", type: "textarea", full: true }
+    ],
+    columns: [
+      { key: "title", label: "Titulo" },
+      { key: "category", label: "Categoria" },
+      { key: "musicalNotes", label: "Notas musicales" }
+    ]
   },
-  {
-    id: "readings",
+  readings: {
     label: "Lecturas",
-    description: "Textos bíblicos, oración y reflexión.",
-    icon: "icon-book"
+    singular: "lectura",
+    emptyTitle: "Todavia no hay lecturas",
+    emptyText: "Agrega lecturas, citas o reflexiones desde el Administrador.",
+    fields: [
+      { name: "title", label: "Titulo", required: true },
+      { name: "date", label: "Fecha", type: "date" },
+      { name: "reference", label: "Cita o referencia" },
+      { name: "text", label: "Texto", type: "textarea", full: true, tall: true },
+      { name: "notes", label: "Notas", type: "textarea", full: true }
+    ],
+    columns: [
+      { key: "title", label: "Titulo" },
+      { key: "date", label: "Fecha" },
+      { key: "reference", label: "Referencia" }
+    ]
   },
-  {
-    id: "events",
+  events: {
     label: "Eventos",
-    description: "Ensayos, misas y actividades especiales.",
-    icon: "icon-calendar"
+    singular: "evento",
+    emptyTitle: "Todavia no hay eventos",
+    emptyText: "Agrega ensayos, misas o actividades desde el Administrador.",
+    fields: [
+      { name: "title", label: "Actividad", required: true },
+      { name: "date", label: "Fecha y hora", type: "datetime" },
+      { name: "place", label: "Lugar", placeholder: "Salon parroquial" },
+      { name: "note", label: "Nota", type: "textarea", full: true }
+    ],
+    columns: [
+      { key: "title", label: "Actividad" },
+      { key: "date", label: "Fecha y hora", formatter: formatDateTime },
+      { key: "place", label: "Lugar" }
+    ]
   },
-  {
-    id: "members",
+  members: {
     label: "Miembros",
-    description: "Roles y grupos del coro.",
-    icon: "icon-users"
+    singular: "miembro",
+    emptyTitle: "Todavia no hay miembros",
+    emptyText: "Agrega nombres, roles y ubicacion musical desde el Administrador.",
+    fields: [
+      { name: "name", label: "Nombre", required: true },
+      { name: "role", label: "Rol o voz" },
+      { name: "group", label: "Grupo / ubicacion" },
+      { name: "contact", label: "Contacto" },
+      { name: "note", label: "Nota", type: "textarea", full: true }
+    ],
+    columns: [
+      { key: "name", label: "Nombre" },
+      { key: "role", label: "Rol" },
+      { key: "group", label: "Ubicacion" }
+    ]
   },
-  {
-    id: "local-inventory",
-    label: "Inventario local",
-    description: "Objetos guardados en este dispositivo.",
-    icon: "icon-box"
+  inventory: {
+    label: "Inventario patrimonial",
+    singular: "item",
+    emptyTitle: "Todavia no hay inventario",
+    emptyText: "Agrega materiales patrimoniales del coro desde el Administrador.",
+    fields: [
+      { name: "name", label: "Objeto", required: true },
+      { name: "status", label: "Estado", type: "select", options: ["Bueno", "Regular", "Reparar", "Prestado", "Perdido"] },
+      { name: "location", label: "Ubicacion" },
+      { name: "note", label: "Nota", type: "textarea", full: true }
+    ],
+    columns: [
+      { key: "name", label: "Objeto" },
+      { key: "status", label: "Estado" },
+      { key: "location", label: "Ubicacion" }
+    ]
   },
-  {
-    id: "add-local",
-    label: "Agregar local",
-    description: "Crear un objeto temporal sin internet.",
-    icon: "icon-plus"
-  },
-  {
-    id: "cloud-inventory",
-    label: "Actualizaciones",
-    description: "Leer datos compartidos desde GitHub.",
-    icon: "icon-cloud"
-  },
-  {
-    id: "admin",
-    label: "Administrador",
-    description: "Editar canciones y preparar cambios.",
-    icon: "icon-lock"
+  documents: {
+    label: "Documentacion",
+    singular: "documento",
+    emptyTitle: "Todavia no hay documentacion",
+    emptyText: "Agrega enlaces, notas o documentos de referencia desde el Administrador.",
+    fields: [
+      { name: "title", label: "Titulo", required: true },
+      { name: "type", label: "Tipo" },
+      { name: "link", label: "Enlace" },
+      { name: "description", label: "Descripcion", type: "textarea", full: true },
+      { name: "notes", label: "Notas internas", type: "textarea", full: true }
+    ],
+    columns: [
+      { key: "title", label: "Titulo" },
+      { key: "type", label: "Tipo" },
+      { key: "link", label: "Enlace" }
+    ]
   }
-];
-
-const DEFAULT_DATA = {
-  "version": "1.2.0",
-  "updatedAt": "2026-06-10T21:55:52.358Z",
-  "songs": [
-    {
-      "id": "song-1",
-      "title": "Ansias de Paz y Ante ti Señor",
-      "image": "assets/logo-coro.jpeg",
-      "category": "Entrada",
-      "musicalNotes": "Tono sugerido: Re. Ritmo: balada suave.",
-      "lyrics": "ío Dios es amor, Dios es amor. s, que lloran en o en el espejo y ue sufrido por tu nsannienfo, pues el ayer/ prefiero por tanto que que ius 9rrado nunca y rcíe o temprano ándanos. a, desde aquel ue tengo rnuy sé que debí santos pensanicnto (le hablo con Itiysle vos abandonado, por la ilislezca quo 1.1 nugndo esiá pasando. Porque si 10 qucrcrrw,e-, si ie necesitamos, porque no lerrninc:trnos hacer llorar a Dios. 2i. ANSIAS DE PAZ Todos esperan tu paz Señor, los hombres da buena voluntad, la paz de un -reino que llegará, paz de un hogar con fe en ti. Y danos, Oh Jesús danos/ danós la paz que solo tú nos puedes dar/ Paz, paz, paz. 22. ANTE TI SEÑOR Ante ti Señor, rni alrna levarriaré (2) Oh ITIi Dios (2) confío en ü, confío en ti Yo fe alabo Señor, yo te adoro Señor, Oh rni Dios (2) Líbrame Señor, de iodo peligro (2) REDMI NOTE 12 PRO 5C Guíame Señor, y guarda mi alma (2) 6/08/2024 18:27",
-      "notes": "Letra extraída por OCR. Revisar y corregir desde Administrador si hace falta.",
-      "updatedAt": "2026-06-10T20:57:42.4304793Z"
-    },
-    {
-      "id": "song-2",
-      "title": "Buscaba amor en el perfume de una flor",
-      "image": "assets/logo-coro.jpeg",
-      "category": "Reflexión",
-      "musicalNotes": "Tono sugerido: Do. Entrada tranquila.",
-      "lyrics": "Buscaba amor en el perfume de una flor / Buscaba en un árbol la alegría y el amor / Pero espinas tuvo la flor y el árbol fue una cruz / Yo seguía buscando sin hallar la luz. Buscaba amor en el canto de un ave / Buscaba amor en el sin de amistades / Pero el canto me aburrió y la amistad siempre falló / Yo perdí la esperanza de hallar amor. Pero un día escuché la historia de un amor como nunca oí / Cristo vino al mundo y dio su vida para mí. Y yo sé que me ama a mí! Y yo sé que te ama a ti! Y yo sé que me ama a mí! Y yo sé que él te ama a ti. Ahora yo sé lo que es el amor, no es el canto de un ave ni el aroma de una flor / Es la Comunión con Dios, su presencia siento en mí. Y yo sé que me ama a mí! Y yo sé que te ama a ti! Y yo sé que me ama a mí! Y yo sé que él te ama a ti.",
-      "notes": "Letra extraída por OCR. Revisar y corregir desde Administrador si hace falta.",
-      "updatedAt": "2026-06-10T20:57:42.6403577Z"
-    },
-    {
-      "id": "song-3",
-      "title": "Canta trovador",
-      "image": "assets/logo-coro.jpeg",
-      "category": "Animación",
-      "musicalNotes": "Tono sugerido: Sol. Ritmo alegre.",
-      "lyrics": "CANTA Canto frovacfor buena cania iodo el unundo el nt. Lleva e} evctngelio en este amémonos hernnctnos corno Crit Canta, canta frovcxdor, y lleva tu cantar Señor. Y cantaran ei canto cie del Señor. Canta irovador que sonnos hijos canta que si iodos nos uni,mos la ig{esia somos uno y todos en io{esia peregrina que Pedro y Dios fundo. Canta Irovador que el hcmbr: porque Dios, puso en nuestras r,u• milagro de su amor. Libertad de vida l(bntiacd de vocación, la libertad de hacer la guerra o ef amor.",
-      "notes": "Letra extraída por OCR. Revisar y corregir desde Administrador si hace falta.",
-      "updatedAt": "2026-06-10T20:57:42.9296319Z"
-    },
-    {
-      "id": "song-4",
-      "title": "Ella es",
-      "image": "assets/logo-coro.jpeg",
-      "category": "Mariano",
-      "musicalNotes": "Tono sugerido: Mi menor.",
-      "lyrics": "un camtnaoa ELLA ES Era como la mañana Y con ella amanecía Ese sol que al mirarla En sus brazos se dormía Ella es, ella es, ella es maría Ella es, ella es, ella es maría Ella es, ella es, ellc es mcría Luego de sufrir la muerte De ese hijo que ella amaba Llevó en silencio al mundo La verdad de sus palabras Dame tus fuerzas maría Para que pueda encontrar EI camino que en su vida nos quiso señalar Ella es, ella es, ella es maría Ella es, ella es, ella es maría Ella es, ella es, ella es maría Ella es, ella es, ella es maría Trc Trc mi SU M m",
-      "notes": "Letra extraída por OCR. Revisar y corregir desde Administrador si hace falta.",
-      "updatedAt": "2026-06-10T20:57:43.0612612Z"
-    },
-    {
-      "id": "song-5",
-      "title": "Este es el día y el lugar",
-      "image": "assets/logo-coro.jpeg",
-      "category": "Entrada",
-      "musicalNotes": "Tono sugerido: Sol. Palmas suaves.",
-      "lyrics": "c ESTE ES EL DíA Y EL LUGAR DIOS ESTÁ AQUí Y TE QUIERE HABLAR c HABRE LAS PUERTAS, ESCUCHALO Y DÉJALO ENTRAR c Am ALABANZAS AL SEÑOR POR SUS OBRAS, POR SUS DONES c Am ALABANZAS AL SEÑOR POR LA VIDA Y SIJ PALABRA c Am F G Y DAR GRACIAS AL SEÑOR, NUESTRO DIOS c POR SIJ AMOR",
-      "notes": "Letra extraída por OCR. Revisar y corregir desde Administrador si hace falta.",
-      "updatedAt": "2026-06-10T20:57:43.1545645Z"
-    },
-    {
-      "id": "song-6",
-      "title": "Este vino y este pan te ofrecemos Señor",
-      "image": "assets/logo-coro.jpeg",
-      "category": "Ofertorio",
-      "musicalNotes": "Tono sugerido: Re.",
-      "lyrics": "D Bm ESTE VINO Y ESTE PAN TE OFRECEMOS SEÑOR Bm PARA QUE EN TU BONDAD G. LOS CONVIERTAS EN OFRENDA DE AMOR NUESTROS SUEÑOS NUESTRO AFÁN Y NUESTRO CORAZÓN HOY PONEMOS A TUS PIES Y A TUS OJOS EN HUMILDE ORACIÓN ESTE VINO Y ESTE PAN SE CONVERTIRÁN EN TI ALIMENTO DE TU AMOR SEÑOR POR MI ESTA VIDA QUE ME DAS TE LA OFREZCO EN VERDAD EN VERDAD EN TUS MANOS TOMALA Y TRANSFORMALA SEGÚN TU VOLUNTAD",
-      "notes": "Letra extraída por OCR. Revisar y corregir desde Administrador si hace falta.",
-      "updatedAt": "2026-06-10T20:57:43.2632600Z"
-    },
-    {
-      "id": "song-7",
-      "title": "Hola, canción de bienvenida",
-      "image": "assets/logo-coro.jpeg",
-      "category": "Bienvenida",
-      "musicalNotes": "Tono sugerido: Do. Ritmo sencillo.",
-      "lyrics": "HOLA, CANCION DE BIENVENIDA Hoy me dijo mi madre, !levántate ya! Pero si hoy es domingo, no hay que madrugar Este es un dia especial nos vamos a reunir, la familia y los amigos 10 vamos a compartir. CORO Hola(hola) estamos aquí (estamos aqui) Hola(hola) te queremos a ti(te queremos a En este día de fiesta en la casa de dios cantemos en la eucaristía, rezemos por el amor. Los jovenes de la confirmación Sus padres la gente mayor CORO Venimos todos unidos a esta celebracion Hola(hola) estamos aquí (estamos aqui) Hola(hola) te queremos a ti(te queremos a 1/2 Estamos en san patricio en la casa de dios Cantemos en la eucaristía rezemos por el amor Hola....",
-      "notes": "Letra extraída por OCR. Revisar y corregir desde Administrador si hace falta.",
-      "updatedAt": "2026-06-10T20:57:43.4343588Z"
-    },
-    {
-      "id": "song-8",
-      "title": "Hoy en oración quiero preguntar Señor",
-      "image": "assets/logo-coro.jpeg",
-      "category": "Oración",
-      "musicalNotes": "Tono sugerido: La menor.",
-      "lyrics": "Hoy en oración Hoy en oración quiero preguntar señor Quiero escuchar tu voz tus palabras con annor CORO Ser como eres tu servidor de los demás dime Como en qué lugar te hago falta Dime señor en que te puedo servir déjame conocer tu voluntad Cime señor en que te puedo servir quiero de ti aprender saber amar Hoy quiero seguir tus caminos junto al mar Tu palabra tu verdad ser imagen de ti CORO como eres tu servidor de los demá'J dime Como en qué lugar te hago falta Dime señor en que te puedo servir oéjame conocer tu voluntad Dime señor en que fe puedo servir quiero de ti aprender saber amar AQUÍ HAV UN MUCHACHO Aquí hav un muchacho Que solamente tiene cinco panes dos peces qué es eso para tanta gente. n:muchachc •nte tiene un corezón óispueste. e es eso para tanta gente. oui está este corazón que quiere serte fiel Toma ee.\"• Tc•do Mi corazOn 'ornaste A la gente a todos a:canad. Mi vid* está en tus m Y ouieres repartir!a, panes Aquel diz oh Señor. Aqui están Aquí están mis ilusiones MES san Aqui está esre ccra: Más qué es s; Si no te tiene•z Aqui está este peces Toma tcdc Y Toma este comer Toma cuanto tens Toma mi pasado, . lodo cuento teng Toma este ccrazt Toma cuanto ten: Toma mi pasado, Todo cuanto teni Todo cuanto ten Aqui hav on muc 03/08/2024 16:54",
-      "notes": "Letra extraída por OCR. Revisar y corregir desde Administrador si hace falta.",
-      "updatedAt": "2026-06-10T20:57:43.8021906Z"
-    },
-    {
-      "id": "song-9",
-      "title": "Hoy estoy de fiesta junto a ti",
-      "image": "assets/logo-coro.jpeg",
-      "category": "Animación",
-      "musicalNotes": "Tono sugerido: Sol.",
-      "lyrics": "\"Rafael Moreno Latino\". Nace de la mágica y contagiosa música colombiana tocando ritmos como vallenato, cumbia y tropi-pop, donde eI acordeón, la caja vallenata y la guacharaca dan ese toque único del Caribe. ABC (R. Moreno) Hoy estoy de fiesta junto a ti Paso el día alabando soy feliz y cuando ya no se que mas cantar EI \"ABC\" vuelvo a empezar Me devuelves al camino Alabanza por tu gran poder aLELUYA Bendición y gracias por tu amor ALELUYA y por último en adoración ADORACION en silencio eI corazón CORAZON pensando solo en Cristo Y empiezo con alabanzas y sigo con bendiciones termino con Cristo Jesús! \"C\" de Cristo Yo te alabo porque tu eres Dios Bendición por 10 que haces Señor Pero mi alma goza más Cuando te puedo adorar Cuando estoy solo contigo Alabanza por tu gran poder. Alabanza por tu gran poder aLELUYA Bendición y gracias por tu amor ALELUYA y por último en adoración",
-      "notes": "Letra extraída por OCR. Revisar y corregir desde Administrador si hace falta.",
-      "updatedAt": "2026-06-10T20:57:43.9421510Z"
-    },
-    {
-      "id": "song-10",
-      "title": "Huayno de la Paz",
-      "image": "assets/logo-coro.jpeg",
-      "category": "Paz",
-      "musicalNotes": "Tono sugerido: Re. Ritmo huayno.",
-      "lyrics": "HUAYNO LA PAZ Fscljcha Padre tu pueblo que te canta hoy/' Escucha que te imploralX!os tiaya entre los horrbres paz arnor Y fe cesen fos guerras, eI odio y la rr;aldad (2 Y unidos iodos cantemos viva el Señor/ Y unidos iodos grifemos querernos la paz ia paz hermanos, querernos la paz Aqu hac Pinar",
-      "notes": "Letra extraída por OCR. Revisar y corregir desde Administrador si hace falta.",
-      "updatedAt": "2026-06-10T20:57:44.1804586Z"
-    },
-    {
-      "id": "song-11",
-      "title": "María mírame, María mírame",
-      "image": "assets/logo-coro.jpeg",
-      "category": "Mariano",
-      "musicalNotes": "Tono sugerido: Do.",
-      "lyrics": "María mírame, María mírame, Si tú me miras, Él también me mirará Madre mía mírame, de la mano llévame, MUY cerca de Él, que ahí me quiero quedar María cúbreme con tu manto Que tengo miedo, no sé rezar Que por tus ojos misericordiosos, Tendré la fuerza, tendré la paz María mírame, María mírame, Si tú me miras, Él también me mirará Madre mía mírame, de la mano llévame, Muy cerca de Él, que ahí me quiero quedar Madre consuélame de mis penas, Es que no quiero, ofenderle más Que por tus ojos misericordiosos, Quiero ir al cielo, y verlos ya María mírame, María mírame, Si tú me miras, Él también me mirará Madre mía mírame, de la mano llévame, Muy cerca de Él, que ahí me quiero quedar",
-      "notes": "Letra extraída por OCR. Revisar y corregir desde Administrador si hace falta.",
-      "updatedAt": "2026-06-10T20:57:44.3068130Z"
-    },
-    {
-      "id": "song-12",
-      "title": "Oh Señora y Madre mía",
-      "image": "assets/logo-coro.jpeg",
-      "category": "Mariano",
-      "musicalNotes": "Tono sugerido: Re.",
-      "lyrics": "Oh Señora y Madre mía, con filial cariño vengo a ofrecerte en este día cuanto soy y cuanto tengo: mis ojos para mirarte, mi voz para bendecirte, mi corazón para amarte y mi vida para servirte. Acepta Madre este don, que te ofrece mi cariño, guárdame como un niño cerca de tu corazón(2). Que nunca sea traidor a1 amor que hoy se me entrega y que rechace sin pena los halagos de otro amor y aunque el dolor me taladre, y haga de mi un crucifijo que yo sepa ser tu hijo y que sienta que eres mi Madre. En la dicha y en la aflicción, en mi vida y en mi agonía, mírame con compasión no me dejes Madre mía. (2)",
-      "notes": "Letra extraída por OCR. Revisar y corregir desde Administrador si hace falta.",
-      "updatedAt": "2026-06-10T20:57:44.3737397Z"
-    },
-    {
-      "id": "song-13",
-      "title": "Que alegría es venir a la casa de Dios",
-      "image": "assets/logo-coro.jpeg",
-      "category": "Entrada",
-      "musicalNotes": "Tono sugerido: Sol. Tempo vivo.",
-      "lyrics": "Que Alegria Es Venir Canciones Religiosas Que alegría es venir A la casa de Dios Que alegría es participar Del pan de Dios Que alegría es venir A la casa de Dios Que alegría es participar Del pan de Dios Vayaamos todos a la casa de Dios Cantad alegres nuestra canción Que alegría es venir A la casa de Dios Que alegría es participar Del pan de Dios Que alegría es venir A la casa de Dios Que alegría es participar Del pan de Dios",
-      "notes": "Letra extraída por OCR. Revisar y corregir desde Administrador si hace falta.",
-      "updatedAt": "2026-06-10T20:57:44.4766246Z"
-    },
-    {
-      "id": "song-14",
-      "title": "Quiero ofrecerte Señor",
-      "image": "assets/logo-coro.jpeg",
-      "category": "Ofertorio",
-      "musicalNotes": "Tono sugerido: Do.",
-      "lyrics": "10 or CORO DE JÓVENES \"PAZ [N JESUS\" 219. QUIERO OFRECERTE SEÑOR Quiero ofrecerte Señor este canto de amor como un don de paz Que junto con el vino y el pan tu cuerpo y sangre se harán y así vendrás a reinar con amor en nuestro corazón/ La, la, la, la, la, la (bis) Recibe con nuestras ofrendas el ruego y el clamor como una oración. Te presentamos también, el fruto del trabajo y de nuestro afán, 220. QUIERO SER PAN",
-      "notes": "Letra extraída por OCR. Revisar y corregir desde Administrador si hace falta.",
-      "updatedAt": "2026-06-10T20:57:44.7382255Z"
-    },
-    {
-      "id": "song-15",
-      "title": "Santo Sentimiento",
-      "image": "assets/logo-coro.jpeg",
-      "category": "Santo",
-      "musicalNotes": "Tono sugerido: Re.",
-      "lyrics": "u vientre (bis) ies a mí ise tt; greneex Santo sentimiento Santo cres señor Dios del univerf,v: Hosanna en et cielo Hosanna señor Bendito el que viene en nombre del señor Siüú+:es su nombre Santo es su nombre Santo es su nombre Santo eres señor Dios del universo (bis)",
-      "notes": "Letra extraída por OCR. Revisar y corregir desde Administrador si hace falta.",
-      "updatedAt": "2026-06-10T20:57:44.8964937Z"
-    },
-    {
-      "id": "song-16",
-      "title": "Theotokos",
-      "image": "assets/logo-coro.jpeg",
-      "category": "Mariano",
-      "musicalNotes": "Tono sugerido: Mi menor.",
-      "lyrics": "Theotokos Salve, Marí-----a, Theotokos, la Madre de Dios. Salve, Marí—-a, siempre virgen y Madre de Dios. En ti vemos ya nuestra resurrección. Asunta al cielo estás. Salve, Marí-----a, Theotokos, la Madre de Dios. Salve, Marí-----a, la Reina del cielo la Madre de Dios.",
-      "notes": "Letra extraída por OCR. Revisar y corregir desde Administrador si hace falta.",
-      "updatedAt": "2026-06-10T20:57:44.9867696Z"
-    },
-    {
-      "id": "song-17",
-      "title": "Un Día caminaba",
-      "image": "assets/logo-coro.jpeg",
-      "category": "Comunión",
-      "musicalNotes": "Tono sugerido: Sol.",
-      "lyrics": "Un l' . ya . qt me mí en i.}ore en eso a! = ; que perdí sc¿Dar CIE '{i Y mi 7 coa -0 que ul [Eri sos brazos sc é.i'3 es, es, es es, es, de sufrir la rnuer{G) ese hijo q:.oe elfo amab(\"! REDMI NOTE 12 PRO 5G La v 17/08/2024 19:17",
-      "notes": "Letra extraída por OCR. Revisar y corregir desde Administrador si hace falta.",
-      "updatedAt": "2026-06-10T20:57:45.2083910Z"
-    },
-    {
-      "id": "song-18",
-      "title": "Vino y Pan",
-      "image": "assets/logo-coro.jpeg",
-      "category": "Ofertorio",
-      "musicalNotes": "Tono sugerido: Do.",
-      "lyrics": "CANTO OFERTORIO VINO Y PAN NOS ACERCAMOS A TU MESA PARA OFRECERTE NUESTRO CORAZÓN, LAS ALEGRIAS Y TRISTEZAS NUESTROS TRABAJOS Y NUESTRA ORACION. VINO Y PAN HOY PRESENTAMOS, AQUÍ EN TU ALTAR RECIBELOS Y TRANSFORMALOS EN TU CUERPO Y SANGRE SEÑOR. NOS ACERCAMOS COMO HERMANOS CON NUESTRAS LUCHAS EN EL CAMINAR Y LEVANTANDO A TI LAS MANOS PEDIMOS QUE NOS CUBRA TU BONDAD VINO Y PAN HOY PRESENTAMOS, AQUÍ EN TU ALTAR RECIBELOS Y TRANSFORMALOS EN TU CUERPO Y SANGRE SEÑOR (BIS)",
-      "notes": "Letra extraída por OCR. Revisar y corregir desde Administrador si hace falta.",
-      "updatedAt": "2026-06-10T20:57:45.3836518Z"
-    },
-    {
-      "id": "song-19",
-      "title": "Viviré 1",
-      "image": "assets/logo-coro.jpeg",
-      "category": "Comunión",
-      "musicalNotes": "Tono sugerido: Re.",
-      "lyrics": "VIVIRÉ\n\nYo no sé qué sucedió, jamás nadie me habló así; fue su palabra, su mirada, su voz lo que a mí me transformó.\n\nLetra parcial extraída de la imagen. Revisar y completar desde Administrador.",
-      "notes": "Letra extraída por OCR. Revisar y corregir desde Administrador si hace falta.",
-      "updatedAt": "2026-06-10T20:57:45.4648414Z"
-    },
-    {
-      "id": "song-20",
-      "title": "Viviré 2",
-      "image": "assets/logo-coro.jpeg",
-      "category": "Comunión",
-      "musicalNotes": "Tono sugerido: Re.",
-      "lyrics": "Deje mi cántaro vacío y en soledad, en el camino, junto al pozo de sicar donde aquel hombre me hablo De un amor más allá del infinito, He mi sed y del agua que la podía saciar/ Y de un don que yo no concia y de una vida que lleva a la eternidad/ Viviré porque el me dio la vida, anunciare a los hombres su verdad/ me eligió para ser su instrumento. Nuevo apóstol nueva vida y de nueva luz. Aquel hombre que yo vi, y que olvidar, me dijeron que una cruz solo por amor a mi/ vida quisiera ofrecerle mi libertac, entregada a la misión. predicar aue rre habló",
-      "notes": "Letra extraída por OCR. Revisar y corregir desde Administrador si hace falta.",
-      "updatedAt": "2026-06-10T20:57:45.6824245Z"
-    },
-    {
-      "id": "song-21",
-      "title": "Yo tengo un nuevo amor",
-      "image": "assets/logo-coro.jpeg",
-      "category": "Animación",
-      "musicalNotes": "Tono sugerido: Sol. Ritmo alegre.",
-      "lyrics": "fiesta, fiesta vente en mi (2) esta, fiesta, fiesta a Cristo yo conocí. Cristo, a quien yo sigo anso de conocer. s enfermos, da vista a los ciegos, vientos y la tempestad. labaré, y yo 10 alabaré, labaré, diciendo: Gloria a Dios (Bis) Kia de fe, una mirada de fe, puede salvar al pecador. (Bis) lienes a Cristo Jesús, rdonara una mirada de fe -ae puede salvar al pecador. rada de amor......... . rada de Dios..... la Iglesia, a edificar la iglesia la iglesia del Señor. Ino ven ayúdame, hermana ven me icar la Iglesia del Señor. y Iglesia, tú eres Iglesia, s la Iglesia del Señor. iños son del reino, los grandes son dos, icar la Iglesia del Señor obres son del Reino los ricos son dos. licarla Iglesia del Señor M de Dios es maravilloso (3v) de es eI amor de Dios Ilto, que no puedo estar mas alto que EI, 'ajo que no puedo estar mas bajo que EI, ncho que no pueda estar afuera de EI. ie es eI amar de Dios. v, su amor, su amor esta corriendo ya. do eI mundo esta corriendo ya. tú. y tú eres quien 10 harás correr. (3v) io e: mundo tú 10 hará correr. io aquel que encuentres dale de ese o el mundo dale de vse amor. oraquí, Señor, pasa por aquí. (2v) ior pasa por aqui. (2v) Santo pasa por aquí, (2v) ior pasa por aquí. (2v) Oh Señor pasa por aquí. (2v) Lléname de paz Señor, lléname de paz, (2v) Oh Señor lléname de Paz. (2v) Lléname de amor Señor, lléname de amor, Oh Señor lléname de amor, (2v) Yo tengo un nuevo amor Yo tengo un nuevo amor el corazón me late Sin parar hay uno que me han dicho te amo de verdad Jesús mi amor y mas que amor mi dulce paz. Yo tengo un nuevo amor jamás imagine poder hallar aquel que Ie dio a mi vida Una razón para amar Jesús mi amor y mas que amor mi dulce paz. 3 Siento que tengo ganas de volar al firmamento Guitarle al mundo entero 10 que estoy sintiendo Que ya encontré mi dulce amor Jesús es toda mi Verda Y nunca yo me cansare de repetirlo hasta eI final. Que ahora yo tengo un nuevo amor el corazón me late Sin parar hay uno que me han dicho te amar de verdad Jesús mi amor y mas que amor mi dulce paz. Yo tengo un nuevo amor Jamás imagine poder hallar aquel que Ie dio a mi vida Una razón para amar Jesús mi amor y mas que amor mi dulce paz. Su voz dulcísima en respuesta cuando llamo Sus ojos tiernos has!ê e! toque de sus manos Por siempre suyo quiereyerJesús es toda mi verdad Y nunca yo me cansare de repetido hasta el final. Que ahora yo tengo un nuevo amor el corazón me late Sin parar hay uno que me han dicho te amar de verdad Jesús mi amor y mas que amor mi dulce paz. Yo tengo un nuevo amor Jamás imagine poder hallar aquel que le dio a mi vida Una razón para amar Jesús mi amor y mas que amor mi dulce paz V*-.fif__",
-      "notes": "Letra extraída por OCR. Revisar y corregir desde Administrador si hace falta.",
-      "updatedAt": "2026-06-10T20:57:46.0435110Z"
-    },
-    {
-      "id": "song-22",
-      "title": "Yo tengo un nuevo amor 2",
-      "image": "assets/logo-coro.jpeg",
-      "category": "Animación",
-      "musicalNotes": "Tono sugerido: Sol.",
-      "lyrics": "7:17 . < Título a n 870/0' YO TENGO UN NUEVO AMOR Yo tengo un nuevo amor Jamas imagine poder hallar, aquel que le dio a mi vida una razón para amar Jesús mi amor y mas que amor mi dulce paz Yo tengo un nuevo amor el corazon me late sin parar hay uno que me ha dicho te amo de verdad jesús mi amor y mas que amor mi dulce paz Estrofa 1: Siento que tengo ganas de volar al firmamento, gritarle al mundo entero 10 que estoy sintiendo que ya encontré mi dulce amor jesús es toda mi verdad y nunca yo me cansare de repetirlo hasta el final y ahora...(coro) Estrofa 2: Siento su voz dulcisima en respuesta cuando llamo sus ojos tierno hasta el toque de sus manos, Por siempre suya quiero ser jesus es toda mi verdad y nunca yo me cansare de repertirlo hasta el final y ahora... (coro)",
-      "notes": "Letra extraída por OCR. Revisar y corregir desde Administrador si hace falta.",
-      "updatedAt": "2026-06-10T20:57:46.2156753Z"
-    }
-  ],
-  "documents": [],
-  "readings": [
-    {
-      "body": "Espacio para guardar el texto bíblico que se usará en la celebración o ensayo.",
-      "title": "Lectura del día"
-    },
-    {
-      "body": "Preparar el corazón antes de cantar: servir con alegría, escuchar al grupo y cuidar la oración.",
-      "title": "Reflexión breve"
-    },
-    {
-      "body": "Señor, que nuestra voz ayude a la comunidad a encontrarse contigo en cada celebración.",
-      "title": "Oración del coro"
-    }
-  ],
-  "events": [
-    {
-      "date": "2026-06-14T16:00:00",
-      "title": "Ensayo general",
-      "place": "Salón parroquial",
-      "note": "Revisar entradas, salmo y cantos de comunión."
-    },
-    {
-      "date": "2026-06-21T10:00:00",
-      "title": "Misa dominical",
-      "place": "Templo principal",
-      "note": "Llegar 30 minutos antes para sonido."
-    },
-    {
-      "date": "2026-06-28T15:30:00",
-      "title": "Revisión de inventario",
-      "place": "Bodega del coro",
-      "note": "Confirmar micrófonos, cables, carpetas y atriles."
-    }
-  ],
-  "members": [
-    {
-      "name": "Dirección",
-      "role": "Coordinación musical"
-    },
-    {
-      "name": "Sopranos",
-      "role": "Voces agudas"
-    },
-    {
-      "name": "Contraltos",
-      "role": "Voces graves femeninas"
-    },
-    {
-      "name": "Tenores",
-      "role": "Voces agudas masculinas"
-    },
-    {
-      "name": "Bajos",
-      "role": "Voces graves masculinas"
-    },
-    {
-      "name": "Piano",
-      "role": "Acompañamiento"
-    },
-    {
-      "name": "Guitarra",
-      "role": "Acompañamiento"
-    },
-    {
-      "name": "Sonido",
-      "role": "Micrófonos y consola"
-    }
-  ],
-  "inventory": [
-    {
-      "status": "Bueno",
-      "name": "Micrófono principal",
-      "id": "official-1",
-      "location": "Salón parroquial",
-      "note": "Inventario compartido desde GitHub."
-    },
-    {
-      "status": "Regular",
-      "name": "Atriles",
-      "id": "official-2",
-      "location": "Bodega del coro",
-      "note": "Revisar tornillos antes de misa."
-    },
-    {
-      "status": "Bueno",
-      "name": "Biblias",
-      "id": "official-3",
-      "location": "Estante de materiales",
-      "note": "Disponibles para lecturas y reflexión."
-    }
-  ]
 };
 
-const DEFAULT_LOCAL_INVENTORY = DEFAULT_DATA.inventory.map((item) => ({
-  ...item,
-  id: item.id.replace("official", "local"),
-  note: item.note || "Guardado localmente."
-}));
+let appData = structuredClone(defaultData);
+let currentView = "home";
+let currentAdminTab = "settings";
+let currentSearch = "";
+const editIds = {
+  songs: null,
+  readings: null,
+  events: null,
+  members: null,
+  inventory: null,
+  documents: null
+};
 
-let appData = readSharedData();
-let localInventory = readLocalInventory();
-let adminUnlocked = false;
-let currentSongFilter = "";
+const content = document.querySelector("#appContent");
+const screenTitle = document.querySelector("#screenTitle");
+const dataStatus = document.querySelector("#dataStatus");
 
-document.addEventListener("DOMContentLoaded", () => {
-  renderAll();
+document.addEventListener("DOMContentLoaded", init);
+
+async function init() {
+  appData = await loadData();
   bindNavigation();
-  bindForms();
-  bindSearch();
-  bindSongDialog();
-  bindCloud();
-  bindAdmin();
-  updateConnectionStatus();
+  bindContentEvents();
   registerServiceWorker();
-  loadSharedData({ quiet: true });
-});
-
-window.addEventListener("online", updateConnectionStatus);
-window.addEventListener("offline", updateConnectionStatus);
-
-function icon(name) {
-  return `<svg aria-hidden="true"><use href="#${name}"></use></svg>`;
+  render();
 }
 
-function byId(id) {
-  return document.getElementById(id);
+async function loadData() {
+  const local = readLocalData();
+  if (local) {
+    return normalizeData(local);
+  }
+
+  try {
+    const response = await fetch(DATA_PATH, { cache: "no-store" });
+    if (!response.ok) throw new Error("No se pudo cargar el archivo de datos.");
+    const remote = await response.json();
+    return normalizeData(remote);
+  } catch (error) {
+    console.warn(error);
+    return normalizeData(defaultData);
+  }
 }
 
-function renderAll() {
-  renderHome();
-  renderSongs(filteredSongs());
-  renderDocuments();
-  renderReadings();
-  renderEvents();
-  renderMembers();
-  renderLocalInventory();
-  renderCloudInventory();
-  renderAdminSongList();
+function readLocalData() {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    return raw ? JSON.parse(raw) : null;
+  } catch (error) {
+    console.warn(error);
+    return null;
+  }
+}
+
+function normalizeData(raw) {
+  const normalized = {
+    ...structuredClone(defaultData),
+    ...raw,
+    settings: {
+      ...defaultData.settings,
+      ...(raw && raw.settings ? raw.settings : {})
+    }
+  };
+
+  Object.keys(entityConfig).forEach((key) => {
+    normalized[key] = Array.isArray(raw && raw[key])
+      ? raw[key].map((item) => ({ id: item.id || createId(key), ...item }))
+      : [];
+  });
+
+  normalized.version = APP_VERSION;
+  normalized.updatedAt = raw && raw.updatedAt ? raw.updatedAt : new Date().toISOString();
+  return normalized;
+}
+
+function persistData() {
+  appData.version = APP_VERSION;
+  appData.updatedAt = new Date().toISOString();
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(appData));
+  updateStatus();
+}
+
+function bindNavigation() {
+  document.querySelectorAll("[data-view]").forEach((button) => {
+    button.addEventListener("click", () => {
+      currentView = button.dataset.view;
+      currentSearch = "";
+      render();
+    });
+  });
+}
+
+function bindContentEvents() {
+  content.addEventListener("click", (event) => {
+    const viewLink = event.target.closest("[data-view-link]");
+    if (viewLink) {
+      currentView = viewLink.dataset.viewLink;
+      currentSearch = "";
+      render();
+      return;
+    }
+
+    const songDetail = event.target.closest("[data-song-detail]");
+    if (songDetail) {
+      renderSongDetail(songDetail.dataset.songDetail);
+      return;
+    }
+
+    const adminTab = event.target.closest("[data-admin-tab]");
+    if (adminTab) {
+      currentAdminTab = adminTab.dataset.adminTab;
+      renderAdmin();
+      return;
+    }
+
+    const editButton = event.target.closest("[data-edit-entity]");
+    if (editButton) {
+      editIds[editButton.dataset.editEntity] = editButton.dataset.editId;
+      renderAdmin();
+      return;
+    }
+
+    const deleteButton = event.target.closest("[data-delete-entity]");
+    if (deleteButton) {
+      deleteEntity(deleteButton.dataset.deleteEntity, deleteButton.dataset.deleteId);
+      return;
+    }
+
+    if (event.target.closest("[data-cancel-edit]")) {
+      const key = event.target.closest("[data-cancel-edit]").dataset.cancelEdit;
+      editIds[key] = null;
+      renderAdmin();
+      return;
+    }
+
+    if (event.target.closest("[data-download-json]")) {
+      downloadJson();
+      return;
+    }
+
+    if (event.target.closest("[data-clear-local]")) {
+      clearLocalData();
+    }
+  });
+
+  content.addEventListener("submit", (event) => {
+    event.preventDefault();
+
+    if (event.target.matches("[data-admin-login]")) {
+      handleAdminLogin(event.target);
+      return;
+    }
+
+    if (event.target.matches("[data-settings-form]")) {
+      saveSettings(event.target);
+      return;
+    }
+
+    if (event.target.matches("[data-entity-form]")) {
+      saveEntity(event.target.dataset.entityForm, event.target);
+    }
+  });
+
+  content.addEventListener("input", (event) => {
+    if (event.target.matches("[data-search]")) {
+      currentSearch = event.target.value;
+      renderPublicList(event.target.dataset.search);
+    }
+  });
+
+  content.addEventListener("change", (event) => {
+    if (event.target.matches("[data-import-json]")) {
+      importJson(event.target.files[0]);
+    }
+  });
+}
+
+function render() {
+  updateStatus();
+  document.querySelectorAll("[data-view]").forEach((button) => {
+    button.classList.toggle("active", button.dataset.view === currentView);
+  });
+  screenTitle.textContent = viewTitles[currentView] || viewTitles.home;
+
+  if (currentView === "home") renderHome();
+  if (currentView === "songs") renderPublicList("songs");
+  if (currentView === "readings") renderPublicList("readings");
+  if (currentView === "events") renderPublicList("events");
+  if (currentView === "members") renderPublicList("members");
+  if (currentView === "inventory") renderPublicList("inventory");
+  if (currentView === "admin") renderAdmin();
+}
+
+function updateStatus() {
+  dataStatus.textContent = `Version ${APP_VERSION}`;
 }
 
 function renderHome() {
-  byId("homeStats").innerHTML = [
-    ["Canciones", appData.songs.length],
-    ["Eventos", appData.events.length],
-    ["Versión", APP_VERSION]
-  ]
-    .map(([label, value]) => `<div class="stat-item"><strong>${value}</strong><span>${label}</span></div>`)
-    .join("");
-
-  byId("quickGrid").innerHTML = NAV_ITEMS.map(
-    (item) => `
-      <button class="quick-card" type="button" data-nav="${item.id}">
-        ${icon(item.icon)}
-        <span>
-          <strong>${item.label}</strong>
-          <span>${item.description}</span>
-        </span>
-      </button>
-    `
-  ).join("");
-}
-
-function renderSongs(items) {
-  byId("songsCount").textContent = `${items.length} cantos`;
-  byId("songGrid").innerHTML = items.map(
-    (song) => `
-      <button class="song-card" type="button" data-song-id="${escapeHtml(song.id)}">
-        <span class="song-card__body">
-          <span>
-            <strong>${escapeHtml(song.title)}</strong>
-            <small>${escapeHtml(song.category || "Repertorio")}</small>
-            <em>${escapeHtml(lyricsPreview(song.lyrics))}</em>
-          </span>
-          ${icon("icon-music")}
-        </span>
-      </button>
-    `
-  ).join("");
-}
-
-function renderDocuments() {
-  byId("documentList").innerHTML = appData.documents.map(
-    (doc) => `
-      <a class="document-row" href="${escapeHtml(doc.href)}" target="_blank" rel="noopener">
-        ${icon("icon-file")}
-        <span>
-          <strong>${escapeHtml(doc.title)}</strong>
-          <span>PDF local</span>
-        </span>
-        ${icon("icon-book")}
-      </a>
-    `
-  ).join("");
-}
-
-function renderReadings() {
-  byId("readingList").innerHTML = appData.readings.map(
-    (reading) => `
-      <article class="reading-item">
-        <strong>${escapeHtml(reading.title)}</strong>
-        <p>${escapeHtml(reading.body)}</p>
-      </article>
-    `
-  ).join("");
-}
-
-function renderEvents() {
-  const formatter = new Intl.DateTimeFormat("es-CO", {
-    weekday: "short",
-    day: "2-digit",
-    month: "short"
-  });
-  const timeFormatter = new Intl.DateTimeFormat("es-CO", {
-    hour: "numeric",
-    minute: "2-digit"
-  });
-
-  byId("eventList").innerHTML = appData.events.map((event) => {
-    const date = new Date(event.date);
-    const parts = formatter.format(date).replace(".", "").split(", ");
-    const weekday = parts[0] || "";
-    const dayMonth = parts[1] || formatter.format(date);
-    return `
-      <article class="event-item">
-        <div class="event-date">
-          <span>${escapeHtml(dayMonth)}</span>
-          <small>${escapeHtml(weekday)}</small>
-        </div>
-        <div>
-          <strong>${escapeHtml(event.title)}</strong>
-          <span>${escapeHtml(timeFormatter.format(date))} · ${escapeHtml(event.place)}</span>
-          <p>${escapeHtml(event.note)}</p>
-        </div>
-      </article>
-    `;
-  }).join("");
-}
-
-function renderMembers() {
-  byId("memberGrid").innerHTML = appData.members.map(
-    (member) => `
-      <article class="member-card">
-        <div class="member-avatar">${escapeHtml(member.name.slice(0, 1))}</div>
-        <strong>${escapeHtml(member.name)}</strong>
-        <span>${escapeHtml(member.role)}</span>
-      </article>
-    `
-  ).join("");
-}
-
-function renderLocalInventory() {
-  const list = byId("localInventoryList");
-  if (!localInventory.length) {
-    list.innerHTML = `<div class="empty-state">No hay objetos guardados en este dispositivo.</div>`;
-    return;
-  }
-
-  list.innerHTML = localInventory.map((item) => inventoryItemTemplate(item, true)).join("");
-}
-
-function renderCloudInventory() {
-  const list = byId("cloudInventoryList");
-  if (!list) return;
-
-  if (!appData.inventory.length) {
-    list.innerHTML = `<div class="empty-state">Todavía no hay objetos compartidos desde GitHub.</div>`;
-    return;
-  }
-
-  list.innerHTML = appData.inventory.map((item) => inventoryItemTemplate(item, false)).join("");
-}
-
-function inventoryItemTemplate(item, removable) {
-  const removeButton = removable
-    ? `<button class="icon-button" type="button" data-delete-item="${escapeHtml(item.id)}" aria-label="Eliminar ${escapeHtml(item.name)}" title="Eliminar">${icon("icon-trash")}</button>`
-    : "";
-  return `
-    <article class="inventory-item">
-      <div class="inventory-item__top">
-        <div>
-          <strong>${escapeHtml(item.name)}</strong>
-          <span>${escapeHtml(item.note || "Sin nota")}</span>
-        </div>
-        ${removeButton}
+  const settings = appData.settings;
+  content.innerHTML = `
+    <section class="hero">
+      <img class="hero-logo" src="assets/logo-coro.jpeg" alt="Logo Coro Paz en Jesus">
+      <div>
+        <p class="eyebrow">Version limpia 2.0</p>
+        <h2>${escapeHtml(settings.choirName)}</h2>
+        <p>${escapeHtml(settings.subtitle)}</p>
       </div>
-      <div class="inventory-meta">
-        <span class="status-pill" data-status="${escapeHtml(item.status)}">${escapeHtml(item.status)}</span>
-        <span class="status-pill">${escapeHtml(item.location)}</span>
+    </section>
+
+    <section class="stats-grid" aria-label="Resumen">
+      ${statCard(appData.songs.length, "Canciones")}
+      ${statCard(appData.readings.length, "Lecturas")}
+      ${statCard(appData.events.length, "Eventos")}
+      ${statCard(appData.members.length, "Miembros")}
+      ${statCard(appData.inventory.length, "Inventario")}
+    </section>
+
+    <section>
+      <div class="section-title">
+        <div>
+          <p class="eyebrow">Menu</p>
+          <h2>Secciones de la app</h2>
+        </div>
+      </div>
+      <div class="section-grid">
+        ${homeCard("Canciones", "Repertorio, letras y notas musicales.", "songs")}
+        ${homeCard("Lecturas", "Textos, citas, oraciones y reflexiones.", "readings")}
+        ${homeCard("Eventos", "Ensayos, misas y actividades especiales.", "events")}
+        ${homeCard("Miembros", "Integrantes, roles y ubicacion musical.", "members")}
+        ${homeCard("Inventario", "Material patrimonial y ubicaciones.", "inventory")}
+        ${homeCard("Administrador", "Agregar, editar, borrar y descargar JSON.", "admin")}
+      </div>
+    </section>
+  `;
+}
+
+function statCard(number, label) {
+  return `<article class="stat"><strong>${number}</strong><span>${label}</span></article>`;
+}
+
+function homeCard(title, text, view) {
+  return `
+    <article class="card">
+      <h3>${title}</h3>
+      <p>${text}</p>
+      <div class="card-meta">
+        <button class="secondary-button" type="button" data-view-link="${view}">Abrir</button>
       </div>
     </article>
   `;
 }
 
-function bindNavigation() {
-  document.addEventListener("click", (event) => {
-    const navButton = event.target.closest("[data-nav]");
-    if (navButton) {
-      navigate(navButton.dataset.nav);
-    }
+function renderPublicList(key) {
+  const config = entityConfig[key];
+  const items = getFilteredItems(key);
 
-    const deleteButton = event.target.closest("[data-delete-item]");
-    if (deleteButton) {
-      deleteLocalItem(deleteButton.dataset.deleteItem);
-    }
-  });
-
-  const initialHash = window.location.hash.replace("#", "");
-  if (initialHash && byId(`view-${initialHash}`)) {
-    navigate(initialHash, false);
-  }
-
-  window.addEventListener("hashchange", () => {
-    const route = window.location.hash.replace("#", "") || "home";
-    if (byId(`view-${route}`)) {
-      navigate(route, false);
-    }
-  });
-}
-
-function navigate(route, updateHash = true) {
-  document.querySelectorAll(".view").forEach((view) => {
-    view.classList.toggle("is-active", view.id === `view-${route}`);
-  });
-  document.querySelectorAll(".bottom-nav button").forEach((button) => {
-    button.classList.toggle("is-active", button.dataset.nav === route);
-  });
-  if (updateHash) {
-    window.history.pushState(null, "", route === "home" ? location.pathname : `#${route}`);
-  }
-  window.scrollTo({ top: 0, behavior: "smooth" });
-}
-
-function bindSearch() {
-  byId("songSearch").addEventListener("input", (event) => {
-    currentSongFilter = event.target.value;
-    renderSongs(filteredSongs());
-  });
-}
-
-function filteredSongs() {
-  const query = normalize(currentSongFilter);
-  if (!query) return appData.songs;
-  return appData.songs.filter((song) => {
-    return [song.title, song.category, song.musicalNotes, song.lyrics, song.notes].some((value) => normalize(value || "").includes(query));
-  });
-}
-
-function bindSongDialog() {
-  const dialog = byId("songDialog");
-  const title = byId("dialogTitle");
-  const image = byId("dialogImage");
-  const meta = byId("dialogSongMeta");
-
-  byId("songGrid").addEventListener("click", (event) => {
-    const card = event.target.closest("[data-song-id]");
-    if (!card) return;
-
-    const song = appData.songs.find((item) => item.id === card.dataset.songId);
-    if (!song) return;
-
-    title.textContent = song.title;
-    image.src = song.image;
-    image.alt = song.title;
-    meta.innerHTML = `
-      <div>
-        <p class="section-label">Notas musicales</p>
-        <pre>${escapeHtml(song.musicalNotes || "Sin notas musicales registradas.")}</pre>
-      </div>
-      <div>
-        <p class="section-label">Letra</p>
-        <pre>${escapeHtml(song.lyrics || "Sin letra registrada. Puedes escribirla desde Administrador.")}</pre>
-      </div>
-      <div>
-        <p class="section-label">Notas del canto</p>
-        <p>${escapeHtml(song.notes || "Sin notas adicionales.")}</p>
-      </div>
-    `;
-
-    if (typeof dialog.showModal === "function") {
-      dialog.showModal();
-    } else {
-      window.open(song.image, "_blank", "noopener");
-    }
-  });
-
-  byId("closeDialog").addEventListener("click", () => dialog.close());
-}
-
-function bindForms() {
-  byId("localItemForm").addEventListener("submit", (event) => {
-    event.preventDefault();
-    const item = formToInventoryItem(event.currentTarget);
-    localInventory = [item, ...localInventory];
-    saveLocalInventory();
-    renderLocalInventory();
-    renderHome();
-    event.currentTarget.reset();
-    showToast("Ítem guardado en este dispositivo.");
-    navigate("local-inventory");
-  });
-}
-
-function bindCloud() {
-  const dataUrlInput = byId("cloudEndpoint");
-  dataUrlInput.value = getDataUrl();
-
-  byId("saveCloudEndpoint").addEventListener("click", () => {
-    const value = dataUrlInput.value.trim() || DEFAULT_DATA_URL;
-    localStorage.setItem(STORAGE_KEYS.dataUrl, value);
-    showCloudStatus("URL de datos guardada.", "success");
-    loadSharedData({ quiet: false });
-  });
-
-  byId("refreshCloud").addEventListener("click", () => loadSharedData({ quiet: false }));
-  showCloudStatus("Los datos compartidos se leen desde un archivo JSON publicado en GitHub.", "success");
-}
-
-function bindAdmin() {
-  const loginForm = byId("adminLock");
-  const songForm = byId("songAdminForm");
-  const endpointInput = byId("adminEndpoint");
-
-  endpointInput.value = localStorage.getItem(STORAGE_KEYS.adminEndpoint) || "";
-
-  loginForm.addEventListener("submit", (event) => {
-    event.preventDefault();
-    const passcode = String(new FormData(loginForm).get("passcode") || "");
-    if (passcode !== ADMIN_PASSCODE) {
-      showToast("Clave incorrecta.");
-      return;
-    }
-    adminUnlocked = true;
-    loginForm.reset();
-    renderAdminAccess();
-    renderAdminSongList();
-  });
-
-  byId("adminLockButton").addEventListener("click", () => {
-    adminUnlocked = false;
-    renderAdminAccess();
-  });
-
-  byId("newSongButton").addEventListener("click", () => {
-    songForm.reset();
-    songForm.elements.songId.value = "";
-    songForm.elements.title.focus();
-  });
-
-  songForm.addEventListener("submit", async (event) => {
-    event.preventDefault();
-    const song = await formToSong(songForm);
-    const existingIndex = appData.songs.findIndex((item) => item.id === song.id);
-    if (existingIndex >= 0) {
-      appData.songs[existingIndex] = song;
-    } else {
-      appData.songs = [song, ...appData.songs];
-    }
-    appData.updatedAt = new Date().toISOString();
-    saveSharedData();
-    renderAll();
-    songForm.reset();
-    showToast("Canción guardada.");
-  });
-
-  byId("adminSongList").addEventListener("click", (event) => {
-    const editButton = event.target.closest("[data-edit-song]");
-    const deleteButton = event.target.closest("[data-delete-song]");
-
-    if (editButton) {
-      fillSongForm(editButton.dataset.editSong);
-    }
-
-    if (deleteButton) {
-      deleteSong(deleteButton.dataset.deleteSong);
-    }
-  });
-
-  byId("exportData").addEventListener("click", exportSharedData);
-
-  byId("importDataFile").addEventListener("change", importSharedData);
-
-  byId("saveAdminEndpoint").addEventListener("click", () => {
-    localStorage.setItem(STORAGE_KEYS.adminEndpoint, endpointInput.value.trim());
-    showToast("Endpoint de publicación guardado.");
-  });
-
-  byId("publishData").addEventListener("click", publishSharedData);
-
-  renderAdminAccess();
-}
-
-function renderAdminAccess() {
-  byId("adminLock").hidden = adminUnlocked;
-  byId("adminPanel").hidden = !adminUnlocked;
-}
-
-function renderAdminSongList() {
-  const list = byId("adminSongList");
-  if (!list || !adminUnlocked) return;
-
-  list.innerHTML = appData.songs.map(
-    (song) => `
-      <article class="admin-song-row">
+  content.innerHTML = `
+    <section>
+      <div class="section-title">
         <div>
-          <strong>${escapeHtml(song.title)}</strong>
-          <span>${escapeHtml(song.category || "Repertorio")} · ${escapeHtml(song.musicalNotes || "Sin notas musicales")}</span>
+          <p class="eyebrow">${config.label}</p>
+          <h2>${config.label}</h2>
+          <p>${publicSubtitle(key)}</p>
         </div>
-        <div class="admin-song-row__actions">
-          <button class="icon-button" type="button" data-edit-song="${escapeHtml(song.id)}" aria-label="Editar ${escapeHtml(song.title)}" title="Editar">
-            ${icon("icon-edit")}
-          </button>
-          <button class="icon-button" type="button" data-delete-song="${escapeHtml(song.id)}" aria-label="Eliminar ${escapeHtml(song.title)}" title="Eliminar">
-            ${icon("icon-trash")}
-          </button>
+      </div>
+      <div class="toolbar">
+        <input class="search-input" data-search="${key}" type="search" value="${escapeAttribute(currentSearch)}" placeholder="Buscar">
+        <button class="primary-button" type="button" data-view-link="admin">Editar en Admin</button>
+      </div>
+      <div id="publicListMount">
+        ${items.length ? renderCards(key, items) : renderEmpty(config.emptyTitle, config.emptyText)}
+      </div>
+    </section>
+  `;
+}
+
+function getFilteredItems(key) {
+  const search = currentSearch.trim().toLowerCase();
+  const items = [...appData[key]];
+  if (key === "events") {
+    items.sort((a, b) => String(a.date || "").localeCompare(String(b.date || "")));
+  }
+  if (!search) return items;
+  return items.filter((item) => JSON.stringify(item).toLowerCase().includes(search));
+}
+
+function publicSubtitle(key) {
+  const subtitles = {
+    songs: "Letras y notas musicales agregadas por el administrador.",
+    readings: "Lecturas y reflexiones disponibles para el coro.",
+    events: "Agenda general con hora, lugar y nota.",
+    members: "Listado de integrantes y roles.",
+    inventory: "Material patrimonial del coro."
+  };
+  return subtitles[key] || "";
+}
+
+function renderCards(key, items) {
+  return `<div class="cards-grid">${items.map((item) => renderPublicCard(key, item)).join("")}</div>`;
+}
+
+function renderPublicCard(key, item) {
+  if (key === "songs") {
+    return `
+      <article class="card">
+        <h3>${escapeHtml(item.title || "Sin titulo")}</h3>
+        <p>${escapeHtml(item.category || "Sin categoria")}</p>
+        <div class="card-meta">
+          ${item.musicalNotes ? `<span class="tag">Notas musicales</span>` : ""}
+          <button class="secondary-button" type="button" data-song-detail="${escapeAttribute(item.id)}">Ver letra</button>
         </div>
       </article>
-    `
-  ).join("");
-}
-
-async function formToSong(form) {
-  const formData = new FormData(form);
-  const currentId = String(formData.get("songId") || "").trim();
-  let image = String(formData.get("image") || "").trim();
-
-  return {
-    id: currentId || `song-${Date.now()}`,
-    title: String(formData.get("title") || "").trim(),
-    image: image || "assets/logo-coro.jpeg",
-    category: String(formData.get("category") || "Repertorio").trim(),
-    musicalNotes: String(formData.get("musicalNotes") || "").trim(),
-    lyrics: String(formData.get("lyrics") || "").trim(),
-    notes: String(formData.get("notes") || "").trim(),
-    updatedAt: new Date().toISOString()
-  };
-}
-
-function fillSongForm(id) {
-  const song = appData.songs.find((item) => item.id === id);
-  if (!song) return;
-
-  const form = byId("songAdminForm");
-  form.elements.songId.value = song.id;
-  form.elements.title.value = song.title || "";
-  form.elements.image.value = song.image || "";
-  form.elements.category.value = song.category || "";
-  form.elements.musicalNotes.value = song.musicalNotes || "";
-  form.elements.lyrics.value = song.lyrics || "";
-  form.elements.notes.value = song.notes || "";
-  form.elements.title.focus();
-}
-
-function deleteSong(id) {
-  appData.songs = appData.songs.filter((song) => song.id !== id);
-  appData.updatedAt = new Date().toISOString();
-  saveSharedData();
-  renderAll();
-  showToast("Canción eliminada.");
-}
-
-function formToInventoryItem(form) {
-  const formData = new FormData(form);
-  return {
-    id: `item-${Date.now()}`,
-    name: String(formData.get("name") || "").trim(),
-    status: String(formData.get("status") || "").trim(),
-    location: String(formData.get("location") || "").trim(),
-    note: String(formData.get("note") || "").trim(),
-    updatedAt: new Date().toISOString()
-  };
-}
-
-function readSharedData() {
-  try {
-    const saved = localStorage.getItem(STORAGE_KEYS.sharedData);
-    return normalizeData(saved ? JSON.parse(saved) : DEFAULT_DATA);
-  } catch {
-    return normalizeData(DEFAULT_DATA);
+    `;
   }
-}
 
-function saveSharedData() {
-  localStorage.setItem(STORAGE_KEYS.sharedData, JSON.stringify(normalizeData(appData)));
-}
-
-function readLocalInventory() {
-  try {
-    const saved = localStorage.getItem(STORAGE_KEYS.inventory);
-    return saved ? JSON.parse(saved) : DEFAULT_LOCAL_INVENTORY;
-  } catch {
-    return DEFAULT_LOCAL_INVENTORY;
+  if (key === "events") {
+    return `
+      <article class="card">
+        <h3>${escapeHtml(item.title || "Sin actividad")}</h3>
+        <p>${escapeHtml(formatDateTime(item.date))}</p>
+        <div class="card-meta">
+          ${item.place ? `<span class="tag">${escapeHtml(item.place)}</span>` : ""}
+        </div>
+        ${item.note ? `<p class="help-text">${escapeHtml(item.note)}</p>` : ""}
+      </article>
+    `;
   }
-}
 
-function saveLocalInventory() {
-  localStorage.setItem(STORAGE_KEYS.inventory, JSON.stringify(localInventory));
-}
-
-function deleteLocalItem(id) {
-  localInventory = localInventory.filter((item) => item.id !== id);
-  saveLocalInventory();
-  renderLocalInventory();
-  renderHome();
-  showToast("Ítem local eliminado.");
-}
-
-function getDataUrl() {
-  return localStorage.getItem(STORAGE_KEYS.dataUrl) || DEFAULT_DATA_URL;
-}
-
-async function loadSharedData({ quiet }) {
-  const dataUrl = getDataUrl();
-  if (!quiet) showCloudStatus("Buscando actualizaciones en GitHub...", "success");
-
-  try {
-    const response = await fetch(`${dataUrl}${dataUrl.includes("?") ? "&" : "?"}v=${Date.now()}`, {
-      cache: "no-store"
-    });
-    if (!response.ok) throw new Error(`El archivo respondió ${response.status}.`);
-
-    const data = normalizeData(await response.json());
-    appData = data;
-    saveSharedData();
-    renderAll();
-    if (!quiet) showCloudStatus(`Actualizado: ${appData.songs.length} canciones y ${appData.inventory.length} objetos.`, "success");
-  } catch (error) {
-    if (!quiet) showCloudStatus(`No se pudo actualizar desde GitHub. ${error.message}`, "error");
+  if (key === "members") {
+    return `
+      <article class="card">
+        <h3>${escapeHtml(item.name || "Sin nombre")}</h3>
+        <p>${escapeHtml(item.role || "Sin rol")}</p>
+        <div class="card-meta">
+          ${item.group ? `<span class="tag">${escapeHtml(item.group)}</span>` : ""}
+        </div>
+        ${item.note ? `<p class="help-text">${escapeHtml(item.note)}</p>` : ""}
+      </article>
+    `;
   }
+
+  if (key === "inventory") {
+    return `
+      <article class="card">
+        <h3>${escapeHtml(item.name || "Sin objeto")}</h3>
+        <p>${escapeHtml(item.location || "Sin ubicacion")}</p>
+        <div class="card-meta">
+          ${item.status ? `<span class="tag">${escapeHtml(item.status)}</span>` : ""}
+        </div>
+        ${item.note ? `<p class="help-text">${escapeHtml(item.note)}</p>` : ""}
+      </article>
+    `;
+  }
+
+  if (key === "readings") {
+    return `
+      <article class="card">
+        <h3>${escapeHtml(item.title || "Sin titulo")}</h3>
+        <p>${escapeHtml(item.reference || item.date || "Sin referencia")}</p>
+        ${item.text ? `<p class="help-text">${escapeHtml(item.text)}</p>` : ""}
+      </article>
+    `;
+  }
+
+  return "";
 }
 
-async function publishSharedData() {
-  const endpoint = byId("adminEndpoint").value.trim();
-  const passcode = byId("publishPasscode").value;
-
-  if (!endpoint) {
-    showToast("Falta el endpoint seguro.");
-    return;
-  }
-  if (!passcode) {
-    showToast("Escribe la clave de administrador.");
+function renderSongDetail(songId) {
+  const song = appData.songs.find((item) => item.id === songId);
+  if (!song) {
+    renderPublicList("songs");
     return;
   }
 
-  localStorage.setItem(STORAGE_KEYS.adminEndpoint, endpoint);
-  const payload = normalizeData({
-    ...appData,
-    updatedAt: new Date().toISOString(),
-    version: APP_VERSION
+  content.innerHTML = `
+    <article class="song-detail">
+      <div class="button-row">
+        <button class="secondary-button" type="button" data-view-link="songs">Volver</button>
+        <button class="primary-button" type="button" data-view-link="admin">Editar en Admin</button>
+      </div>
+      <h2>${escapeHtml(song.title || "Sin titulo")}</h2>
+      <div class="card-meta">
+        ${song.category ? `<span class="tag">${escapeHtml(song.category)}</span>` : ""}
+        ${song.musicalNotes ? `<span class="tag">Notas musicales</span>` : ""}
+      </div>
+      ${song.musicalNotes ? `<h3>Notas musicales</h3><div class="lyrics">${escapeHtml(song.musicalNotes)}</div>` : ""}
+      <h3>Letra</h3>
+      <div class="lyrics">${escapeHtml(song.lyrics || "Sin letra agregada.")}</div>
+      ${song.notes ? `<h3>Notas</h3><div class="lyrics">${escapeHtml(song.notes)}</div>` : ""}
+    </article>
+  `;
+}
+
+function renderAdmin() {
+  if (sessionStorage.getItem(ADMIN_SESSION_KEY) !== "ok") {
+    content.innerHTML = `
+      <section class="login-card">
+        <h2>Administrador</h2>
+        <p class="help-text">Ingresa la clave de seguridad para editar la aplicacion.</p>
+        <form data-admin-login>
+          <div class="form-field">
+            <label for="adminPassword">Clave</label>
+            <input id="adminPassword" name="password" type="password" autocomplete="current-password" required>
+          </div>
+          <div class="button-row">
+            <button class="primary-button" type="submit">Entrar</button>
+          </div>
+        </form>
+      </section>
+    `;
+    return;
+  }
+
+  content.innerHTML = `
+    <section>
+      <div class="section-title">
+        <div>
+          <p class="eyebrow">Administrador</p>
+          <h2>Editar toda la aplicacion</h2>
+          <p>Agrega, corrige o borra informacion. Al terminar, descarga el JSON actualizado.</p>
+        </div>
+      </div>
+
+      <div class="admin-layout">
+        <nav class="admin-menu" aria-label="Editor">
+          ${adminTab("settings", "Ajustes")}
+          ${adminTab("songs", "Canciones")}
+          ${adminTab("readings", "Lecturas")}
+          ${adminTab("events", "Eventos")}
+          ${adminTab("members", "Miembros")}
+          ${adminTab("inventory", "Inventario")}
+          ${adminTab("documents", "Documentacion")}
+        </nav>
+        <div class="admin-workspace" id="adminWorkspace">
+          ${currentAdminTab === "settings" ? renderSettingsAdmin() : renderEntityAdmin(currentAdminTab)}
+        </div>
+      </div>
+    </section>
+  `;
+}
+
+function adminTab(key, label) {
+  return `
+    <button class="admin-tab ${currentAdminTab === key ? "active" : ""}" type="button" data-admin-tab="${key}">
+      <span>${label}</span>
+      <strong>${key === "settings" ? "" : appData[key].length}</strong>
+    </button>
+  `;
+}
+
+function renderSettingsAdmin() {
+  return `
+    <section class="admin-section">
+      <h3>Descargar o cargar datos</h3>
+      <p class="help-text">Despues de editar, descarga el archivo JSON. Ese archivo es el que se sube para publicar los datos.</p>
+      <div class="button-row">
+        <button class="primary-button" type="button" data-download-json>Descargar app-data.json</button>
+        <label class="secondary-button">
+          Cargar JSON
+          <input class="hidden" type="file" accept="application/json,.json" data-import-json>
+        </label>
+        <button class="danger-button" type="button" data-clear-local>Borrar datos de este celular</button>
+      </div>
+      <p class="notice">Este boton de borrar solo limpia los datos guardados en este dispositivo. No borra lo que ya este publicado en linea.</p>
+    </section>
+
+    <section class="admin-section">
+      <h3>Ajustes generales</h3>
+      <form data-settings-form>
+        <div class="form-grid">
+          <div class="form-field">
+            <label for="choirName">Nombre de la app</label>
+            <input id="choirName" name="choirName" value="${escapeAttribute(appData.settings.choirName)}" required>
+          </div>
+          <div class="form-field">
+            <label for="parishPlace">Lugar principal</label>
+            <input id="parishPlace" name="parishPlace" value="${escapeAttribute(appData.settings.parishPlace)}">
+          </div>
+          <div class="form-field full">
+            <label for="subtitle">Descripcion de inicio</label>
+            <textarea id="subtitle" name="subtitle">${escapeHtml(appData.settings.subtitle)}</textarea>
+          </div>
+        </div>
+        <div class="button-row">
+          <button class="primary-button" type="submit">Guardar ajustes</button>
+        </div>
+      </form>
+    </section>
+  `;
+}
+
+function renderEntityAdmin(key) {
+  const config = entityConfig[key];
+  const editId = editIds[key];
+  const editing = appData[key].find((item) => item.id === editId) || {};
+  const editingLabel = editId ? `Editando ${config.singular}` : `Agregar ${config.singular}`;
+
+  return `
+    <section class="admin-section">
+      <h3>${editingLabel}</h3>
+      <form data-entity-form="${key}">
+        <div class="form-grid">
+          ${config.fields.map((field) => renderField(field, editing)).join("")}
+        </div>
+        <div class="button-row">
+          <button class="primary-button" type="submit">${editId ? "Guardar cambios" : "Agregar"}</button>
+          ${editId ? `<button class="secondary-button" type="button" data-cancel-edit="${key}">Cancelar</button>` : ""}
+        </div>
+      </form>
+    </section>
+
+    <section class="admin-section">
+      <h3>${config.label} agregadas</h3>
+      ${appData[key].length ? renderAdminTable(key) : renderEmpty(config.emptyTitle, config.emptyText)}
+    </section>
+  `;
+}
+
+function renderField(field, values) {
+  const value = values[field.name] || "";
+  const classes = `form-field ${field.full ? "full" : ""}`;
+  const required = field.required ? "required" : "";
+  const placeholder = field.placeholder ? `placeholder="${escapeAttribute(field.placeholder)}"` : "";
+
+  if (field.type === "textarea") {
+    return `
+      <div class="${classes}">
+        <label for="${field.name}">${field.label}</label>
+        <textarea id="${field.name}" name="${field.name}" ${placeholder} ${required} class="${field.tall ? "tall-text" : ""}">${escapeHtml(value)}</textarea>
+      </div>
+    `;
+  }
+
+  if (field.type === "select") {
+    return `
+      <div class="${classes}">
+        <label for="${field.name}">${field.label}</label>
+        <select id="${field.name}" name="${field.name}" ${required}>
+          <option value="">Seleccionar</option>
+          ${field.options.map((option) => `<option value="${escapeAttribute(option)}" ${option === value ? "selected" : ""}>${escapeHtml(option)}</option>`).join("")}
+        </select>
+      </div>
+    `;
+  }
+
+  const type = field.type === "date" ? "date" : field.type === "datetime" ? "datetime-local" : "text";
+  const inputValue = field.type === "datetime" ? toDateTimeInput(value) : value;
+  return `
+    <div class="${classes}">
+      <label for="${field.name}">${field.label}</label>
+      <input id="${field.name}" name="${field.name}" type="${type}" value="${escapeAttribute(inputValue)}" ${placeholder} ${required}>
+    </div>
+  `;
+}
+
+function renderAdminTable(key) {
+  const config = entityConfig[key];
+  return `
+    <div class="table-wrap">
+      <table class="data-table">
+        <thead>
+          <tr>
+            ${config.columns.map((column) => `<th>${column.label}</th>`).join("")}
+            <th>Acciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          ${appData[key].map((item) => renderAdminRow(key, item)).join("")}
+        </tbody>
+      </table>
+    </div>
+  `;
+}
+
+function renderAdminRow(key, item) {
+  const config = entityConfig[key];
+  return `
+    <tr>
+      ${config.columns.map((column) => {
+        const value = column.formatter ? column.formatter(item[column.key]) : item[column.key];
+        return `<td>${escapeHtml(value || "")}</td>`;
+      }).join("")}
+      <td>
+        <div class="row-actions">
+          <button class="secondary-button" type="button" data-edit-entity="${key}" data-edit-id="${escapeAttribute(item.id)}">Editar</button>
+          <button class="danger-button" type="button" data-delete-entity="${key}" data-delete-id="${escapeAttribute(item.id)}">Borrar</button>
+        </div>
+      </td>
+    </tr>
+  `;
+}
+
+function handleAdminLogin(form) {
+  const password = new FormData(form).get("password");
+  if (password === ADMIN_PASSWORD) {
+    sessionStorage.setItem(ADMIN_SESSION_KEY, "ok");
+    renderAdmin();
+    return;
+  }
+  alert("Clave incorrecta.");
+}
+
+function saveSettings(form) {
+  const formData = new FormData(form);
+  appData.settings = {
+    choirName: cleanValue(formData.get("choirName")) || defaultData.settings.choirName,
+    subtitle: cleanValue(formData.get("subtitle")),
+    parishPlace: cleanValue(formData.get("parishPlace"))
+  };
+  persistData();
+  renderAdmin();
+}
+
+function saveEntity(key, form) {
+  const config = entityConfig[key];
+  const formData = new FormData(form);
+  const values = {};
+
+  config.fields.forEach((field) => {
+    values[field.name] = cleanValue(formData.get(field.name));
   });
 
-  try {
-    const response = await fetch(endpoint, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "X-Admin-Key": passcode
-      },
-      body: JSON.stringify({ data: payload })
-    });
-    const result = await response.json().catch(() => ({}));
-    if (!response.ok) {
-      throw new Error(result.error || `El servidor respondió ${response.status}.`);
-    }
-    appData = payload;
-    saveSharedData();
-    showToast("Cambios publicados para todos.");
-    showCloudStatus("GitHub recibió la actualización. Los usuarios la verán al actualizar la app.", "success");
-  } catch (error) {
-    showToast("No se pudo publicar.");
-    showCloudStatus(error.message, "error");
+  const requiredMissing = config.fields.some((field) => field.required && !values[field.name]);
+  if (requiredMissing) {
+    alert("Completa los campos obligatorios.");
+    return;
   }
+
+  const editId = editIds[key];
+  if (editId) {
+    appData[key] = appData[key].map((item) => (
+      item.id === editId
+        ? { ...item, ...values, updatedAt: new Date().toISOString() }
+        : item
+    ));
+    editIds[key] = null;
+  } else {
+    appData[key].push({
+      id: createId(key),
+      ...values,
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString()
+    });
+  }
+
+  persistData();
+  renderAdmin();
 }
 
-function exportSharedData() {
-  const payload = JSON.stringify(normalizeData(appData), null, 2);
-  const blob = new Blob([payload], { type: "application/json" });
+function deleteEntity(key, id) {
+  const config = entityConfig[key];
+  const ok = confirm(`Borrar este ${config.singular}?`);
+  if (!ok) return;
+  appData[key] = appData[key].filter((item) => item.id !== id);
+  if (editIds[key] === id) editIds[key] = null;
+  persistData();
+  renderAdmin();
+}
+
+function downloadJson() {
+  const dataToDownload = normalizeData(appData);
+  dataToDownload.updatedAt = new Date().toISOString();
+  const blob = new Blob([JSON.stringify(dataToDownload, null, 2)], {
+    type: "application/json"
+  });
   const url = URL.createObjectURL(blob);
   const link = document.createElement("a");
   link.href = url;
   link.download = "app-data.json";
+  document.body.appendChild(link);
   link.click();
+  link.remove();
   URL.revokeObjectURL(url);
 }
 
-async function importSharedData(event) {
-  const file = event.target.files[0];
+function importJson(file) {
   if (!file) return;
-
-  try {
-    const text = await file.text();
-    appData = normalizeData(JSON.parse(text));
-    appData.updatedAt = new Date().toISOString();
-    saveSharedData();
-    renderAll();
-    showToast("Datos importados.");
-  } catch {
-    showToast("El archivo no parece ser un JSON válido.");
-  } finally {
-    event.target.value = "";
-  }
-}
-
-function normalizeData(data) {
-  const source = data && typeof data === "object" ? data : {};
-  return {
-    version: String(source.version || APP_VERSION),
-    updatedAt: String(source.updatedAt || new Date().toISOString()),
-    songs: Array.isArray(source.songs) ? source.songs.map(normalizeSong) : DEFAULT_DATA.songs,
-    documents: Array.isArray(source.documents) ? source.documents : DEFAULT_DATA.documents,
-    readings: Array.isArray(source.readings) ? source.readings : DEFAULT_DATA.readings,
-    events: Array.isArray(source.events) ? source.events : DEFAULT_DATA.events,
-    members: Array.isArray(source.members) ? source.members : DEFAULT_DATA.members,
-    inventory: Array.isArray(source.inventory) ? source.inventory : DEFAULT_DATA.inventory
+  const reader = new FileReader();
+  reader.onload = () => {
+    try {
+      appData = normalizeData(JSON.parse(reader.result));
+      persistData();
+      currentAdminTab = "settings";
+      renderAdmin();
+      alert("JSON cargado correctamente.");
+    } catch (error) {
+      console.error(error);
+      alert("No se pudo cargar el JSON. Revisa que sea el archivo correcto.");
+    }
   };
+  reader.readAsText(file);
 }
 
-function normalizeSong(song, index) {
-  return {
-    id: String(song.id || `song-${index || Date.now()}`),
-    title: String(song.title || "Canción sin título"),
-    image: String(song.image || "assets/logo-coro.jpeg"),
-    category: String(song.category || "Repertorio"),
-    musicalNotes: String(song.musicalNotes || ""),
-    lyrics: String(song.lyrics || ""),
-    notes: String(song.notes || ""),
-    updatedAt: String(song.updatedAt || "")
-  };
+function clearLocalData() {
+  const ok = confirm("Esto dejara en blanco los datos guardados en este dispositivo. Continuar?");
+  if (!ok) return;
+  localStorage.removeItem(STORAGE_KEY);
+  appData = normalizeData(defaultData);
+  currentAdminTab = "settings";
+  Object.keys(editIds).forEach((key) => { editIds[key] = null; });
+  render();
 }
 
-function showCloudStatus(message, type = "success") {
-  const status = byId("cloudStatus");
-  status.textContent = message;
-  status.className = `cloud-status is-visible is-${type}`;
+function renderEmpty(title, text) {
+  return `
+    <div class="empty-state">
+      <img src="assets/logo-coro.jpeg" alt="">
+      <h2>${escapeHtml(title)}</h2>
+      <p>${escapeHtml(text)}</p>
+      <div class="button-row">
+        <button class="primary-button" type="button" data-view-link="admin">Ir a Administrador</button>
+      </div>
+    </div>
+  `;
 }
 
-function updateConnectionStatus() {
-  const status = byId("connectionStatus");
-  const online = navigator.onLine;
-  status.textContent = online ? "En línea" : "Sin conexión";
-  status.classList.toggle("is-online", online);
-  status.classList.toggle("is-offline", !online);
+function createId(prefix) {
+  return `${prefix}-${Date.now()}-${Math.random().toString(16).slice(2)}`;
 }
 
-function showToast(message) {
-  const toast = byId("toast");
-  toast.textContent = message;
-  toast.classList.add("is-visible");
-  window.clearTimeout(showToast.timer);
-  showToast.timer = window.setTimeout(() => {
-    toast.classList.remove("is-visible");
-  }, 2800);
+function cleanValue(value) {
+  return String(value || "").trim();
 }
 
-function normalize(value) {
-  return String(value)
-    .toLowerCase()
-    .normalize("NFD")
-    .replace(/[\u0300-\u036f]/g, "")
-    .trim();
+function formatDateTime(value) {
+  if (!value) return "Sin fecha";
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) return String(value);
+  return new Intl.DateTimeFormat("es-US", {
+    dateStyle: "medium",
+    timeStyle: "short"
+  }).format(date);
 }
 
-function lyricsPreview(value) {
-  const compact = String(value || "")
-    .replace(/\s+/g, " ")
-    .trim();
-  if (!compact) return "Letra pendiente de revisar";
-  return compact.length > 92 ? `${compact.slice(0, 92)}...` : compact;
+function toDateTimeInput(value) {
+  if (!value) return "";
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) return String(value).slice(0, 16);
+  const offset = date.getTimezoneOffset();
+  const localDate = new Date(date.getTime() - offset * 60 * 1000);
+  return localDate.toISOString().slice(0, 16);
 }
 
 function escapeHtml(value) {
-  return String(value)
+  return String(value ?? "")
     .replaceAll("&", "&amp;")
     .replaceAll("<", "&lt;")
     .replaceAll(">", "&gt;")
@@ -1064,50 +891,13 @@ function escapeHtml(value) {
     .replaceAll("'", "&#039;");
 }
 
-async function registerServiceWorker() {
-  if (!("serviceWorker" in navigator) || location.protocol === "file:") {
-    return;
-  }
-
-  try {
-    const registration = await navigator.serviceWorker.register("sw.js");
-    registration.addEventListener("updatefound", () => {
-      const worker = registration.installing;
-      if (!worker) return;
-      worker.addEventListener("statechange", () => {
-        if (worker.state === "installed" && navigator.serviceWorker.controller) {
-          showUpdateBanner(registration);
-        }
-      });
-    });
-
-    if (registration.waiting) {
-      showUpdateBanner(registration);
-    }
-
-    navigator.serviceWorker.addEventListener("controllerchange", () => {
-      window.location.reload();
-    });
-  } catch {
-    showToast("La app funciona, pero el modo instalable no se pudo activar aquí.");
-  }
+function escapeAttribute(value) {
+  return escapeHtml(value);
 }
 
-function showUpdateBanner(registration) {
-  if (document.querySelector(".update-banner")) return;
-
-  const banner = document.createElement("div");
-  banner.className = "update-banner";
-  banner.innerHTML = `
-    <p><strong>Actualización disponible.</strong> Hay una nueva versión de la app lista para usar.</p>
-    <button class="button button--primary" type="button">Actualizar ahora</button>
-  `;
-  banner.querySelector("button").addEventListener("click", () => {
-    if (registration.waiting) {
-      registration.waiting.postMessage({ type: "SKIP_WAITING" });
-    } else {
-      window.location.reload();
-    }
+function registerServiceWorker() {
+  if (!("serviceWorker" in navigator)) return;
+  window.addEventListener("load", () => {
+    navigator.serviceWorker.register("sw.js").catch((error) => console.warn(error));
   });
-  document.body.appendChild(banner);
 }
