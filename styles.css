@@ -459,6 +459,7 @@ h1 {
 
 .toolbar {
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
   justify-content: space-between;
   gap: 12px;
@@ -502,6 +503,12 @@ h1 {
   background: #ffffff;
 }
 
+.secondary-button.active-filter {
+  border-color: var(--blue);
+  color: var(--blue-dark);
+  background: #eef0ff;
+}
+
 .danger-button {
   border: 1px solid #050505;
   color: var(--danger);
@@ -517,6 +524,11 @@ h1 {
   margin: 0 0 8px;
 }
 
+.song-detail.large-text .lyrics {
+  font-size: 23px;
+  line-height: 1.9;
+}
+
 .lyrics {
   margin-top: 20px;
   padding: 18px;
@@ -524,6 +536,27 @@ h1 {
   background: #f7f8ff;
   line-height: 1.7;
   white-space: pre-wrap;
+}
+
+.sunday-summary {
+  margin-bottom: 18px;
+  padding: 18px;
+}
+
+.sunday-summary strong {
+  display: block;
+  margin-bottom: 8px;
+  font-size: 20px;
+}
+
+.sunday-summary p {
+  margin: 0 0 14px;
+  color: var(--muted);
+  line-height: 1.55;
+}
+
+.sunday-plan-grid .card h3 {
+  margin-top: 12px;
 }
 
 .admin-layout {

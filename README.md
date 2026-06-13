@@ -1,4 +1,4 @@
-# Coro Paz en Jesús - Version 3.4
+# Coro Paz en Jesús - Version 3.7
 
 Aplicacion web instalable para celular y laptop.
 
@@ -13,6 +13,17 @@ La app muestra el logo con `Cargando...` durante 10 segundos cuando abre y cuand
 Durante la carga hace tareas reales: borra cache anterior, carga datos, revisa la version publicada y prepara la pantalla.
 
 La app revisa cambios automaticamente cada 1 minuto, asi queda por debajo de 3 minutos despues de que GitHub Pages termine de publicar.
+
+## Navegacion
+
+Cuando abres una seccion o una letra, la app sube automaticamente al inicio de la pantalla.
+
+## Nuevas funciones
+
+- `Domingo`: repertorio personal por celular, armado con selects por momento de misa.
+- `Favoritos`: cada celular puede marcar sus canciones favoritas.
+- `Letra grande`: al abrir una letra puedes aumentar el tamaño para cantar mas comodo.
+- `Momento de misa`: cada cancion puede tener momento como Entrada, Ofertorio, Santo, Paz, Comunion o Salida.
 
 ## Administrador
 

@@ -1,12 +1,44 @@
-const APP_VERSION = "3.4.0";
+const APP_VERSION = "3.7.0";
 const VERSION_PATH = "version.json";
 const DATA_PATH = "data/app-data.json";
 const STORAGE_KEY = "coro-paz-en-jesus-data-v2";
 const EVENT_READ_KEY = "coro-paz-en-jesus-read-events-v1";
+const FAVORITES_KEY = "coro-paz-en-jesus-favorite-songs-v1";
+const LYRICS_SIZE_KEY = "coro-paz-en-jesus-lyrics-size-v1";
+const SUNDAY_PERSONAL_KEY = "coro-paz-en-jesus-domingo-personal-v1";
 const UPDATE_CHECK_INTERVAL = 60 * 1000;
 const MINIMUM_STARTUP_MS = 10000;
 const APP_CACHE_PREFIX = "coro-paz-en-jesus-";
-const CURRENT_CACHE_NAME = "coro-paz-en-jesus-v3-4-0";
+const CURRENT_CACHE_NAME = "coro-paz-en-jesus-v3-7-0";
+
+const SONG_MOMENTS = [
+  "Entrada",
+  "Perdon",
+  "Gloria",
+  "Salmo",
+  "Aleluya",
+  "Ofertorio",
+  "Santo",
+  "Paz",
+  "Comunion",
+  "Salida",
+  "Mariano",
+  "Animacion",
+  "Otro"
+];
+
+const SUNDAY_PLAN_MOMENTS = [
+  "Entrada",
+  "Perdon",
+  "Gloria",
+  "Salmo",
+  "Aleluya",
+  "Ofertorio",
+  "Santo",
+  "Paz",
+  "Comunion",
+  "Salida"
+];
 
 const defaultData = {
   version: APP_VERSION,
@@ -26,6 +58,7 @@ const viewTitles = {
   home: "Coro Paz en Jesús",
   songs: "Canciones",
   readings: "Lecturas y Salmos",
+  sunday: "Domingo",
   events: "Eventos",
   members: "Miembros",
   admin: "Administrador"
@@ -40,6 +73,7 @@ const entityConfig = {
     fields: [
       { name: "title", label: "Titulo", required: true },
       { name: "category", label: "Categoria / tipo de cancion" },
+      { name: "moment", label: "Momento de misa", type: "select", options: SONG_MOMENTS },
       { name: "musicalNotes", label: "Notas musicales", type: "textarea", full: true },
       { name: "lyrics", label: "Letra", type: "textarea", full: true, tall: true },
       { name: "notes", label: "Notas internas", type: "textarea", full: true }
@@ -47,6 +81,7 @@ const entityConfig = {
     columns: [
       { key: "title", label: "Titulo" },
       { key: "category", label: "Categoria" },
+      { key: "moment", label: "Momento" },
       { key: "musicalNotes", label: "Notas musicales" }
     ]
   },
@@ -114,6 +149,12 @@ let currentView = "home";
 let currentAdminTab = "settings";
 let currentSearch = "";
 let currentSongCategory = "";
+let currentSongMoment = "";
+let currentSongDetailId = null;
+let showFavoritesOnly = false;
+let favoriteSongIds = new Set(readStoredArray(FAVORITES_KEY));
+let largeLyricsMode = localStorage.getItem(LYRICS_SIZE_KEY) === "large";
+let personalSundayPlan = readPersonalSundayPlan();
 const editIds = {
   songs: null,
   readings: null,
@@ -239,8 +280,10 @@ function normalizeData(raw) {
       ? raw[key].map((item) => ({ id: item.id || createId(key), ...item }))
       : [];
   });
+  normalized.songs = normalized.songs.map(normalizeSong);
   normalized.members = normalized.members.map(normalizeMember);
   delete normalized.inventory;
+  delete normalized.sundayPlan;
 
   normalized.version = APP_VERSION;
   normalized.updatedAt = raw && raw.updatedAt ? raw.updatedAt : new Date().toISOString();
@@ -250,6 +293,48 @@ function normalizeData(raw) {
   normalized.settings.choirName = fixJesusAccent(normalized.settings.choirName || defaultData.settings.choirName);
   normalized.settings.subtitle = fixJesusAccent(normalized.settings.subtitle || defaultData.settings.subtitle);
   return normalized;
+}
+
+function normalizeSong(song) {
+  return {
+    ...song,
+    moment: SONG_MOMENTS.includes(song.moment) ? song.moment : inferSongMoment(song)
+  };
+}
+
+function normalizeSundayPlan(plan) {
+  const rawSlots = Array.isArray(plan && plan.slots) ? plan.slots : [];
+  return {
+    date: plan && plan.date ? cleanValue(plan.date) : "",
+    notes: plan && plan.notes ? cleanValue(plan.notes) : "",
+    slots: SUNDAY_PLAN_MOMENTS.map((moment, index) => {
+      const existing = rawSlots.find((slot) => slot && slot.moment === moment) || rawSlots[index] || {};
+      return {
+        moment,
+        songId: cleanValue(existing.songId)
+      };
+    })
+  };
+}
+
+function readPersonalSundayPlan() {
+  try {
+    const saved = localStorage.getItem(SUNDAY_PERSONAL_KEY);
+    if (saved) return normalizeSundayPlan(JSON.parse(saved));
+
+    const oldLocalData = localStorage.getItem(STORAGE_KEY);
+    if (oldLocalData) {
+      const parsed = JSON.parse(oldLocalData);
+      if (parsed && parsed.sundayPlan) return normalizeSundayPlan(parsed.sundayPlan);
+    }
+  } catch (error) {
+    console.warn(error);
+  }
+  return normalizeSundayPlan(null);
+}
+
+function persistPersonalSundayPlan() {
+  localStorage.setItem(SUNDAY_PERSONAL_KEY, JSON.stringify(personalSundayPlan));
 }
 
 function normalizeMember(member) {
@@ -280,8 +365,12 @@ function bindNavigation() {
       currentView = button.dataset.view;
       currentSearch = "";
       currentSongCategory = "";
+      currentSongMoment = "";
+      currentSongDetailId = null;
+      showFavoritesOnly = false;
       closeMoreMenu();
       render();
+      scrollAppToTop();
     });
   });
 }
@@ -320,13 +409,53 @@ function bindContentEvents() {
     if (viewLink) {
       currentView = viewLink.dataset.viewLink;
       currentSearch = "";
+      currentSongCategory = "";
+      currentSongMoment = "";
+      currentSongDetailId = null;
+      showFavoritesOnly = false;
       render();
+      scrollAppToTop();
       return;
     }
 
     const songDetail = event.target.closest("[data-song-detail]");
     if (songDetail) {
       renderSongDetail(songDetail.dataset.songDetail);
+      scrollAppToTop();
+      return;
+    }
+
+    const favoriteButton = event.target.closest("[data-toggle-favorite]");
+    if (favoriteButton) {
+      toggleFavoriteSong(favoriteButton.dataset.toggleFavorite);
+      return;
+    }
+
+    if (event.target.closest("[data-toggle-favorites-only]")) {
+      showFavoritesOnly = !showFavoritesOnly;
+      updatePublicList("songs");
+      return;
+    }
+
+    if (event.target.closest("[data-clear-search]")) {
+      currentSearch = "";
+      currentSongCategory = "";
+      currentSongMoment = "";
+      showFavoritesOnly = false;
+      renderPublicList("songs");
+      scrollAppToTop();
+      return;
+    }
+
+    if (event.target.closest("[data-clear-sunday]")) {
+      clearPersonalSundayPlan();
+      return;
+    }
+
+    if (event.target.closest("[data-toggle-lyrics-size]")) {
+      largeLyricsMode = !largeLyricsMode;
+      localStorage.setItem(LYRICS_SIZE_KEY, largeLyricsMode ? "large" : "normal");
+      if (currentSongDetailId) renderSongDetail(currentSongDetailId);
       return;
     }
 
@@ -334,6 +463,7 @@ function bindContentEvents() {
     if (adminTab) {
       currentAdminTab = adminTab.dataset.adminTab;
       renderAdmin();
+      scrollAppToTop();
       return;
     }
 
@@ -377,6 +507,11 @@ function bindContentEvents() {
 
     if (event.target.matches("[data-entity-form]")) {
       saveEntity(event.target.dataset.entityForm, event.target);
+      return;
+    }
+
+    if (event.target.matches("[data-sunday-personal-form]")) {
+      savePersonalSundayPlan(event.target);
     }
   });
 
@@ -396,6 +531,12 @@ function bindContentEvents() {
     if (event.target.matches("[data-category-filter]")) {
       currentSongCategory = event.target.value;
       updatePublicList("songs");
+      return;
+    }
+
+    if (event.target.matches("[data-moment-filter]")) {
+      currentSongMoment = event.target.value;
+      updatePublicList("songs");
     }
   });
 }
@@ -406,13 +547,14 @@ function render() {
     button.classList.toggle("active", button.dataset.view === currentView);
   });
   if (moreToggle) {
-    moreToggle.classList.toggle("active", ["events", "members", "admin"].includes(currentView));
+    moreToggle.classList.toggle("active", ["sunday", "events", "members", "admin"].includes(currentView));
   }
   screenTitle.textContent = viewTitles[currentView] || viewTitles.home;
 
   if (currentView === "home") renderHome();
   if (currentView === "songs") renderPublicList("songs");
   if (currentView === "readings") renderPublicList("readings");
+  if (currentView === "sunday") renderSundayPlan();
   if (currentView === "events") renderPublicList("events");
   if (currentView === "members") renderPublicList("members");
   if (currentView === "admin") renderAdmin();
@@ -421,6 +563,15 @@ function render() {
 function updateStatus() {
   dataStatus.textContent = `Version ${APP_VERSION}`;
   updateEventBell();
+}
+
+function scrollAppToTop() {
+  requestAnimationFrame(() => {
+    window.scrollTo({ top: 0, left: 0, behavior: "auto" });
+    document.documentElement.scrollTop = 0;
+    document.body.scrollTop = 0;
+    if (content) content.scrollTop = 0;
+  });
 }
 
 function showUpdateOverlay(message, seconds = 20) {
@@ -488,6 +639,7 @@ function renderHome() {
     <section class="stats-grid" aria-label="Resumen">
       ${statCard(appData.songs.length, "Canciones")}
       ${statCard(appData.readings.length, "Lecturas y Salmos")}
+      ${statCard(getSundayPlanSongs().length, "Domingo")}
       ${statCard(appData.events.length, "Eventos")}
       ${statCard(appData.members.length, "Miembros")}
     </section>
@@ -502,6 +654,7 @@ function renderHome() {
       <div class="section-grid">
         ${homeCard("Canciones", "Repertorio, letras y notas musicales.", "songs")}
         ${homeCard("Lecturas y Salmos", "Lecturas, salmos, citas, oraciones y reflexiones.", "readings")}
+        ${homeCard("Domingo", "Repertorio personal guardado en este celular.", "sunday")}
         ${homeCard("Eventos", "Ensayos, misas y actividades especiales.", "events")}
         ${homeCard("Miembros", "Integrantes, roles y ubicacion musical.", "members")}
         ${homeCard("Administrador", "Agregar, editar, borrar y descargar JSON.", "admin")}
@@ -542,6 +695,9 @@ function renderPublicList(key) {
       <div class="toolbar">
         <input class="search-input" data-search="${key}" type="search" value="${escapeAttribute(currentSearch)}" placeholder="${escapeAttribute(searchPlaceholder(key))}">
         ${key === "songs" ? renderSongCategoryFilter() : ""}
+        ${key === "songs" ? renderSongMomentFilter() : ""}
+        ${key === "songs" ? `<button class="secondary-button ${showFavoritesOnly ? "active-filter" : ""}" type="button" data-toggle-favorites-only>Favoritos</button>` : ""}
+        ${key === "songs" ? `<button class="secondary-button" type="button" data-clear-search>Limpiar</button>` : ""}
         <button class="primary-button" type="button" data-view-link="admin">Editar en Admin</button>
       </div>
       <div id="publicListMount">
@@ -573,16 +729,19 @@ function getFilteredItems(key) {
   if (key === "events") {
     items.sort((a, b) => String(a.date || "").localeCompare(String(b.date || "")));
   }
-  if (!search) return items;
   if (key === "songs") {
     return items.filter((item) => {
       const title = String(item.title || "").toLowerCase();
       const category = String(item.category || "").toLowerCase();
-      const matchesSearch = !search || title.includes(search) || category.includes(search);
+      const moment = String(getSongMoment(item) || "").toLowerCase();
+      const matchesSearch = !search || title.includes(search) || category.includes(search) || moment.includes(search);
       const matchesCategory = !currentSongCategory || item.category === currentSongCategory;
-      return matchesSearch && matchesCategory;
+      const matchesMoment = !currentSongMoment || getSongMoment(item) === currentSongMoment;
+      const matchesFavorite = !showFavoritesOnly || favoriteSongIds.has(item.id);
+      return matchesSearch && matchesCategory && matchesMoment && matchesFavorite;
     });
   }
+  if (!search) return items;
   return items.filter((item) => JSON.stringify(item).toLowerCase().includes(search));
 }
 
@@ -603,9 +762,49 @@ function renderSongCategoryFilter() {
   `;
 }
 
+function renderSongMomentFilter() {
+  return `
+    <select class="search-input" data-moment-filter aria-label="Filtrar canciones por momento de misa">
+      <option value="">Todos los momentos</option>
+      ${SONG_MOMENTS.map((moment) => (
+        `<option value="${escapeAttribute(moment)}" ${moment === currentSongMoment ? "selected" : ""}>${escapeHtml(moment)}</option>`
+      )).join("")}
+    </select>
+  `;
+}
+
 function getSongCategories() {
   return [...new Set(appData.songs.map((song) => cleanValue(song.category)).filter(Boolean))]
     .sort((a, b) => a.localeCompare(b, "es"));
+}
+
+function getSongsSortedByTitle() {
+  return [...appData.songs].sort((a, b) => String(a.title || "").localeCompare(String(b.title || ""), "es"));
+}
+
+function getSundayPlanSongs() {
+  if (!personalSundayPlan || !Array.isArray(personalSundayPlan.slots)) return [];
+  return personalSundayPlan.slots
+    .map((slot) => ({
+      moment: slot.moment,
+      song: appData.songs.find((song) => song.id === slot.songId)
+    }))
+    .filter((item) => item.song);
+}
+
+function toggleFavoriteSong(songId) {
+  if (!songId) return;
+  if (favoriteSongIds.has(songId)) {
+    favoriteSongIds.delete(songId);
+  } else {
+    favoriteSongIds.add(songId);
+  }
+  localStorage.setItem(FAVORITES_KEY, JSON.stringify([...favoriteSongIds]));
+  if (currentSongDetailId) {
+    renderSongDetail(currentSongDetailId);
+    return;
+  }
+  updatePublicList("songs");
 }
 
 function publicSubtitle(key) {
@@ -649,14 +848,100 @@ function renderMembersPublicTable(items) {
   `;
 }
 
+function renderSundayPlan() {
+  const planSongs = getSundayPlanSongs();
+  const dateText = personalSundayPlan.date ? formatDateOnly(personalSundayPlan.date) : "Sin fecha";
+
+  content.innerHTML = `
+    <section>
+      <div class="section-title">
+        <div>
+          <p class="eyebrow">Repertorio personal</p>
+          <h2>Domingo</h2>
+          <p>Escoge en este celular las canciones dadas para cada momento de la misa.</p>
+        </div>
+      </div>
+      <div class="panel sunday-summary">
+        <strong>${escapeHtml(dateText)}</strong>
+        ${personalSundayPlan.notes ? `<p>${escapeHtml(personalSundayPlan.notes)}</p>` : `<p>Esta seleccion se guarda solo en este celular.</p>`}
+      </div>
+      ${renderSundayPersonalEditor()}
+      <div class="section-title compact-title">
+        <div>
+          <p class="eyebrow">Canciones escogidas</p>
+          <h2>Mi repertorio</h2>
+        </div>
+      </div>
+      ${planSongs.length ? renderSundayPlanCards(planSongs) : renderSundayEmpty()}
+    </section>
+  `;
+}
+
+function renderSundayPersonalEditor() {
+  return `
+    <section class="admin-section">
+      <h3>Armar mi Domingo</h3>
+      <p class="help-text">Elige las canciones desde el repertorio cargado en la app. Esto no cambia el JSON oficial.</p>
+      <form data-sunday-personal-form>
+        <div class="form-grid">
+          <div class="form-field">
+            <label for="personalSundayDate">Fecha</label>
+            <input id="personalSundayDate" name="date" type="date" value="${escapeAttribute(personalSundayPlan.date || "")}">
+          </div>
+          <div class="form-field full">
+            <label for="personalSundayNotes">Notas</label>
+            <textarea id="personalSundayNotes" name="notes">${escapeHtml(personalSundayPlan.notes || "")}</textarea>
+          </div>
+          ${SUNDAY_PLAN_MOMENTS.map((moment, index) => renderSundaySlotField(moment, index)).join("")}
+        </div>
+        <div class="button-row">
+          <button class="primary-button" type="submit">Guardar mi Domingo</button>
+          <button class="secondary-button" type="button" data-clear-sunday>Limpiar Domingo</button>
+        </div>
+      </form>
+    </section>
+  `;
+}
+
+function renderSundayEmpty() {
+  return `
+    <div class="empty-state">
+      <img src="assets/logo-coro.jpeg" alt="">
+      <h2>Todavia no hay canciones escogidas</h2>
+      <p>Usa los selects de arriba y guarda tu Domingo en este celular.</p>
+    </div>
+  `;
+}
+
+function renderSundayPlanCards(items) {
+  return `
+    <div class="cards-grid sunday-plan-grid">
+      ${items.map(({ moment, song }) => `
+        <article class="card">
+          <span class="tag">${escapeHtml(moment)}</span>
+          <h3>${escapeHtml(song.title || "Sin titulo")}</h3>
+          <p>${escapeHtml(song.category || "Sin categoria")}</p>
+          <div class="card-meta">
+            <button class="secondary-button" type="button" data-song-detail="${escapeAttribute(song.id)}">Ver letra</button>
+          </div>
+        </article>
+      `).join("")}
+    </div>
+  `;
+}
+
 function renderPublicCard(key, item) {
   if (key === "songs") {
+    const isFavorite = favoriteSongIds.has(item.id);
     return `
       <article class="card">
         <h3>${escapeHtml(item.title || "Sin titulo")}</h3>
         <p>${escapeHtml(item.category || "Sin categoria")}</p>
         <div class="card-meta">
+          ${getSongMoment(item) ? `<span class="tag">${escapeHtml(getSongMoment(item))}</span>` : ""}
           ${item.musicalNotes ? `<span class="tag">Notas musicales</span>` : ""}
+          ${isFavorite ? `<span class="tag">Favorito</span>` : ""}
+          <button class="secondary-button" type="button" data-toggle-favorite="${escapeAttribute(item.id)}">${isFavorite ? "Quitar favorito" : "Favorito"}</button>
           <button class="secondary-button" type="button" data-song-detail="${escapeAttribute(item.id)}">Ver letra</button>
         </div>
       </article>
@@ -713,16 +998,22 @@ function renderSongDetail(songId) {
     renderPublicList("songs");
     return;
   }
+  currentSongDetailId = songId;
+  const isFavorite = favoriteSongIds.has(song.id);
 
   content.innerHTML = `
-    <article class="song-detail">
+    <article class="song-detail ${largeLyricsMode ? "large-text" : ""}">
       <div class="button-row">
         <button class="secondary-button" type="button" data-view-link="songs">Volver</button>
         <button class="primary-button" type="button" data-view-link="admin">Editar en Admin</button>
+        <button class="secondary-button" type="button" data-toggle-favorite="${escapeAttribute(song.id)}">${isFavorite ? "Quitar favorito" : "Favorito"}</button>
+        <button class="secondary-button" type="button" data-toggle-lyrics-size>${largeLyricsMode ? "Letra normal" : "Letra grande"}</button>
       </div>
       <h2>${escapeHtml(song.title || "Sin titulo")}</h2>
       <div class="card-meta">
         ${song.category ? `<span class="tag">${escapeHtml(song.category)}</span>` : ""}
+        ${getSongMoment(song) ? `<span class="tag">${escapeHtml(getSongMoment(song))}</span>` : ""}
+        ${isFavorite ? `<span class="tag">Favorito</span>` : ""}
         ${song.musicalNotes ? `<span class="tag">Notas musicales</span>` : ""}
       </div>
       ${song.musicalNotes ? `<h3>Notas musicales</h3><div class="lyrics">${escapeHtml(song.musicalNotes)}</div>` : ""}
@@ -761,10 +1052,13 @@ function renderAdmin() {
 }
 
 function adminTab(key, label) {
+  const count = key === "settings"
+    ? ""
+    : appData[key].length;
   return `
     <button class="admin-tab ${currentAdminTab === key ? "active" : ""}" type="button" data-admin-tab="${key}">
       <span>${label}</span>
-      <strong>${key === "settings" ? "" : appData[key].length}</strong>
+      <strong>${count}</strong>
     </button>
   `;
 }
@@ -807,6 +1101,21 @@ function renderSettingsAdmin() {
         </div>
       </form>
     </section>
+  `;
+}
+
+function renderSundaySlotField(moment, index) {
+  const slot = personalSundayPlan.slots.find((item) => item.moment === moment) || {};
+  return `
+    <div class="form-field">
+      <label for="sundaySlot${index}">${escapeHtml(moment)}</label>
+      <select id="sundaySlot${index}" name="slot-${index}">
+        <option value="">Sin cancion</option>
+        ${getSongsSortedByTitle().map((song) => (
+          `<option value="${escapeAttribute(song.id)}" ${song.id === slot.songId ? "selected" : ""}>${escapeHtml(song.title || "Sin titulo")}</option>`
+        )).join("")}
+      </select>
+    </div>
   `;
 }
 
@@ -963,6 +1272,30 @@ function saveEntity(key, form) {
   renderAdmin();
 }
 
+function savePersonalSundayPlan(form) {
+  const formData = new FormData(form);
+  personalSundayPlan = {
+    date: cleanValue(formData.get("date")),
+    notes: cleanValue(formData.get("notes")),
+    slots: SUNDAY_PLAN_MOMENTS.map((moment, index) => ({
+      moment,
+      songId: cleanValue(formData.get(`slot-${index}`))
+    }))
+  };
+  persistPersonalSundayPlan();
+  renderSundayPlan();
+  scrollAppToTop();
+}
+
+function clearPersonalSundayPlan() {
+  const ok = confirm("Borrar el repertorio de Domingo guardado en este celular?");
+  if (!ok) return;
+  personalSundayPlan = normalizeSundayPlan(null);
+  localStorage.removeItem(SUNDAY_PERSONAL_KEY);
+  renderSundayPlan();
+  scrollAppToTop();
+}
+
 function deleteEntity(key, id) {
   const config = entityConfig[key];
   const ok = confirm(`Borrar este ${config.singular}?`);
@@ -1064,6 +1397,7 @@ function downloadJson() {
   const dataToDownload = normalizeData(appData);
   dataToDownload.updatedAt = new Date().toISOString();
   delete dataToDownload.inventory;
+  delete dataToDownload.sundayPlan;
   const blob = new Blob([JSON.stringify(dataToDownload, null, 2)], {
     type: "application/json"
   });
@@ -1099,7 +1433,9 @@ function clearLocalData() {
   const ok = confirm("Esto dejara en blanco los datos guardados en este dispositivo. Continuar?");
   if (!ok) return;
   localStorage.removeItem(STORAGE_KEY);
+  localStorage.removeItem(SUNDAY_PERSONAL_KEY);
   appData = normalizeData(defaultData);
+  personalSundayPlan = normalizeSundayPlan(null);
   currentAdminTab = "settings";
   Object.keys(editIds).forEach((key) => { editIds[key] = null; });
   render();
@@ -1126,9 +1462,41 @@ function cleanValue(value) {
   return String(value || "").trim();
 }
 
+function readStoredArray(key) {
+  try {
+    const parsed = JSON.parse(localStorage.getItem(key) || "[]");
+    return Array.isArray(parsed) ? parsed : [];
+  } catch (error) {
+    console.warn(error);
+    return [];
+  }
+}
+
+function getSongMoment(song) {
+  return SONG_MOMENTS.includes(song.moment) ? song.moment : inferSongMoment(song);
+}
+
+function inferSongMoment(song) {
+  const text = `${song.category || ""} ${song.title || ""}`.toLowerCase();
+  if (text.includes("entrada") || text.includes("bienvenida")) return "Entrada";
+  if (text.includes("perdon") || text.includes("perdÃ³n")) return "Perdon";
+  if (text.includes("gloria")) return "Gloria";
+  if (text.includes("salmo")) return "Salmo";
+  if (text.includes("aleluya")) return "Aleluya";
+  if (text.includes("ofertorio") || text.includes("dones") || text.includes("vino") || text.includes("pan")) return "Ofertorio";
+  if (text.includes("santo")) return "Santo";
+  if (text.includes("paz")) return "Paz";
+  if (text.includes("comunion") || text.includes("comuniÃ³n")) return "Comunion";
+  if (text.includes("salida")) return "Salida";
+  if (text.includes("marian") || text.includes("virgen") || text.includes("marÃ­a")) return "Mariano";
+  if (text.includes("animaci")) return "Animacion";
+  return "";
+}
+
 function fixJesusAccent(value) {
   return String(value || "")
     .replaceAll("JesÃºs", "Jesús")
+    .replaceAll("Jes?s", "Jesús")
     .replaceAll("Jesus", "Jesús");
 }
 
@@ -1139,6 +1507,14 @@ function formatDateTime(value) {
   return new Intl.DateTimeFormat("es-US", {
     dateStyle: "medium",
     timeStyle: "short"
+  }).format(date);
+}
+
+function formatDateOnly(value) {
+  const date = parseDateOnly(value);
+  if (!date) return String(value || "");
+  return new Intl.DateTimeFormat("es-US", {
+    dateStyle: "full"
   }).format(date);
 }
 
