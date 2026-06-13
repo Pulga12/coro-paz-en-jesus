@@ -1,4 +1,4 @@
-# Coro Paz en Jesus - Version 3.0
+# Coro Paz en Jesus - Version 3.1
 
 Aplicacion web instalable para celular y laptop.
 

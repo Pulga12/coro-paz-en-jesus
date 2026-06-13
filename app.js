@@ -1,4 +1,4 @@
-const APP_VERSION = "3.0.0";
+const APP_VERSION = "3.1.0";
 const DATA_PATH = "data/app-data.json";
 const STORAGE_KEY = "coro-paz-en-jesus-data-v2";
 
@@ -338,7 +338,7 @@ function bindContentEvents() {
   content.addEventListener("input", (event) => {
     if (event.target.matches("[data-search]")) {
       currentSearch = event.target.value;
-      renderPublicList(event.target.dataset.search);
+      updatePublicList(event.target.dataset.search);
     }
   });
 
@@ -350,7 +350,7 @@ function bindContentEvents() {
 
     if (event.target.matches("[data-category-filter]")) {
       currentSongCategory = event.target.value;
-      renderPublicList("songs");
+      updatePublicList("songs");
     }
   });
 }
@@ -464,6 +464,20 @@ function renderPublicList(key) {
       </div>
     </section>
   `;
+}
+
+function updatePublicList(key) {
+  const mount = document.querySelector("#publicListMount");
+  if (!mount) {
+    renderPublicList(key);
+    return;
+  }
+
+  const config = entityConfig[key];
+  const items = getFilteredItems(key);
+  mount.innerHTML = items.length
+    ? (key === "members" ? renderMembersPublicTable(items) : renderCards(key, items))
+    : renderEmpty(config.emptyTitle, config.emptyText);
 }
 
 function getFilteredItems(key) {
