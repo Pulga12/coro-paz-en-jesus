@@ -1,4 +1,4 @@
-const APP_VERSION = "2.7.0";
+const APP_VERSION = "3.0.0";
 const DATA_PATH = "data/app-data.json";
 const STORAGE_KEY = "coro-paz-en-jesus-data-v2";
 
@@ -14,8 +14,7 @@ const defaultData = {
   readings: [],
   events: [],
   members: [],
-  inventory: [],
-  documents: []
+  inventory: []
 };
 
 const viewTitles = {
@@ -91,17 +90,17 @@ const entityConfig = {
     emptyText: "Agrega nombres, tipo de miembro, cargos y ubicacion musical desde el Administrador.",
     fields: [
       { name: "name", label: "Nombre", required: true },
-      { name: "memberType", label: "Tipo", type: "select", options: ["Miembro", "Cargo", "Administrador", "Miembro y cargo"] },
-      { name: "role", label: "Cargos, voces o instrumentos" },
-      { name: "group", label: "Grupo / ubicacion" },
+      { name: "memberType", label: "Tipo", type: "select", options: ["Miembro", "Cabeza de grupo"] },
+      { name: "role", label: "Cargo" },
+      { name: "group", label: "Grupo liturgico", type: "select", options: ["No", "Si"] },
       { name: "contact", label: "Contacto" },
       { name: "note", label: "Nota", type: "textarea", full: true }
     ],
     columns: [
       { key: "name", label: "Nombre" },
       { key: "memberType", label: "Tipo" },
-      { key: "role", label: "Cargos o roles" },
-      { key: "group", label: "Ubicacion" }
+      { key: "role", label: "Cargo" },
+      { key: "group", label: "Grupo liturgico" }
     ]
   },
   inventory: {
@@ -120,24 +119,6 @@ const entityConfig = {
       { key: "status", label: "Estado" },
       { key: "location", label: "Ubicacion" }
     ]
-  },
-  documents: {
-    label: "Documentacion",
-    singular: "documento",
-    emptyTitle: "Todavia no hay documentacion",
-    emptyText: "Agrega enlaces, notas o documentos de referencia desde el Administrador.",
-    fields: [
-      { name: "title", label: "Titulo", required: true },
-      { name: "type", label: "Tipo" },
-      { name: "link", label: "Enlace" },
-      { name: "description", label: "Descripcion", type: "textarea", full: true },
-      { name: "notes", label: "Notas internas", type: "textarea", full: true }
-    ],
-    columns: [
-      { key: "title", label: "Titulo" },
-      { key: "type", label: "Tipo" },
-      { key: "link", label: "Enlace" }
-    ]
   }
 };
 
@@ -151,8 +132,7 @@ const editIds = {
   readings: null,
   events: null,
   members: null,
-  inventory: null,
-  documents: null
+  inventory: null
 };
 
 const content = document.querySelector("#appContent");
@@ -160,12 +140,15 @@ const screenTitle = document.querySelector("#screenTitle");
 const dataStatus = document.querySelector("#dataStatus");
 const eventBell = document.querySelector("#eventBell");
 const eventCount = document.querySelector("#eventCount");
+const moreToggle = document.querySelector("[data-more-toggle]");
+const moreMenu = document.querySelector("#moreMenu");
 
 document.addEventListener("DOMContentLoaded", init);
 
 async function init() {
   appData = await loadData();
   bindNavigation();
+  bindMoreMenu();
   bindContentEvents();
   bindEventBell();
   registerServiceWorker();
@@ -214,6 +197,7 @@ function normalizeData(raw) {
       ? raw[key].map((item) => ({ id: item.id || createId(key), ...item }))
       : [];
   });
+  normalized.members = normalized.members.map(normalizeMember);
 
   normalized.version = APP_VERSION;
   normalized.updatedAt = raw && raw.updatedAt ? raw.updatedAt : new Date().toISOString();
@@ -221,6 +205,21 @@ function normalizeData(raw) {
     normalized.settings.subtitle = defaultData.settings.subtitle;
   }
   return normalized;
+}
+
+function normalizeMember(member) {
+  const validTypes = ["Miembro", "Cabeza de grupo"];
+  const nextType = validTypes.includes(member.memberType)
+    ? member.memberType
+    : member.memberType
+      ? "Cabeza de grupo"
+      : "";
+  const nextGroup = member.group === "Si" || member.group === "No" ? member.group : "";
+  return {
+    ...member,
+    memberType: nextType,
+    group: nextGroup
+  };
 }
 
 function persistData() {
@@ -236,9 +235,33 @@ function bindNavigation() {
       currentView = button.dataset.view;
       currentSearch = "";
       currentSongCategory = "";
+      closeMoreMenu();
       render();
     });
   });
+}
+
+function bindMoreMenu() {
+  if (!moreToggle || !moreMenu) return;
+
+  moreToggle.addEventListener("click", (event) => {
+    event.stopPropagation();
+    const willOpen = moreMenu.classList.contains("hidden");
+    moreMenu.classList.toggle("hidden", !willOpen);
+    moreToggle.setAttribute("aria-expanded", String(willOpen));
+  });
+
+  document.addEventListener("click", (event) => {
+    if (moreMenu.classList.contains("hidden")) return;
+    if (moreMenu.contains(event.target) || moreToggle.contains(event.target)) return;
+    closeMoreMenu();
+  });
+}
+
+function closeMoreMenu() {
+  if (!moreToggle || !moreMenu) return;
+  moreMenu.classList.add("hidden");
+  moreToggle.setAttribute("aria-expanded", "false");
 }
 
 function bindEventBell() {
@@ -337,6 +360,9 @@ function render() {
   document.querySelectorAll("[data-view]").forEach((button) => {
     button.classList.toggle("active", button.dataset.view === currentView);
   });
+  if (moreToggle) {
+    moreToggle.classList.toggle("active", ["events", "members", "inventory", "admin"].includes(currentView));
+  }
   screenTitle.textContent = viewTitles[currentView] || viewTitles.home;
 
   if (currentView === "home") renderHome();
@@ -506,8 +532,8 @@ function renderMembersPublicTable(items) {
           <tr>
             <th>Nombre</th>
             <th>Tipo</th>
-            <th>Cargos o roles</th>
-            <th>Ubicacion</th>
+            <th>Cargo</th>
+            <th>Grupo liturgico</th>
           </tr>
         </thead>
         <tbody>
@@ -641,7 +667,6 @@ function renderAdmin() {
           ${adminTab("events", "Eventos")}
           ${adminTab("members", "Miembros")}
           ${adminTab("inventory", "Inventario")}
-          ${adminTab("documents", "Documentacion")}
         </nav>
         <div class="admin-workspace" id="adminWorkspace">
           ${currentAdminTab === "settings" ? renderSettingsAdmin() : renderEntityAdmin(currentAdminTab)}
@@ -1049,6 +1074,11 @@ function escapeAttribute(value) {
 function registerServiceWorker() {
   if (!("serviceWorker" in navigator)) return;
   window.addEventListener("load", () => {
-    navigator.serviceWorker.register("sw.js").catch((error) => console.warn(error));
+    navigator.serviceWorker.register("sw.js").then((registration) => {
+      registration.update().catch((error) => console.warn(error));
+      window.setInterval(() => {
+        registration.update().catch((error) => console.warn(error));
+      }, 60 * 60 * 1000);
+    }).catch((error) => console.warn(error));
   });
 }

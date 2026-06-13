@@ -23,21 +23,31 @@
         </button>
         <button class="nav-button" type="button" data-view="readings">
           <span class="nav-icon">LE</span>
-          <span>Lecturas y Salmos</span>
+          <span>Lecturas</span>
         </button>
-        <button class="nav-button" type="button" data-view="events">
+        <button class="nav-button more-toggle" type="button" data-more-toggle aria-expanded="false" aria-controls="moreMenu">
+          <span class="nav-icon">...</span>
+          <span>Mas</span>
+        </button>
+        <div id="moreMenu" class="more-menu hidden">
+          <button class="more-menu-item" type="button" data-view="events">Eventos</button>
+          <button class="more-menu-item" type="button" data-view="members">Miembros</button>
+          <button class="more-menu-item" type="button" data-view="inventory">Inventario</button>
+          <button class="more-menu-item" type="button" data-view="admin">Admin</button>
+        </div>
+        <button class="nav-button nav-extra" type="button" data-view="events">
           <span class="nav-icon">EV</span>
           <span>Eventos</span>
         </button>
-        <button class="nav-button" type="button" data-view="members">
+        <button class="nav-button nav-extra" type="button" data-view="members">
           <span class="nav-icon">MI</span>
           <span>Miembros</span>
         </button>
-        <button class="nav-button" type="button" data-view="inventory">
+        <button class="nav-button nav-extra" type="button" data-view="inventory">
           <span class="nav-icon">IV</span>
           <span>Inventario</span>
         </button>
-        <button class="nav-button" type="button" data-view="admin">
+        <button class="nav-button nav-extra" type="button" data-view="admin">
           <span class="nav-icon">AD</span>
           <span>Admin</span>
         </button>
@@ -54,7 +64,7 @@
               Avisos
               <span id="eventCount" class="bell-count hidden">0</span>
             </button>
-            <span id="dataStatus" class="status-pill">Versi&oacute;n 2.7</span>
+            <span id="dataStatus" class="status-pill">Versi&oacute;n 3.0</span>
           </div>
         </header>
 

@@ -1,4 +1,4 @@
-const CACHE_NAME = "coro-paz-en-jesus-v2-7-0";
+const CACHE_NAME = "coro-paz-en-jesus-v3-0-0";
 const APP_SHELL = [
   "./",
   "index.html",
@@ -18,18 +18,17 @@ self.addEventListener("install", (event) => {
 });
 
 self.addEventListener("activate", (event) => {
-  event.waitUntil(
-    caches.keys().then((keys) => (
-      Promise.all(keys.filter((key) => key !== CACHE_NAME).map((key) => caches.delete(key)))
-    ))
-  );
-  self.clients.claim();
+  event.waitUntil(activateNewVersion());
 });
 
 self.addEventListener("fetch", (event) => {
-  const requestUrl = new URL(event.request.url);
+  if (event.request.method !== "GET") return;
 
-  if (requestUrl.pathname.endsWith("/data/app-data.json")) {
+  const requestUrl = new URL(event.request.url);
+  const isAppFile = requestUrl.origin === self.location.origin;
+  const isStaticAsset = requestUrl.pathname.includes("/assets/");
+
+  if (isAppFile && !isStaticAsset) {
     event.respondWith(networkFirst(event.request));
     return;
   }
@@ -37,10 +36,24 @@ self.addEventListener("fetch", (event) => {
   event.respondWith(cacheFirst(event.request));
 });
 
+async function activateNewVersion() {
+  const keys = await caches.keys();
+  await Promise.all(keys.filter((key) => key !== CACHE_NAME).map((key) => caches.delete(key)));
+  await self.clients.claim();
+
+  const clients = await self.clients.matchAll({ type: "window" });
+  await Promise.all(clients.map((client) => {
+    if ("navigate" in client) {
+      return client.navigate(client.url);
+    }
+    return undefined;
+  }));
+}
+
 async function networkFirst(request) {
   const cache = await caches.open(CACHE_NAME);
   try {
-    const response = await fetch(request);
+    const response = await fetch(request, { cache: "no-store" });
     cache.put(request, response.clone());
     return response;
   } catch (error) {

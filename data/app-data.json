@@ -1,5 +1,5 @@
 {
-  "version": "2.7.0",
+  "version": "3.0.0",
   "updatedAt": "2026-06-12T00:00:00.000Z",
   "settings": {
     "choirName": "Coro Paz en Jesus",
@@ -10,6 +10,5 @@
   "readings": [],
   "events": [],
   "members": [],
-  "inventory": [],
-  "documents": []
+  "inventory": []
 }

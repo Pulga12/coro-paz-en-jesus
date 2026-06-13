@@ -84,6 +84,29 @@ button {
   font-weight: 700;
 }
 
+.more-toggle,
+.more-menu {
+  display: none;
+}
+
+.more-menu-item {
+  width: 100%;
+  min-height: 44px;
+  border: 0;
+  border-radius: 8px;
+  padding: 10px 12px;
+  color: var(--ink);
+  background: transparent;
+  text-align: left;
+  font-weight: 800;
+}
+
+.more-menu-item:hover,
+.more-menu-item.active {
+  background: #f2f4ff;
+  color: var(--blue);
+}
+
 .nav-icon {
   display: grid;
   width: 30px;
@@ -595,7 +618,7 @@ h1 {
     inset: auto 0 0 0;
     display: grid;
     height: auto;
-    grid-template-columns: repeat(7, minmax(0, 1fr));
+    grid-template-columns: repeat(4, minmax(0, 1fr));
     gap: 4px;
     padding: 8px;
     border-top: 1px solid var(--line);
@@ -605,6 +628,32 @@ h1 {
 
   .sidebar-logo {
     display: none;
+  }
+
+  .nav-extra {
+    display: none;
+  }
+
+  .more-toggle {
+    display: grid;
+  }
+
+  .more-menu {
+    position: fixed;
+    right: 10px;
+    bottom: 78px;
+    z-index: 40;
+    width: min(250px, calc(100vw - 20px));
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    padding: 8px;
+    background: #ffffff;
+    box-shadow: var(--shadow);
+  }
+
+  .more-menu:not(.hidden) {
+    display: grid;
+    gap: 4px;
   }
 
   .nav-button {

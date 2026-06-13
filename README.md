@@ -1,8 +1,8 @@
-# Coro Paz en Jesus - Version 2.7
+# Coro Paz en Jesus - Version 3.0
 
 Aplicacion web instalable para celular y laptop.
 
-Esta version viene en blanco para canciones, miembros, inventario, lecturas y documentos.
+Esta version viene en blanco para canciones, miembros, inventario, lecturas y eventos manuales.
 
 Todo se agrega desde `Administrador`.
 
@@ -16,7 +16,7 @@ No tiene clave. Solo quien tenga el enlace y sepa administrar debe hacer cambios
 
 1. Abre la app.
 2. Entra a `Admin`.
-3. Agrega o edita canciones, lecturas y salmos, eventos, miembros, inventario o documentacion.
+3. Agrega o edita canciones, lecturas y salmos, eventos, miembros o inventario.
 4. En `Ajustes`, presiona `Descargar app-data.json`.
 5. Sube ese archivo a GitHub dentro de la carpeta `data`.
 
@@ -77,3 +77,5 @@ Cuando ya tengas datos agregados desde la app:
 ## Nota para celular
 
 La primera vez puede demorarse un poco porque el celular guarda la app para usarla sin internet. Despues de la primera carga normalmente abre mas rapido.
+
+Si la app instalada se queda en una version vieja, abre la web, actualiza, cierra la app instalada y vuelve a abrirla. Si sigue vieja, desinstala la app instalada y vuelve a instalarla desde Chrome.
