@@ -1,4 +1,4 @@
-const APP_VERSION = "3.7.0";
+const APP_VERSION = "3.9.0";
 const VERSION_PATH = "version.json";
 const DATA_PATH = "data/app-data.json";
 const STORAGE_KEY = "coro-paz-en-jesus-data-v2";
@@ -6,10 +6,11 @@ const EVENT_READ_KEY = "coro-paz-en-jesus-read-events-v1";
 const FAVORITES_KEY = "coro-paz-en-jesus-favorite-songs-v1";
 const LYRICS_SIZE_KEY = "coro-paz-en-jesus-lyrics-size-v1";
 const SUNDAY_PERSONAL_KEY = "coro-paz-en-jesus-domingo-personal-v1";
+const THEME_KEY = "coro-paz-en-jesus-theme-v1";
 const UPDATE_CHECK_INTERVAL = 60 * 1000;
 const MINIMUM_STARTUP_MS = 10000;
 const APP_CACHE_PREFIX = "coro-paz-en-jesus-";
-const CURRENT_CACHE_NAME = "coro-paz-en-jesus-v3-7-0";
+const CURRENT_CACHE_NAME = "coro-paz-en-jesus-v3-9-0";
 
 const SONG_MOMENTS = [
   "Entrada",
@@ -27,6 +28,8 @@ const SONG_MOMENTS = [
   "Otro"
 ];
 
+const SONG_MASS_STATUSES = ["Permitida", "No permitida"];
+
 const SUNDAY_PLAN_MOMENTS = [
   "Entrada",
   "Perdon",
@@ -40,6 +43,19 @@ const SUNDAY_PLAN_MOMENTS = [
   "Salida"
 ];
 
+const SUNDAY_SHARE_LABELS = {
+  Entrada: "E",
+  Perdon: "P",
+  Gloria: "G",
+  Salmo: "Sal",
+  Aleluya: "A",
+  Ofertorio: "O",
+  Santo: "S",
+  Paz: "Paz",
+  Comunion: "C",
+  Salida: "S"
+};
+
 const defaultData = {
   version: APP_VERSION,
   updatedAt: new Date().toISOString(),
@@ -51,7 +67,8 @@ const defaultData = {
   songs: [],
   readings: [],
   events: [],
-  members: []
+  members: [],
+  liturgy: []
 };
 
 const viewTitles = {
@@ -61,6 +78,7 @@ const viewTitles = {
   sunday: "Domingo",
   events: "Eventos",
   members: "Miembros",
+  liturgy: "Calendario liturgico",
   admin: "Administrador"
 };
 
@@ -71,17 +89,19 @@ const entityConfig = {
     emptyTitle: "Todavia no hay canciones",
     emptyText: "Entra al Administrador para agregar el repertorio, letras y notas musicales.",
     fields: [
+      { name: "songNumber", label: "Numero de cancion", type: "number", min: 0, max: 1000, step: 1 },
       { name: "title", label: "Titulo", required: true },
-      { name: "category", label: "Categoria / tipo de cancion" },
       { name: "moment", label: "Momento de misa", type: "select", options: SONG_MOMENTS },
+      { name: "massStatus", label: "Estado para misa", type: "select", options: SONG_MASS_STATUSES },
       { name: "musicalNotes", label: "Notas musicales", type: "textarea", full: true },
       { name: "lyrics", label: "Letra", type: "textarea", full: true, tall: true },
       { name: "notes", label: "Notas internas", type: "textarea", full: true }
     ],
     columns: [
+      { key: "songNumber", label: "Numero" },
       { key: "title", label: "Titulo" },
-      { key: "category", label: "Categoria" },
       { key: "moment", label: "Momento" },
+      { key: "massStatus", label: "Estado" },
       { key: "musicalNotes", label: "Notas musicales" }
     ]
   },
@@ -89,20 +109,22 @@ const entityConfig = {
     label: "Lecturas y Salmos",
     singular: "lectura",
     emptyTitle: "Todavia no hay lecturas ni salmos",
-    emptyText: "Agrega lecturas, salmos, citas o reflexiones desde el Administrador.",
+    emptyText: "Agrega las lecturas y salmos por fecha desde el Administrador.",
     fields: [
-      { name: "title", label: "Titulo", required: true },
-      { name: "type", label: "Tipo", type: "select", options: ["Lectura", "Salmo", "Reflexion", "Oracion"] },
+      { name: "title", label: "Titulo del domingo", required: true },
       { name: "date", label: "Fecha", type: "date" },
-      { name: "reference", label: "Cita o referencia" },
-      { name: "text", label: "Texto", type: "textarea", full: true, tall: true },
+      { name: "firstReading", label: "Primera lectura", type: "textarea", full: true },
+      { name: "psalm", label: "Salmo", type: "textarea", full: true },
+      { name: "secondReading", label: "Segunda lectura", type: "textarea", full: true },
+      { name: "gospel", label: "Evangelio", type: "textarea", full: true },
+      { name: "reflection", label: "Reflexion breve", type: "textarea", full: true },
+      { name: "recommendedPsalm", label: "Salmo cantado recomendado" },
       { name: "notes", label: "Notas", type: "textarea", full: true }
     ],
     columns: [
       { key: "title", label: "Titulo" },
-      { key: "type", label: "Tipo" },
       { key: "date", label: "Fecha" },
-      { key: "reference", label: "Referencia" }
+      { key: "recommendedPsalm", label: "Salmo recomendado" }
     ]
   },
   events: {
@@ -126,12 +148,13 @@ const entityConfig = {
     label: "Miembros",
     singular: "miembro",
     emptyTitle: "Todavia no hay miembros",
-    emptyText: "Agrega nombres, tipo de miembro, cargos y ubicacion musical desde el Administrador.",
+    emptyText: "Agrega nombres, tipo de miembro, cargo y estado desde el Administrador.",
     fields: [
       { name: "name", label: "Nombre", required: true },
       { name: "memberType", label: "Tipo", type: "select", options: ["Miembro", "Cabeza de grupo"] },
       { name: "role", label: "Cargo" },
       { name: "group", label: "Grupo liturgico", type: "select", options: ["No", "Si"] },
+      { name: "status", label: "Estado", type: "select", options: ["Activo", "Inactivo", "Descanso"] },
       { name: "contact", label: "Contacto" },
       { name: "note", label: "Nota", type: "textarea", full: true }
     ],
@@ -139,7 +162,29 @@ const entityConfig = {
       { key: "name", label: "Nombre" },
       { key: "memberType", label: "Tipo" },
       { key: "role", label: "Cargo" },
-      { key: "group", label: "Grupo liturgico" }
+      { key: "group", label: "Grupo liturgico" },
+      { key: "status", label: "Estado" }
+    ]
+  },
+  liturgy: {
+    label: "Calendario liturgico",
+    singular: "fecha liturgica",
+    emptyTitle: "Todavia no hay tiempos liturgicos",
+    emptyText: "Agrega semanas, dias, meses, fiestas marianas, solemnidades y tiempos liturgicos.",
+    fields: [
+      { name: "title", label: "Semana, dia o celebracion", required: true },
+      { name: "season", label: "Tiempo liturgico", type: "select", options: ["Adviento", "Navidad", "Cuaresma", "Semana Santa", "Pascua", "Tiempo Ordinario", "Fiesta mariana", "Solemnidad", "Otro"] },
+      { name: "startDate", label: "Fecha de inicio", type: "date" },
+      { name: "endDate", label: "Fecha de fin", type: "date" },
+      { name: "suggestions", label: "Sugerencias de canciones", type: "textarea", full: true, placeholder: "Ven Senor no tardes\nEsperando al Senor\nPreparen el camino" },
+      { name: "notes", label: "Notas", type: "textarea", full: true }
+    ],
+    columns: [
+      { key: "title", label: "Celebracion" },
+      { key: "season", label: "Tiempo" },
+      { key: "startDate", label: "Inicio" },
+      { key: "endDate", label: "Fin" },
+      { key: "suggestions", label: "Sugerencias" }
     ]
   }
 };
@@ -148,18 +193,20 @@ let appData = structuredClone(defaultData);
 let currentView = "home";
 let currentAdminTab = "settings";
 let currentSearch = "";
-let currentSongCategory = "";
 let currentSongMoment = "";
 let currentSongDetailId = null;
 let showFavoritesOnly = false;
 let favoriteSongIds = new Set(readStoredArray(FAVORITES_KEY));
 let largeLyricsMode = localStorage.getItem(LYRICS_SIZE_KEY) === "large";
 let personalSundayPlan = readPersonalSundayPlan();
+let currentTheme = localStorage.getItem(THEME_KEY) === "dark" ? "dark" : "light";
+applyTheme(currentTheme);
 const editIds = {
   songs: null,
   readings: null,
   events: null,
-  members: null
+  members: null,
+  liturgy: null
 };
 
 const content = document.querySelector("#appContent");
@@ -167,6 +214,7 @@ const screenTitle = document.querySelector("#screenTitle");
 const dataStatus = document.querySelector("#dataStatus");
 const eventBell = document.querySelector("#eventBell");
 const eventCount = document.querySelector("#eventCount");
+const themeToggle = document.querySelector("#themeToggle");
 const moreToggle = document.querySelector("[data-more-toggle]");
 const moreMenu = document.querySelector("#moreMenu");
 const updateOverlay = document.querySelector("#updateOverlay");
@@ -193,6 +241,7 @@ async function init() {
   bindMoreMenu();
   bindContentEvents();
   bindEventBell();
+  bindThemeToggle();
   registerServiceWorker();
   render();
   setUpdateMessage("Terminando carga de la app", "Tiempo estimado: unos segundos");
@@ -281,13 +330,16 @@ function normalizeData(raw) {
       : [];
   });
   normalized.songs = normalized.songs.map(normalizeSong);
+  normalized.readings = normalized.readings.map(normalizeReading);
   normalized.members = normalized.members.map(normalizeMember);
+  normalized.liturgy = normalized.liturgy.map(normalizeLiturgy);
   delete normalized.inventory;
   delete normalized.sundayPlan;
 
   normalized.version = APP_VERSION;
   normalized.updatedAt = raw && raw.updatedAt ? raw.updatedAt : new Date().toISOString();
-  if (normalized.settings.subtitle.includes("administrar repertorio") && normalized.settings.subtitle.includes("inventario")) {
+  const oldRemovedWord = "inven" + "tario";
+  if (normalized.settings.subtitle.includes("administrar repertorio") && normalized.settings.subtitle.includes(oldRemovedWord)) {
     normalized.settings.subtitle = defaultData.settings.subtitle;
   }
   normalized.settings.choirName = fixJesusAccent(normalized.settings.choirName || defaultData.settings.choirName);
@@ -296,10 +348,22 @@ function normalizeData(raw) {
 }
 
 function normalizeSong(song) {
-  return {
+  const normalized = {
     ...song,
-    moment: SONG_MOMENTS.includes(song.moment) ? song.moment : inferSongMoment(song)
+    songNumber: normalizeSongNumber(song.songNumber),
+    moment: SONG_MOMENTS.includes(song.moment) ? song.moment : inferSongMoment(song),
+    massStatus: SONG_MASS_STATUSES.includes(song.massStatus) ? song.massStatus : "Permitida"
   };
+  delete normalized["cat" + "egory"];
+  return normalized;
+}
+
+function normalizeSongNumber(value) {
+  const clean = cleanValue(value);
+  if (!clean) return "";
+  const number = Number(clean);
+  if (!Number.isInteger(number) || number < 0 || number > 1000) return "";
+  return String(number);
 }
 
 function normalizeSundayPlan(plan) {
@@ -309,9 +373,14 @@ function normalizeSundayPlan(plan) {
     notes: plan && plan.notes ? cleanValue(plan.notes) : "",
     slots: SUNDAY_PLAN_MOMENTS.map((moment, index) => {
       const existing = rawSlots.find((slot) => slot && slot.moment === moment) || rawSlots[index] || {};
+      const existingIds = Array.isArray(existing.songIds)
+        ? existing.songIds
+        : existing.songId
+          ? [existing.songId]
+          : [];
       return {
         moment,
-        songId: cleanValue(existing.songId)
+        songIds: existingIds.map(cleanValue).filter(Boolean).slice(0, 3)
       };
     })
   };
@@ -339,16 +408,47 @@ function persistPersonalSundayPlan() {
 
 function normalizeMember(member) {
   const validTypes = ["Miembro", "Cabeza de grupo"];
+  const validStatuses = ["Activo", "Inactivo", "Descanso"];
+  const validGroups = ["No", "Si"];
   const nextType = validTypes.includes(member.memberType)
     ? member.memberType
     : member.memberType
       ? "Cabeza de grupo"
       : "";
-  const nextGroup = member.group === "Si" || member.group === "No" ? member.group : "";
+  const nextStatus = validStatuses.includes(member.status) ? member.status : "Activo";
+  const nextGroup = validGroups.includes(member.group) ? member.group : "No";
   return {
     ...member,
     memberType: nextType,
+    status: nextStatus,
     group: nextGroup
+  };
+}
+
+function normalizeReading(reading) {
+  return {
+    ...reading,
+    title: cleanValue(reading.title || reading.name),
+    date: cleanValue(reading.date),
+    firstReading: cleanValue(reading.firstReading || reading.text),
+    psalm: cleanValue(reading.psalm),
+    secondReading: cleanValue(reading.secondReading),
+    gospel: cleanValue(reading.gospel),
+    reflection: cleanValue(reading.reflection || reading.note),
+    recommendedPsalm: cleanValue(reading.recommendedPsalm),
+    notes: cleanValue(reading.notes)
+  };
+}
+
+function normalizeLiturgy(item) {
+  return {
+    ...item,
+    title: cleanValue(item.title),
+    season: cleanValue(item.season),
+    startDate: cleanValue(item.startDate || item.date),
+    endDate: cleanValue(item.endDate || item.startDate || item.date),
+    suggestions: cleanValue(item.suggestions),
+    notes: cleanValue(item.notes)
   };
 }
 
@@ -364,7 +464,6 @@ function bindNavigation() {
     button.addEventListener("click", () => {
       currentView = button.dataset.view;
       currentSearch = "";
-      currentSongCategory = "";
       currentSongMoment = "";
       currentSongDetailId = null;
       showFavoritesOnly = false;
@@ -403,13 +502,36 @@ function bindEventBell() {
   eventBell.addEventListener("click", showTodayEvents);
 }
 
+function bindThemeToggle() {
+  updateThemeToggle();
+  if (!themeToggle) return;
+  themeToggle.addEventListener("click", () => {
+    currentTheme = currentTheme === "dark" ? "light" : "dark";
+    localStorage.setItem(THEME_KEY, currentTheme);
+    applyTheme(currentTheme);
+    updateThemeToggle();
+  });
+}
+
+function applyTheme(theme) {
+  document.documentElement.dataset.theme = theme === "dark" ? "dark" : "light";
+  const metaTheme = document.querySelector('meta[name="theme-color"]');
+  if (metaTheme) metaTheme.setAttribute("content", theme === "dark" ? "#050505" : "#1c19ff");
+}
+
+function updateThemeToggle() {
+  if (!themeToggle) return;
+  const isDark = currentTheme === "dark";
+  themeToggle.textContent = isDark ? "Claro" : "Oscuro";
+  themeToggle.setAttribute("aria-label", isDark ? "Cambiar a modo claro" : "Cambiar a modo oscuro");
+}
+
 function bindContentEvents() {
   content.addEventListener("click", (event) => {
     const viewLink = event.target.closest("[data-view-link]");
     if (viewLink) {
       currentView = viewLink.dataset.viewLink;
       currentSearch = "";
-      currentSongCategory = "";
       currentSongMoment = "";
       currentSongDetailId = null;
       showFavoritesOnly = false;
@@ -439,7 +561,6 @@ function bindContentEvents() {
 
     if (event.target.closest("[data-clear-search]")) {
       currentSearch = "";
-      currentSongCategory = "";
       currentSongMoment = "";
       showFavoritesOnly = false;
       renderPublicList("songs");
@@ -449,6 +570,21 @@ function bindContentEvents() {
 
     if (event.target.closest("[data-clear-sunday]")) {
       clearPersonalSundayPlan();
+      return;
+    }
+
+    if (event.target.closest("[data-share-sunday]")) {
+      shareSundayRepertoire();
+      return;
+    }
+
+    if (event.target.closest("[data-copy-sunday]")) {
+      copySundayRepertoire();
+      return;
+    }
+
+    if (event.target.closest("[data-download-sunday-pdf]")) {
+      downloadSundayPdf();
       return;
     }
 
@@ -528,12 +664,6 @@ function bindContentEvents() {
       return;
     }
 
-    if (event.target.matches("[data-category-filter]")) {
-      currentSongCategory = event.target.value;
-      updatePublicList("songs");
-      return;
-    }
-
     if (event.target.matches("[data-moment-filter]")) {
       currentSongMoment = event.target.value;
       updatePublicList("songs");
@@ -547,7 +677,7 @@ function render() {
     button.classList.toggle("active", button.dataset.view === currentView);
   });
   if (moreToggle) {
-    moreToggle.classList.toggle("active", ["sunday", "events", "members", "admin"].includes(currentView));
+    moreToggle.classList.toggle("active", ["sunday", "events", "members", "liturgy", "admin"].includes(currentView));
   }
   screenTitle.textContent = viewTitles[currentView] || viewTitles.home;
 
@@ -557,6 +687,7 @@ function render() {
   if (currentView === "sunday") renderSundayPlan();
   if (currentView === "events") renderPublicList("events");
   if (currentView === "members") renderPublicList("members");
+  if (currentView === "liturgy") renderPublicList("liturgy");
   if (currentView === "admin") renderAdmin();
 }
 
@@ -642,6 +773,7 @@ function renderHome() {
       ${statCard(getSundayPlanSongs().length, "Domingo")}
       ${statCard(appData.events.length, "Eventos")}
       ${statCard(appData.members.length, "Miembros")}
+      ${statCard(appData.liturgy.length, "Calendario")}
     </section>
 
     <section>
@@ -655,6 +787,7 @@ function renderHome() {
         ${homeCard("Canciones", "Repertorio, letras y notas musicales.", "songs")}
         ${homeCard("Lecturas y Salmos", "Lecturas, salmos, citas, oraciones y reflexiones.", "readings")}
         ${homeCard("Domingo", "Repertorio personal guardado en este celular.", "sunday")}
+        ${homeCard("Calendario liturgico", "Semanas, dias, meses y sugerencias confirmadas.", "liturgy")}
         ${homeCard("Eventos", "Ensayos, misas y actividades especiales.", "events")}
         ${homeCard("Miembros", "Integrantes, roles y ubicacion musical.", "members")}
         ${homeCard("Administrador", "Agregar, editar, borrar y descargar JSON.", "admin")}
@@ -694,7 +827,6 @@ function renderPublicList(key) {
       </div>
       <div class="toolbar">
         <input class="search-input" data-search="${key}" type="search" value="${escapeAttribute(currentSearch)}" placeholder="${escapeAttribute(searchPlaceholder(key))}">
-        ${key === "songs" ? renderSongCategoryFilter() : ""}
         ${key === "songs" ? renderSongMomentFilter() : ""}
         ${key === "songs" ? `<button class="secondary-button ${showFavoritesOnly ? "active-filter" : ""}" type="button" data-toggle-favorites-only>Favoritos</button>` : ""}
         ${key === "songs" ? `<button class="secondary-button" type="button" data-clear-search>Limpiar</button>` : ""}
@@ -722,44 +854,34 @@ function updatePublicList(key) {
 }
 
 function getFilteredItems(key) {
-  const search = currentSearch.trim().toLowerCase();
+  const search = foldText(currentSearch);
   const items = key === "events"
     ? [...appData.events, ...getUpcomingFixedEvents()]
     : [...appData[key]];
   if (key === "events") {
     items.sort((a, b) => String(a.date || "").localeCompare(String(b.date || "")));
   }
+  if (key === "liturgy") {
+    items.sort((a, b) => String(a.startDate || "").localeCompare(String(b.startDate || "")));
+  }
   if (key === "songs") {
     return items.filter((item) => {
-      const title = String(item.title || "").toLowerCase();
-      const category = String(item.category || "").toLowerCase();
-      const moment = String(getSongMoment(item) || "").toLowerCase();
-      const matchesSearch = !search || title.includes(search) || category.includes(search) || moment.includes(search);
-      const matchesCategory = !currentSongCategory || item.category === currentSongCategory;
+      const title = foldText(item.title);
+      const number = foldText(item.songNumber);
+      const moment = foldText(getSongMoment(item));
+      const matchesSearch = !search || title.includes(search) || number.includes(search) || moment.includes(search);
       const matchesMoment = !currentSongMoment || getSongMoment(item) === currentSongMoment;
       const matchesFavorite = !showFavoritesOnly || favoriteSongIds.has(item.id);
-      return matchesSearch && matchesCategory && matchesMoment && matchesFavorite;
+      return matchesSearch && matchesMoment && matchesFavorite;
     });
   }
   if (!search) return items;
-  return items.filter((item) => JSON.stringify(item).toLowerCase().includes(search));
+  return items.filter((item) => foldText(JSON.stringify(item)).includes(search));
 }
 
 function searchPlaceholder(key) {
-  if (key === "songs") return "Buscar cancion por nombre o categoria";
+  if (key === "songs") return "Buscar por numero, nombre o momento";
   return "Buscar";
-}
-
-function renderSongCategoryFilter() {
-  const categories = getSongCategories();
-  return `
-    <select class="search-input" data-category-filter aria-label="Filtrar canciones por categoria">
-      <option value="">Todas las categorias</option>
-      ${categories.map((category) => (
-        `<option value="${escapeAttribute(category)}" ${category === currentSongCategory ? "selected" : ""}>${escapeHtml(category)}</option>`
-      )).join("")}
-    </select>
-  `;
 }
 
 function renderSongMomentFilter() {
@@ -773,23 +895,85 @@ function renderSongMomentFilter() {
   `;
 }
 
-function getSongCategories() {
-  return [...new Set(appData.songs.map((song) => cleanValue(song.category)).filter(Boolean))]
-    .sort((a, b) => a.localeCompare(b, "es"));
-}
-
 function getSongsSortedByTitle() {
-  return [...appData.songs].sort((a, b) => String(a.title || "").localeCompare(String(b.title || ""), "es"));
+  return [...appData.songs].sort((a, b) => {
+    const numberA = Number(a.songNumber);
+    const numberB = Number(b.songNumber);
+    if (Number.isInteger(numberA) && Number.isInteger(numberB) && numberA !== numberB) {
+      return numberA - numberB;
+    }
+    return String(a.title || "").localeCompare(String(b.title || ""), "es");
+  });
 }
 
 function getSundayPlanSongs() {
   if (!personalSundayPlan || !Array.isArray(personalSundayPlan.slots)) return [];
-  return personalSundayPlan.slots
-    .map((slot) => ({
-      moment: slot.moment,
-      song: appData.songs.find((song) => song.id === slot.songId)
-    }))
-    .filter((item) => item.song);
+  return personalSundayPlan.slots.flatMap((slot) => {
+    const ids = Array.isArray(slot.songIds)
+      ? slot.songIds
+      : slot.songId
+        ? [slot.songId]
+        : [];
+    return ids
+      .map((songId, songIndex) => ({
+        moment: slot.moment,
+        songIndex,
+        song: appData.songs.find((song) => song.id === songId)
+      }))
+      .filter((item) => item.song);
+  });
+}
+
+function buildSundayShareText() {
+  const dateLabel = personalSundayPlan.date ? formatShortDate(personalSundayPlan.date) : "";
+  const heading = dateLabel ? `Cantos de Domingo ${dateLabel}` : "Cantos de Domingo";
+  const lines = personalSundayPlan.slots.flatMap((slot) => {
+    const selectedSongs = getSongsForSundaySlot(slot);
+    return selectedSongs.map((song, index) => {
+      const label = index === 0 ? `${SUNDAY_SHARE_LABELS[slot.moment] || slot.moment} - ` : "  - ";
+      return `${label}${formatSongShareTitle(song)}`;
+    });
+  });
+
+  if (personalSundayPlan.notes) {
+    lines.push("");
+    lines.push(personalSundayPlan.notes);
+  }
+
+  return [heading, "", ...lines].join("\n").trim();
+}
+
+function getSongsForSundaySlot(slot) {
+  if (!slot) return [];
+  const ids = Array.isArray(slot.songIds)
+    ? slot.songIds
+    : slot.songId
+      ? [slot.songId]
+      : [];
+  return ids
+    .map((songId) => appData.songs.find((song) => song.id === songId))
+    .filter(Boolean);
+}
+
+function formatSongShareTitle(song) {
+  const number = song.songNumber !== "" && song.songNumber !== undefined ? `#${song.songNumber} ` : "";
+  return `${number}${song.title || "Sin titulo"}`.trim();
+}
+
+function formatSongOption(song) {
+  const number = song.songNumber !== "" && song.songNumber !== undefined ? `N. ${song.songNumber} - ` : "";
+  const moment = getSongMoment(song) ? ` / ${getSongMoment(song)}` : "";
+  return `${number}${song.title || "Sin titulo"} (${getSongMassStatus(song)}${moment})`;
+}
+
+function getSongMassStatus(song) {
+  return SONG_MASS_STATUSES.includes(song && song.massStatus) ? song.massStatus : "Permitida";
+}
+
+function renderSongStatusBadge(song) {
+  const status = getSongMassStatus(song);
+  const className = status === "No permitida" ? "status-bad" : "status-ok";
+  return `<span class="status-badge ${className}">${escapeHtml(status)}</span>`;
 }
 
 function toggleFavoriteSong(songId) {
@@ -810,9 +994,10 @@ function toggleFavoriteSong(songId) {
 function publicSubtitle(key) {
   const subtitles = {
     songs: "Letras y notas musicales agregadas por el administrador.",
-    readings: "Lecturas, salmos y reflexiones disponibles para el coro.",
+    readings: "Lecturas, salmos y reflexiones guardadas por fecha.",
     events: "Agenda general con hora, lugar y nota.",
-    members: "Listado de integrantes, miembros y cargos."
+    members: "Listado de integrantes, miembros y cargos.",
+    liturgy: "Tiempos liturgicos, semanas, dias y sugerencias confirmadas."
   };
   return subtitles[key] || "";
 }
@@ -831,6 +1016,7 @@ function renderMembersPublicTable(items) {
             <th>Tipo</th>
             <th>Cargo</th>
             <th>Grupo liturgico</th>
+            <th>Estado</th>
           </tr>
         </thead>
         <tbody>
@@ -839,7 +1025,8 @@ function renderMembersPublicTable(items) {
               <td>${escapeHtml(member.name || "Sin nombre")}</td>
               <td>${escapeHtml(member.memberType || "")}</td>
               <td>${escapeHtml(member.role || "")}</td>
-              <td>${escapeHtml(member.group || "")}</td>
+              <td>${escapeHtml(member.group || "No")}</td>
+              <td>${escapeHtml(member.status || "")}</td>
             </tr>
           `).join("")}
         </tbody>
@@ -866,6 +1053,7 @@ function renderSundayPlan() {
         ${personalSundayPlan.notes ? `<p>${escapeHtml(personalSundayPlan.notes)}</p>` : `<p>Esta seleccion se guarda solo en este celular.</p>`}
       </div>
       ${renderSundayPersonalEditor()}
+      ${renderSundaySharePanel(planSongs)}
       <div class="section-title compact-title">
         <div>
           <p class="eyebrow">Canciones escogidas</p>
@@ -903,6 +1091,23 @@ function renderSundayPersonalEditor() {
   `;
 }
 
+function renderSundaySharePanel(planSongs) {
+  const shareText = buildSundayShareText();
+  const disabled = planSongs.length ? "" : "disabled";
+  return `
+    <section class="admin-section share-panel">
+      <h3>Vista para WhatsApp</h3>
+      <p class="help-text">Asi se manda rapido al grupo del coro, parecido al formato que usan en WhatsApp.</p>
+      <pre class="share-preview">${escapeHtml(shareText)}</pre>
+      <div class="button-row">
+        <button class="primary-button" type="button" data-share-sunday ${disabled}>Compartir repertorio</button>
+        <button class="secondary-button" type="button" data-copy-sunday ${disabled}>Copiar texto</button>
+        <button class="secondary-button" type="button" data-download-sunday-pdf ${disabled}>Descargar repertorio PDF</button>
+      </div>
+    </section>
+  `;
+}
+
 function renderSundayEmpty() {
   return `
     <div class="empty-state">
@@ -920,8 +1125,9 @@ function renderSundayPlanCards(items) {
         <article class="card">
           <span class="tag">${escapeHtml(moment)}</span>
           <h3>${escapeHtml(song.title || "Sin titulo")}</h3>
-          <p>${escapeHtml(song.category || "Sin categoria")}</p>
+          <p>${song.songNumber !== "" && song.songNumber !== undefined ? `N. ${escapeHtml(song.songNumber)}` : "Cancion escogida"}</p>
           <div class="card-meta">
+            ${renderSongStatusBadge(song)}
             <button class="secondary-button" type="button" data-song-detail="${escapeAttribute(song.id)}">Ver letra</button>
           </div>
         </article>
@@ -936,9 +1142,11 @@ function renderPublicCard(key, item) {
     return `
       <article class="card">
         <h3>${escapeHtml(item.title || "Sin titulo")}</h3>
-        <p>${escapeHtml(item.category || "Sin categoria")}</p>
+        <p>${getSongMoment(item) ? escapeHtml(getSongMoment(item)) : "Sin momento"}</p>
         <div class="card-meta">
+          ${item.songNumber !== "" && item.songNumber !== undefined ? `<span class="tag">N. ${escapeHtml(item.songNumber)}</span>` : ""}
           ${getSongMoment(item) ? `<span class="tag">${escapeHtml(getSongMoment(item))}</span>` : ""}
+          ${renderSongStatusBadge(item)}
           ${item.musicalNotes ? `<span class="tag">Notas musicales</span>` : ""}
           ${isFavorite ? `<span class="tag">Favorito</span>` : ""}
           <button class="secondary-button" type="button" data-toggle-favorite="${escapeAttribute(item.id)}">${isFavorite ? "Quitar favorito" : "Favorito"}</button>
@@ -969,7 +1177,8 @@ function renderPublicCard(key, item) {
         <p>${escapeHtml(item.role || "Sin cargo o rol")}</p>
         <div class="card-meta">
           ${item.memberType ? `<span class="tag">${escapeHtml(item.memberType)}</span>` : ""}
-          ${item.group ? `<span class="tag">${escapeHtml(item.group)}</span>` : ""}
+          ${item.group ? `<span class="tag">Grupo liturgico: ${escapeHtml(item.group)}</span>` : ""}
+          ${item.status ? `<span class="tag">${escapeHtml(item.status)}</span>` : ""}
         </div>
         ${item.note ? `<p class="help-text">${escapeHtml(item.note)}</p>` : ""}
       </article>
@@ -980,16 +1189,46 @@ function renderPublicCard(key, item) {
     return `
       <article class="card">
         <h3>${escapeHtml(item.title || "Sin titulo")}</h3>
-        <p>${escapeHtml(item.reference || item.date || "Sin referencia")}</p>
+        <p>${escapeHtml(item.date ? formatDateOnly(item.date) : "Sin fecha")}</p>
         <div class="card-meta">
-          ${item.type ? `<span class="tag">${escapeHtml(item.type)}</span>` : ""}
+          ${item.recommendedPsalm ? `<span class="tag">Salmo: ${escapeHtml(item.recommendedPsalm)}</span>` : ""}
         </div>
-        ${item.text ? `<p class="help-text">${escapeHtml(item.text)}</p>` : ""}
+        ${renderReadingSummary(item)}
+      </article>
+    `;
+  }
+
+  if (key === "liturgy") {
+    const dateRange = formatDateRange(item.startDate, item.endDate);
+    return `
+      <article class="card liturgy-card ${liturgySeasonClass(item.season)}">
+        <h3>${escapeHtml(item.title || "Sin celebracion")}</h3>
+        <p>${escapeHtml(dateRange || "Sin fecha")}</p>
+        <div class="card-meta">
+          ${item.season ? `<span class="tag season-tag">${escapeHtml(item.season)}</span>` : ""}
+        </div>
+        ${item.suggestions ? `<h4>Sugerencias</h4><p>${escapeHtml(item.suggestions)}</p>` : ""}
+        ${item.notes ? `<p class="help-text">${escapeHtml(item.notes)}</p>` : ""}
       </article>
     `;
   }
 
   return "";
+}
+
+function liturgySeasonClass(season) {
+  const key = foldText(season).replace(/\s+/g, "-");
+  const map = {
+    adviento: "season-advent",
+    navidad: "season-christmas",
+    cuaresma: "season-lent",
+    "semana-santa": "season-holy-week",
+    pascua: "season-easter",
+    "tiempo-ordinario": "season-ordinary",
+    "fiesta-mariana": "season-marian",
+    solemnidad: "season-solemnity"
+  };
+  return map[key] || "season-other";
 }
 
 function renderSongDetail(songId) {
@@ -1011,8 +1250,9 @@ function renderSongDetail(songId) {
       </div>
       <h2>${escapeHtml(song.title || "Sin titulo")}</h2>
       <div class="card-meta">
-        ${song.category ? `<span class="tag">${escapeHtml(song.category)}</span>` : ""}
+        ${song.songNumber !== "" && song.songNumber !== undefined ? `<span class="tag">N. ${escapeHtml(song.songNumber)}</span>` : ""}
         ${getSongMoment(song) ? `<span class="tag">${escapeHtml(getSongMoment(song))}</span>` : ""}
+        ${renderSongStatusBadge(song)}
         ${isFavorite ? `<span class="tag">Favorito</span>` : ""}
         ${song.musicalNotes ? `<span class="tag">Notas musicales</span>` : ""}
       </div>
@@ -1042,6 +1282,7 @@ function renderAdmin() {
           ${adminTab("readings", "Lecturas y Salmos")}
           ${adminTab("events", "Eventos")}
           ${adminTab("members", "Miembros")}
+          ${adminTab("liturgy", "Calendario")}
         </nav>
         <div class="admin-workspace" id="adminWorkspace">
           ${currentAdminTab === "settings" ? renderSettingsAdmin() : renderEntityAdmin(currentAdminTab)}
@@ -1106,17 +1347,47 @@ function renderSettingsAdmin() {
 
 function renderSundaySlotField(moment, index) {
   const slot = personalSundayPlan.slots.find((item) => item.moment === moment) || {};
+  const selectedIds = Array.isArray(slot.songIds)
+    ? slot.songIds
+    : slot.songId
+      ? [slot.songId]
+      : [];
+  const options = getSongsSortedByTitle().map((song) => (
+    `<option value="${escapeAttribute(song.id)}">${escapeHtml(formatSongOption(song))}</option>`
+  )).join("");
   return `
-    <div class="form-field">
-      <label for="sundaySlot${index}">${escapeHtml(moment)}</label>
-      <select id="sundaySlot${index}" name="slot-${index}">
-        <option value="">Sin cancion</option>
-        ${getSongsSortedByTitle().map((song) => (
-          `<option value="${escapeAttribute(song.id)}" ${song.id === slot.songId ? "selected" : ""}>${escapeHtml(song.title || "Sin titulo")}</option>`
-        )).join("")}
-      </select>
+    <div class="form-field sunday-slot-field">
+      <label>${escapeHtml(moment)}</label>
+      ${[0, 1, 2].map((slotIndex) => {
+        const selectId = `sundaySlot${index}-${slotIndex}`;
+        const selectedId = selectedIds[slotIndex] || "";
+        const selectedSong = appData.songs.find((song) => song.id === selectedId);
+        return `
+          <div class="mini-select">
+            <select id="${selectId}" name="slot-${index}-${slotIndex}" aria-label="${escapeAttribute(`${moment} ${slotIndex + 1}`)}">
+              <option value="">Sin cancion</option>
+              ${options.replace(`value="${escapeAttribute(selectedId)}"`, `value="${escapeAttribute(selectedId)}" selected`)}
+            </select>
+            ${selectedSong ? `<div class="field-hint">${renderSongStatusBadge(selectedSong)}</div>` : ""}
+          </div>
+        `;
+      }).join("")}
     </div>
   `;
+}
+
+function renderReadingSummary(item) {
+  const parts = [
+    item.firstReading ? `Primera lectura: ${item.firstReading}` : "",
+    item.psalm ? `Salmo: ${item.psalm}` : "",
+    item.secondReading ? `Segunda lectura: ${item.secondReading}` : "",
+    item.gospel ? `Evangelio: ${item.gospel}` : "",
+    item.reflection ? `Reflexion: ${item.reflection}` : "",
+    item.notes ? `Notas: ${item.notes}` : ""
+  ].filter(Boolean);
+
+  if (!parts.length) return "";
+  return `<p class="help-text reading-summary">${escapeHtml(parts.join("\n\n"))}</p>`;
 }
 
 function renderEntityAdmin(key) {
@@ -1179,7 +1450,9 @@ function renderField(field, values) {
     : field.type === "date" && field.defaultToday && !value
       ? todayLocalDateString()
       : value;
-  const numberAttrs = field.type === "number" ? 'min="0" step="0.01"' : "";
+  const numberAttrs = field.type === "number"
+    ? `min="${field.min ?? 0}" max="${field.max ?? ""}" step="${field.step ?? 1}"`
+    : "";
   return `
     <div class="${classes}">
       <label for="${field.name}">${field.label}</label>
@@ -1252,17 +1525,18 @@ function saveEntity(key, form) {
   }
 
   const editId = editIds[key];
+  const normalizedValues = normalizeEntityValues(key, values);
   if (editId) {
     appData[key] = appData[key].map((item) => (
       item.id === editId
-        ? { ...item, ...values, updatedAt: new Date().toISOString() }
+        ? { ...item, ...normalizedValues, updatedAt: new Date().toISOString() }
         : item
     ));
     editIds[key] = null;
   } else {
     appData[key].push({
       id: createId(key),
-      ...values,
+      ...normalizedValues,
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString()
     });
@@ -1272,15 +1546,28 @@ function saveEntity(key, form) {
   renderAdmin();
 }
 
+function normalizeEntityValues(key, values) {
+  if (key === "songs") return normalizeSong(values);
+  if (key === "readings") return normalizeReading(values);
+  if (key === "members") return normalizeMember(values);
+  if (key === "liturgy") return normalizeLiturgy(values);
+  return values;
+}
+
 function savePersonalSundayPlan(form) {
   const formData = new FormData(form);
   personalSundayPlan = {
     date: cleanValue(formData.get("date")),
     notes: cleanValue(formData.get("notes")),
-    slots: SUNDAY_PLAN_MOMENTS.map((moment, index) => ({
-      moment,
-      songId: cleanValue(formData.get(`slot-${index}`))
-    }))
+    slots: SUNDAY_PLAN_MOMENTS.map((moment, index) => {
+      const songIds = [0, 1, 2]
+        .map((slotIndex) => cleanValue(formData.get(`slot-${index}-${slotIndex}`)))
+        .filter(Boolean);
+      return {
+        moment,
+        songIds: [...new Set(songIds)]
+      };
+    })
   };
   persistPersonalSundayPlan();
   renderSundayPlan();
@@ -1294,6 +1581,109 @@ function clearPersonalSundayPlan() {
   localStorage.removeItem(SUNDAY_PERSONAL_KEY);
   renderSundayPlan();
   scrollAppToTop();
+}
+
+async function shareSundayRepertoire() {
+  const text = buildSundayShareText();
+  if (!getSundayPlanSongs().length) {
+    alert("Primero guarda al menos una cancion en Domingo.");
+    return;
+  }
+
+  if (navigator.share) {
+    try {
+      await navigator.share({ text });
+      return;
+    } catch (error) {
+      if (error && error.name === "AbortError") return;
+    }
+  }
+
+  window.open(`https://wa.me/?text=${encodeURIComponent(text)}`, "_blank", "noopener");
+}
+
+async function copySundayRepertoire() {
+  const text = buildSundayShareText();
+  if (!getSundayPlanSongs().length) {
+    alert("Primero guarda al menos una cancion en Domingo.");
+    return;
+  }
+
+  try {
+    await navigator.clipboard.writeText(text);
+    alert("Repertorio copiado. Puedes pegarlo en WhatsApp.");
+  } catch (error) {
+    const area = document.createElement("textarea");
+    area.value = text;
+    document.body.appendChild(area);
+    area.select();
+    document.execCommand("copy");
+    area.remove();
+    alert("Repertorio copiado. Puedes pegarlo en WhatsApp.");
+  }
+}
+
+function downloadSundayPdf() {
+  const planSongs = getSundayPlanSongs();
+  if (!planSongs.length) {
+    alert("Primero guarda al menos una cancion en Domingo.");
+    return;
+  }
+
+  const printWindow = window.open("", "_blank", "noopener");
+  if (!printWindow) {
+    alert("Permite ventanas emergentes para descargar o imprimir el repertorio.");
+    return;
+  }
+
+  const dateLabel = personalSundayPlan.date ? formatShortDate(personalSundayPlan.date) : "Sin fecha";
+  const rows = planSongs.map(({ moment, song }) => `
+    <tr>
+      <td>${escapeHtml(SUNDAY_SHARE_LABELS[moment] || moment)}</td>
+      <td>${escapeHtml(moment)}</td>
+      <td>${song.songNumber !== "" && song.songNumber !== undefined ? escapeHtml(song.songNumber) : ""}</td>
+      <td>${escapeHtml(song.title || "Sin titulo")}</td>
+      <td>${escapeHtml(getSongMassStatus(song))}</td>
+    </tr>
+  `).join("");
+
+  printWindow.document.write(`
+    <!doctype html>
+    <html lang="es">
+      <head>
+        <meta charset="utf-8">
+        <title>Repertorio Domingo</title>
+        <style>
+          body { font-family: Arial, sans-serif; margin: 28px; color: #050505; }
+          h1 { margin: 0 0 4px; color: #1c19ff; }
+          p { margin: 0 0 18px; color: #5f6368; }
+          table { width: 100%; border-collapse: collapse; }
+          th, td { border: 1px solid #d9dce2; padding: 10px; text-align: left; vertical-align: top; }
+          th { background: #eef0ff; }
+          .notes { margin-top: 18px; white-space: pre-wrap; }
+        </style>
+      </head>
+      <body>
+        <h1>Cantos de Domingo ${escapeHtml(dateLabel)}</h1>
+        <p>Coro Paz en Jesús</p>
+        <table>
+          <thead>
+            <tr>
+              <th>Letra</th>
+              <th>Momento</th>
+              <th>N.</th>
+              <th>Cancion</th>
+              <th>Estado</th>
+            </tr>
+          </thead>
+          <tbody>${rows}</tbody>
+        </table>
+        ${personalSundayPlan.notes ? `<div class="notes"><strong>Notas:</strong><br>${escapeHtml(personalSundayPlan.notes)}</div>` : ""}
+        <script>window.onload = () => { window.print(); };</script>
+      </body>
+    </html>
+  `);
+  printWindow.document.close();
 }
 
 function deleteEntity(key, id) {
@@ -1477,7 +1867,7 @@ function getSongMoment(song) {
 }
 
 function inferSongMoment(song) {
-  const text = `${song.category || ""} ${song.title || ""}`.toLowerCase();
+  const text = foldText(`${song.title || ""} ${song.notes || ""} ${song.musicalNotes || ""}`);
   if (text.includes("entrada") || text.includes("bienvenida")) return "Entrada";
   if (text.includes("perdon") || text.includes("perdÃ³n")) return "Perdon";
   if (text.includes("gloria")) return "Gloria";
@@ -1493,10 +1883,18 @@ function inferSongMoment(song) {
   return "";
 }
 
+function foldText(value) {
+  return String(value || "")
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .toLowerCase()
+    .trim();
+}
+
 function fixJesusAccent(value) {
   return String(value || "")
     .replaceAll("JesÃºs", "Jesús")
-    .replaceAll("Jes?s", "Jesús")
+    .replaceAll(`Jes${"?"}s`, "Jesús")
     .replaceAll("Jesus", "Jesús");
 }
 
@@ -1516,6 +1914,23 @@ function formatDateOnly(value) {
   return new Intl.DateTimeFormat("es-US", {
     dateStyle: "full"
   }).format(date);
+}
+
+function formatShortDate(value) {
+  const date = parseDateOnly(value);
+  if (!date) return String(value || "");
+  return new Intl.DateTimeFormat("es-US", {
+    day: "numeric",
+    month: "numeric",
+    year: "numeric"
+  }).format(date);
+}
+
+function formatDateRange(startValue, endValue) {
+  const start = startValue ? formatDateOnly(startValue) : "";
+  const end = endValue ? formatDateOnly(endValue) : "";
+  if (start && end && start !== end) return `${start} - ${end}`;
+  return start || end;
 }
 
 function parseDateOnly(value) {

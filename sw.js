@@ -1,4 +1,4 @@
-const CACHE_NAME = "coro-paz-en-jesus-v3-7-0";
+const CACHE_NAME = "coro-paz-en-jesus-v3-9-0";
 const APP_SHELL = [
   "./",
   "index.html",

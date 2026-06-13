@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta name="theme-color" content="#0f766e" />
+    <meta name="theme-color" content="#1c19ff" />
     <title>Coro Paz en Jes&uacute;s</title>
     <link rel="manifest" href="manifest.webmanifest" />
     <link rel="icon" href="assets/logo-coro.jpeg" />
@@ -41,6 +41,7 @@
         </button>
         <div id="moreMenu" class="more-menu hidden">
           <button class="more-menu-item" type="button" data-view="sunday">Domingo</button>
+          <button class="more-menu-item" type="button" data-view="liturgy">Calendario</button>
           <button class="more-menu-item" type="button" data-view="events">Eventos</button>
           <button class="more-menu-item" type="button" data-view="members">Miembros</button>
           <button class="more-menu-item" type="button" data-view="admin">Admin</button>
@@ -52,6 +53,10 @@
         <button class="nav-button nav-extra" type="button" data-view="events">
           <span class="nav-icon">EV</span>
           <span>Eventos</span>
+        </button>
+        <button class="nav-button nav-extra" type="button" data-view="liturgy">
+          <span class="nav-icon">CL</span>
+          <span>Calendario</span>
         </button>
         <button class="nav-button nav-extra" type="button" data-view="members">
           <span class="nav-icon">MI</span>
@@ -70,11 +75,12 @@
             <h1 id="screenTitle">Coro Paz en Jes&uacute;s</h1>
           </div>
           <div class="top-actions">
+            <button id="themeToggle" class="theme-button" type="button" aria-label="Cambiar a modo oscuro">Oscuro</button>
             <button id="eventBell" class="bell-button" type="button" aria-label="Avisos de eventos de hoy">
               Avisos
               <span id="eventCount" class="bell-count hidden">0</span>
             </button>
-            <span id="dataStatus" class="status-pill">Versi&oacute;n 3.7.0</span>
+            <span id="dataStatus" class="status-pill">Versi&oacute;n 3.9.0</span>
           </div>
         </header>
 

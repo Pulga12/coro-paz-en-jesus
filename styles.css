@@ -6,11 +6,48 @@
   --paper: #ffffff;
   --panel: #ffffff;
   --soft: #f2f5ff;
+  --control: #ffffff;
+  --topbar-bg: rgba(255, 255, 255, 0.94);
+  --tag-bg: #eef0ff;
+  --lyrics-bg: #f7f8ff;
+  --notice-bg: #eef4ff;
+  --notice-ink: #21345f;
   --blue: #1c19ff;
   --blue-dark: #06009c;
+  --on-blue: #ffffff;
   --black: #050505;
   --danger: #050505;
+  --ok-bg: #ecfff3;
+  --ok: #087a34;
+  --bad-bg: #fff0f0;
+  --bad: #b00020;
   --shadow: 0 18px 45px rgba(5, 5, 5, 0.12);
+}
+
+html[data-theme="dark"] {
+  color-scheme: dark;
+  --ink: #f7f8ff;
+  --muted: #b8becb;
+  --line: #303447;
+  --paper: #08090d;
+  --panel: #12141d;
+  --soft: #1a1d2b;
+  --control: #171a25;
+  --topbar-bg: rgba(8, 9, 13, 0.94);
+  --tag-bg: #20243a;
+  --lyrics-bg: #151824;
+  --notice-bg: #151d35;
+  --notice-ink: #dfe6ff;
+  --blue: #6f6cff;
+  --blue-dark: #d8d7ff;
+  --on-blue: #050505;
+  --black: #f7f8ff;
+  --danger: #ffb4bd;
+  --ok-bg: #102a1a;
+  --ok: #73e69e;
+  --bad-bg: #351019;
+  --bad: #ff8fa3;
+  --shadow: 0 18px 45px rgba(0, 0, 0, 0.42);
 }
 
 * {
@@ -37,7 +74,7 @@ body {
   display: grid;
   place-items: center;
   padding: 28px;
-  background: #ffffff;
+  background: var(--paper);
   transition: opacity 220ms ease, visibility 220ms ease;
 }
 
@@ -99,7 +136,7 @@ body {
   height: 8px;
   overflow: hidden;
   border-radius: 999px;
-  background: #eef0ff;
+  background: var(--tag-bg);
 }
 
 .update-bar span {
@@ -163,7 +200,7 @@ button {
   gap: 8px;
   padding: 14px;
   border-right: 1px solid var(--line);
-  background: #ffffff;
+  background: var(--panel);
 }
 
 .sidebar-logo {
@@ -172,7 +209,7 @@ button {
   margin: 0 auto 10px;
   border-radius: 50%;
   object-fit: cover;
-  border: 3px solid #fff;
+  border: 3px solid var(--control);
   box-shadow: 0 8px 22px rgba(5, 5, 5, 0.18);
 }
 
@@ -209,7 +246,7 @@ button {
 
 .more-menu-item:hover,
 .more-menu-item.active {
-  background: #f2f4ff;
+  background: var(--soft);
   color: var(--blue);
 }
 
@@ -220,7 +257,7 @@ button {
   place-items: center;
   border-radius: 50%;
   color: var(--blue);
-  background: #eef0ff;
+  background: var(--tag-bg);
   font-size: 11px;
   letter-spacing: 0;
 }
@@ -229,7 +266,7 @@ button {
 .nav-button:hover {
   color: var(--ink);
   border-color: #d7dbff;
-  background: #f2f4ff;
+  background: var(--soft);
 }
 
 .main-shell {
@@ -247,7 +284,7 @@ button {
   min-height: 86px;
   padding: 18px 34px;
   border-bottom: 1px solid var(--line);
-  background: rgba(255, 255, 255, 0.94);
+  background: var(--topbar-bg);
   backdrop-filter: blur(12px);
 }
 
@@ -278,7 +315,7 @@ h1 {
   border-radius: 999px;
   padding: 9px 14px;
   color: var(--blue-dark);
-  background: #eef0ff;
+  background: var(--tag-bg);
   font-size: 13px;
   font-weight: 800;
 }
@@ -290,14 +327,15 @@ h1 {
   gap: 10px;
 }
 
-.bell-button {
+.bell-button,
+.theme-button {
   position: relative;
   min-height: 40px;
   border: 1px solid var(--line);
   border-radius: 999px;
   padding: 9px 14px;
   color: var(--ink);
-  background: #ffffff;
+  background: var(--control);
   font-size: 13px;
   font-weight: 800;
 }
@@ -309,7 +347,7 @@ h1 {
   margin-left: 7px;
   place-items: center;
   border-radius: 999px;
-  color: #ffffff;
+  color: var(--on-blue);
   background: var(--blue);
   font-size: 12px;
 }
@@ -341,7 +379,7 @@ h1 {
   border-radius: 50%;
   object-fit: cover;
   border: 8px solid rgba(255, 255, 255, 0.9);
-  background: #ffffff;
+  background: var(--control);
 }
 
 .hero h2 {
@@ -365,7 +403,7 @@ h1 {
 }
 
 .stats-grid {
-  grid-template-columns: repeat(5, minmax(0, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
   margin: 18px 0 32px;
 }
 
@@ -452,9 +490,31 @@ h1 {
   border-radius: 999px;
   padding: 5px 10px;
   color: var(--blue-dark);
-  background: #eef0ff;
+  background: var(--tag-bg);
   font-size: 12px;
   font-weight: 800;
+}
+
+.status-badge {
+  display: inline-flex;
+  align-items: center;
+  min-height: 28px;
+  border-radius: 999px;
+  padding: 5px 10px;
+  font-size: 12px;
+  font-weight: 900;
+}
+
+.status-ok {
+  color: var(--ok);
+  background: var(--ok-bg);
+  border: 1px solid rgba(8, 122, 52, 0.2);
+}
+
+.status-bad {
+  color: var(--bad);
+  background: var(--bad-bg);
+  border: 1px solid rgba(176, 0, 32, 0.2);
 }
 
 .toolbar {
@@ -472,7 +532,8 @@ h1 {
   border: 1px solid var(--line);
   border-radius: 8px;
   padding: 10px 12px;
-  background: #ffffff;
+  background: var(--control);
+  color: var(--ink);
 }
 
 .button-row {
@@ -493,26 +554,33 @@ h1 {
 
 .primary-button {
   border: 1px solid var(--blue);
-  color: #ffffff;
+  color: var(--on-blue);
   background: var(--blue);
 }
 
 .secondary-button {
   border: 1px solid var(--line);
   color: var(--ink);
-  background: #ffffff;
+  background: var(--control);
 }
 
 .secondary-button.active-filter {
   border-color: var(--blue);
   color: var(--blue-dark);
-  background: #eef0ff;
+  background: var(--tag-bg);
+}
+
+.primary-button:disabled,
+.secondary-button:disabled,
+.danger-button:disabled {
+  cursor: not-allowed;
+  opacity: 0.55;
 }
 
 .danger-button {
-  border: 1px solid #050505;
+  border: 1px solid var(--line);
   color: var(--danger);
-  background: #ffffff;
+  background: var(--control);
 }
 
 .song-detail,
@@ -533,7 +601,7 @@ h1 {
   margin-top: 20px;
   padding: 18px;
   border-radius: 8px;
-  background: #f7f8ff;
+  background: var(--lyrics-bg);
   line-height: 1.7;
   white-space: pre-wrap;
 }
@@ -559,6 +627,117 @@ h1 {
   margin-top: 12px;
 }
 
+.share-preview {
+  min-height: 180px;
+  margin: 12px 0 16px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 16px;
+  color: var(--ink);
+  background: var(--lyrics-bg);
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 16px;
+  line-height: 1.55;
+  white-space: pre-wrap;
+}
+
+.sunday-slot-field {
+  align-content: start;
+}
+
+.mini-select {
+  display: grid;
+  gap: 5px;
+}
+
+.field-hint {
+  min-height: 28px;
+}
+
+.reading-summary {
+  margin-top: 12px !important;
+}
+
+.liturgy-card {
+  --season-color: var(--blue);
+  --season-bg: var(--tag-bg);
+  border-left: 8px solid var(--season-color);
+  background:
+    linear-gradient(90deg, var(--season-bg), transparent 58%),
+    var(--panel);
+}
+
+.liturgy-card .season-tag {
+  color: var(--season-color);
+  background: var(--season-bg);
+}
+
+.season-advent,
+.season-lent {
+  --season-color: #6f3bbd;
+  --season-bg: #f3edff;
+}
+
+.season-holy-week {
+  --season-color: #b00020;
+  --season-bg: #fff0f0;
+}
+
+.season-easter,
+.season-solemnity {
+  --season-color: #9a6a00;
+  --season-bg: #fff6d8;
+}
+
+.season-ordinary {
+  --season-color: #087a34;
+  --season-bg: #ecfff3;
+}
+
+.season-christmas,
+.season-marian {
+  --season-color: #0b5cad;
+  --season-bg: #eef7ff;
+}
+
+.season-other {
+  --season-color: #4b5563;
+  --season-bg: #f3f4f6;
+}
+
+html[data-theme="dark"] .season-advent,
+html[data-theme="dark"] .season-lent {
+  --season-color: #c8a8ff;
+  --season-bg: rgba(111, 59, 189, 0.18);
+}
+
+html[data-theme="dark"] .season-holy-week {
+  --season-color: #ff9cab;
+  --season-bg: rgba(176, 0, 32, 0.18);
+}
+
+html[data-theme="dark"] .season-easter,
+html[data-theme="dark"] .season-solemnity {
+  --season-color: #ffd166;
+  --season-bg: rgba(154, 106, 0, 0.2);
+}
+
+html[data-theme="dark"] .season-ordinary {
+  --season-color: #73e69e;
+  --season-bg: rgba(8, 122, 52, 0.18);
+}
+
+html[data-theme="dark"] .season-christmas,
+html[data-theme="dark"] .season-marian {
+  --season-color: #96caff;
+  --season-bg: rgba(11, 92, 173, 0.2);
+}
+
+html[data-theme="dark"] .season-other {
+  --season-color: #cbd5e1;
+  --season-bg: rgba(148, 163, 184, 0.16);
+}
+
 .admin-layout {
   display: grid;
   grid-template-columns: 260px minmax(0, 1fr);
@@ -569,7 +748,7 @@ h1 {
 .admin-workspace {
   border: 1px solid var(--line);
   border-radius: 8px;
-  background: #ffffff;
+  background: var(--panel);
 }
 
 .admin-menu {
@@ -645,7 +824,7 @@ h1 {
   border: 1px solid var(--line);
   border-radius: 8px;
   padding: 10px 11px;
-  background: #ffffff;
+  background: var(--control);
   color: var(--ink);
 }
 
@@ -677,7 +856,7 @@ h1 {
 
 .data-table th {
   color: var(--muted);
-  background: #f5f6ff;
+  background: var(--soft);
   font-size: 12px;
   text-transform: uppercase;
 }
@@ -707,7 +886,7 @@ h1 {
   height: 118px;
   border-radius: 50%;
   object-fit: cover;
-  border: 4px solid #ffffff;
+  border: 4px solid var(--control);
   box-shadow: 0 8px 24px rgba(5, 5, 5, 0.16);
 }
 
@@ -727,7 +906,7 @@ h1 {
   padding: 24px;
   border: 1px solid var(--line);
   border-radius: 8px;
-  background: #ffffff;
+  background: var(--panel);
 }
 
 .login-card h2 {
@@ -739,8 +918,8 @@ h1 {
   border-left: 4px solid var(--blue);
   border-radius: 8px;
   padding: 12px;
-  background: #eef4ff;
-  color: #21345f;
+  background: var(--notice-bg);
+  color: var(--notice-ink);
 }
 
 .hidden {
@@ -786,7 +965,7 @@ h1 {
     border: 1px solid var(--line);
     border-radius: 8px;
     padding: 8px;
-    background: #ffffff;
+    background: var(--panel);
     box-shadow: var(--shadow);
   }
 

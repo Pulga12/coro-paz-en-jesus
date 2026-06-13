@@ -1,6 +1,6 @@
 {
-  "version": "3.7.0",
-  "updatedAt": "2026-06-13T15:35:55.988Z",
+  "version": "3.9.0",
+  "updatedAt": "2026-06-13T22:04:13.854Z",
   "settings": {
     "choirName": "Coro Paz en Jesús",
     "subtitle": "Aplicación del Coro Paz en Jesús",
@@ -10,247 +10,1225 @@
     {
       "id": "songs-1781317894678-05635328523d88",
       "title": "ELLA ES",
-      "category": "Canción mariana / Canto a la Virgen María",
       "musicalNotes": "",
       "lyrics": "Era como la mañana\nY con ella amanecía\nEse sol que al mirarla\nEn sus brazos se dormía\n\nElla es, ella es, ella es María\nElla es, ella es, ella es María\nElla es, ella es, ella es María\n\nLuego de sufrir la muerte\nDe ese hijo que ella amaba\nLlevó en silencio al mundo\nLa verdad de sus palabras\n\nDame tus fuerzas María\nPara que pueda encontrar\nEl camino que en su vida\nDios nos quiso señalar\n\nElla es, ella es, ella es María\nElla es, ella es, ella es María\nElla es, ella es, ella es María\nElla es, ella es, ella es María",
       "notes": "",
       "createdAt": "2026-06-13T02:31:34.679Z",
       "updatedAt": "2026-06-13T02:31:34.679Z",
-      "moment": "Mariano"
+      "moment": "Mariano",
+      "songNumber": "",
+      "massStatus": "Permitida"
     },
     {
       "id": "songs-1781318005766-e9f311b1a17ff8",
       "title": "ANSIAS DE PAZ",
-      "category": "Canto de paz / canto para el rito de la paz",
       "musicalNotes": "",
       "lyrics": "Todos esperan tu paz Señor,\nlos hombres de buena voluntad,\nla paz de un reino que llegará,\npaz de un hogar con fe en ti.\n\nY danos, Oh Jesús danos,\ndanos la paz que solo tú nos puedes dar.\nPaz, paz, paz.",
       "notes": "",
       "createdAt": "2026-06-13T02:33:25.766Z",
       "updatedAt": "2026-06-13T02:33:25.766Z",
-      "moment": "Paz"
+      "moment": "Paz",
+      "songNumber": "",
+      "massStatus": "Permitida"
     },
     {
       "id": "songs-1781318114167-61fe4ae526bb38",
       "title": "ANTE TI SEÑOR",
-      "category": "Canto de entrada / canto de confianza en Dios",
       "musicalNotes": "",
       "lyrics": "Ante ti Señor, mi alma levantaré. (2)\n\nOh mi Dios, (2)\nconfío en ti, confío en ti.\n\nYo te alabo Señor,\nyo te adoro Señor,\nOh mi Dios. (2)\n\nLíbrame Señor,\nde todo peligro. (2)\n\nGuíame Señor,\ny guarda mi alma. (2)",
       "notes": "",
       "createdAt": "2026-06-13T02:35:14.167Z",
       "updatedAt": "2026-06-13T02:35:14.167Z",
-      "moment": "Entrada"
+      "moment": "Entrada",
+      "songNumber": "",
+      "massStatus": "Permitida"
     },
     {
       "id": "songs-1781318199843-cd46a8d588e708",
       "title": "BUSCABA AMOR",
-      "category": "Canto de comunión / canto de amor de Dios",
       "musicalNotes": "",
       "lyrics": "Buscaba amor en el perfume de una flor,\nbuscaba en un árbol la alegría y el amor.\nPero espinas tuvo la flor\ny el árbol fue una cruz.\nYo seguía buscando sin hallar la luz.\n\nBuscaba amor en el canto de un ave,\nbuscaba amor en el sin de amistades.\nPero el canto me aburrió\ny la amistad siempre falló.\nYo perdí la esperanza de hallar amor.\n\nPero un día escuché la historia\nde un amor como nunca oí.\nCristo vino al mundo\ny dio su vida para mí.\n\nY yo sé que me ama a mí,\ny yo sé que te ama a ti.\nY yo sé que me ama a mí,\ny yo sé que él te ama a ti.\n\nAhora yo sé lo que es el amor,\nno es el canto de un ave\nni el aroma de una flor.\nEs la Comunión con Dios,\nsu presencia siento en mí.\n\nY yo sé que me ama a mí,\ny yo sé que te ama a ti.\nY yo sé que me ama a mí,\ny yo sé que él te ama a ti.",
       "notes": "",
       "createdAt": "2026-06-13T02:36:39.843Z",
       "updatedAt": "2026-06-13T02:36:39.843Z",
-      "moment": ""
+      "moment": "Comunion",
+      "songNumber": "",
+      "massStatus": "Permitida"
     },
     {
       "id": "songs-1781318304469-69f87ffd9fd818",
       "title": "CANTA TROVADOR",
-      "category": "Canto de evangelización / canto misionero.",
       "musicalNotes": "",
       "lyrics": "Canta trovador la buena nueva del Señor,\ncanta a todo el mundo el mensaje que él nos dio.\nLleva el evangelio en este cántico de amor,\namémonos hermanos como Cristo nos amó.\n\nCanta, canta trovador, entona esta canción\ny lleva tu cantar al Señor,\ny así todos cantarán\nel canto de hermandad que viene del Señor.\n\nCanta trovador que somos hijos del Señor,\ncanta que si todos nos unimos es mejor.\nQue la iglesia somos uno y todos en amor,\niglesia peregrina que Pedro y Dios fundó.\n\nCanta trovador que el hombre es libre porque Dios,\npuso en nuestras mentes el milagro de su amor.\nLibertad de vida, libertad de vocación,\nla libertad de hacer la paz, la guerra o el amor.",
       "notes": "",
       "createdAt": "2026-06-13T02:38:24.469Z",
       "updatedAt": "2026-06-13T02:38:24.469Z",
-      "moment": ""
+      "moment": "",
+      "songNumber": "",
+      "massStatus": "Permitida"
     },
     {
       "id": "songs-1781318336956-03f7214979cc78",
       "title": "ESTE ES EL DÍA Y EL LUGAR",
-      "category": "Canto de alabanza / canto de entrada",
       "musicalNotes": "",
       "lyrics": "Este es el día y el lugar,\nDios está aquí y te quiere hablar.\nAbre las puertas, escúchalo\ny déjalo entrar.\n\nAlabanzas al Señor\npor sus obras, por sus dones.\nAlabanzas al Señor\npor la vida y su palabra.\nY dar gracias al Señor, nuestro Dios,\npor su amor.",
       "notes": "",
       "createdAt": "2026-06-13T02:38:56.956Z",
       "updatedAt": "2026-06-13T02:38:56.956Z",
-      "moment": "Entrada"
+      "moment": "Entrada",
+      "songNumber": "",
+      "massStatus": "Permitida"
     },
     {
       "id": "songs-1781318417079-18e86f01d5222",
       "title": "ESTE VINO Y ESTE PAN",
-      "category": "Canto de ofertorio / presentación de dones",
       "musicalNotes": "",
       "lyrics": "Este vino y este pan\nte ofrecemos Señor,\npara que en tu bondad\nlos conviertas en ofrenda de amor.\n\nNuestros sueños, nuestro afán\ny nuestro corazón,\nhoy ponemos a tus pies\ny a tus ojos en humilde oración.\n\nEste vino y este pan\nse convertirán en ti,\nalimento de tu amor,\nSeñor, por mí.\n\nEsta vida que me das\nte la ofrezco en verdad, en verdad.\nEn tus manos tómala\ny transfórmala según tu voluntad.",
       "notes": "",
       "createdAt": "2026-06-13T02:40:17.079Z",
       "updatedAt": "2026-06-13T02:40:17.079Z",
-      "moment": "Ofertorio"
+      "moment": "Ofertorio",
+      "songNumber": "",
+      "massStatus": "Permitida"
     },
     {
       "id": "songs-1781318464072-4f06b56c15325",
       "title": "HOLA, CANCIÓN DE BIENVENIDA",
-      "category": "Canto de bienvenida / canto de entrada",
       "musicalNotes": "",
       "lyrics": "Hoy me dijo mi madre, ¡levántate ya!\nPero si hoy es domingo, no hay que madrugar.\n\nEste es un día especial, nos vamos a reunir,\nla familia y los amigos lo vamos a compartir.\n\nCORO\nHola, hola, estamos aquí, estamos aquí.\nHola, hola, te queremos a ti, te queremos a ti.\n\nEn este día de fiesta en la casa de Dios,\ncantemos en la Eucaristía, recemos por el amor.\n\nLos jóvenes de la confirmación,\nsus padres, la gente mayor.\n\nCORO\nVenimos todos unidos a esta celebración.\nHola, hola, estamos aquí, estamos aquí.\nHola, hola, te queremos a ti, te queremos a ti.\n\nEstamos en San Patricio, en la casa de Dios.\nCantemos en la Eucaristía, recemos por el amor.\n\nHola…",
       "notes": "",
       "createdAt": "2026-06-13T02:41:04.072Z",
       "updatedAt": "2026-06-13T02:41:04.072Z",
-      "moment": "Entrada"
+      "moment": "Entrada",
+      "songNumber": "",
+      "massStatus": "Permitida"
     },
     {
       "id": "songs-1781318521057-7638407fac26",
       "title": "HOY EN ORACIÓN",
-      "category": "Canto de oración / canto vocacional y de servicio",
       "musicalNotes": "",
       "lyrics": "Hoy en oración quiero preguntar, Señor,\nquiero escuchar tu voz, tus palabras con amor.\n\nCORO\nSer como eres tú, servidor de los demás, dime,\ncómo, en qué lugar te hago falta más.\n\nDime, Señor, en qué te puedo servir,\ndéjame conocer tu voluntad.\n\nDime, Señor, en qué te puedo servir,\nquiero de ti aprender, saber amar.\n\nHoy quiero seguir tus caminos junto al mar,\ntu palabra, tu verdad, ser imagen de ti.\n\nCORO\nSer como eres tú, servidor de los demás, dime,\ncómo, en qué lugar te hago falta más.\n\nDime, Señor, en qué te puedo servir,\ndéjame conocer tu voluntad.\n\nDime, Señor, en qué te puedo servir,\nquiero de ti aprender, saber amar.",
       "notes": "",
       "createdAt": "2026-06-13T02:42:01.057Z",
       "updatedAt": "2026-06-13T02:42:01.057Z",
-      "moment": ""
+      "moment": "",
+      "songNumber": "",
+      "massStatus": "Permitida"
     },
     {
       "id": "songs-1781318606384-1cd9a42b8feed8",
       "title": "ABC",
-      "category": "Canto de alabanza / canto de animación cristiana",
       "musicalNotes": "",
       "lyrics": "Hoy estoy de fiesta junto a ti,\npaso el día alabando, soy feliz.\nY cuando ya no sé qué más cantar,\nel “ABC” vuelvo a empezar.\n\nMe devuelves al camino,\nalabanza por tu gran poder.\n\nAleluya,\nbendición y gracias por tu amor.\nAleluya,\ny por último en adoración.\n\nAdoración,\nen silencio el corazón.\n\nCorazón,\npensando solo en Cristo.\n\nY empiezo con alabanzas\ny sigo con bendiciones,\ntermino con “C” de Cristo,\n¡Cristo Jesús!\n\nYo te alabo porque tú eres Dios,\nbendición por lo que haces, Señor.\nPero mi alma goza más\ncuando te puedo adorar,\ncuando estoy solo contigo.\n\nAlabanza por tu gran poder.\nAlabanza por tu gran poder.\n\nAleluya,\nbendición y gracias por tu amor.\nAleluya,\ny por último en adoración.",
       "notes": "",
       "createdAt": "2026-06-13T02:43:26.384Z",
       "updatedAt": "2026-06-13T02:57:41.413Z",
-      "moment": "Animacion"
+      "moment": "Animacion",
+      "songNumber": "",
+      "massStatus": "Permitida"
     },
     {
       "id": "songs-1781318648044-0ab030b7e2463",
       "title": "HUAYNO DE LA PAZ",
-      "category": "Canto de paz / canto de fraternidad",
       "musicalNotes": "",
       "lyrics": "Escucha Padre a tu pueblo que te canta hoy,\nescucha que te imploramos por la salvación.\n\nQue haya entre los hombres paz, amor y fe,\nque cesen las guerras, el odio y la maldad.\n(2 veces)\n\nY unidos todos cantemos: viva el Señor,\ny unidos todos gritemos: queremos la paz.\n\nQueremos la paz, hermanos,\nqueremos la paz.\n(4 veces)",
       "notes": "",
       "createdAt": "2026-06-13T02:44:08.044Z",
       "updatedAt": "2026-06-13T02:44:08.044Z",
-      "moment": "Paz"
+      "moment": "Paz",
+      "songNumber": "",
+      "massStatus": "Permitida"
     },
     {
       "id": "songs-1781318717977-bcaed65dcd14e8",
       "title": "MARÍA MÍRAME",
-      "category": "Canto mariano / canto a la Virgen María",
       "musicalNotes": "",
       "lyrics": "María mírame, María mírame,\nsi tú me miras, Él también me mirará.\nMadre mía mírame, de la mano llévame,\nmuy cerca de Él, que ahí me quiero quedar.\n\nMaría cúbreme con tu manto,\nque tengo miedo, no sé rezar.\nQue por tus ojos misericordiosos,\ntendré la fuerza, tendré la paz.\n\nMaría mírame, María mírame,\nsi tú me miras, Él también me mirará.\n\nMadre mía mírame, de la mano llévame,\nmuy cerca de Él, que ahí me quiero quedar.\nMadre consuélame de mis penas,\nes que no quiero ofenderle más.\nQue por tus ojos misericordiosos,\nquiero ir al cielo y verlos ya.\n\nMaría mírame, María mírame,\nsi tú me miras, Él también me mirará.\nMadre mía mírame, de la mano llévame,\nmuy cerca de Él, que ahí me quiero quedar.",
       "notes": "",
       "createdAt": "2026-06-13T02:45:17.977Z",
       "updatedAt": "2026-06-13T02:45:17.977Z",
-      "moment": "Mariano"
+      "moment": "Mariano",
+      "songNumber": "",
+      "massStatus": "Permitida"
     },
     {
       "id": "songs-1781318794803-b26e6000df58e8",
       "title": "OH SEÑORA Y MADRE MÍA",
-      "category": "Canto mariano / canto de consagración a la Virgen María",
       "musicalNotes": "",
       "lyrics": "Oh Señora y Madre mía,\ncon filial cariño vengo a ofrecerte\nen este día cuanto soy y cuanto tengo:\nmis ojos para mirarte,\nmi voz para bendecirte,\nmi corazón para amarte\ny mi vida para servirte.\n\nAcepta Madre este don,\nque te ofrece mi cariño,\nguárdame como un niño\ncerca de tu corazón. (2)\n\nQue nunca sea traidor\nal amor que hoy se me entrega,\ny que rechace sin pena\nlos halagos de otro amor.\nY aunque el dolor me taladre,\ny haga de mí un crucifijo,\nque yo sepa ser tu hijo\ny que sienta que eres mi Madre.\n\nEn la dicha y en la aflicción,\nen mi vida y en mi agonía,\nmírame con compasión,\nno me dejes Madre mía. (2)",
       "notes": "",
       "createdAt": "2026-06-13T02:46:34.803Z",
       "updatedAt": "2026-06-13T02:46:34.803Z",
-      "moment": "Mariano"
+      "moment": "Mariano",
+      "songNumber": "",
+      "massStatus": "Permitida"
     },
     {
       "id": "songs-1781318831470-c326ff72af1e48",
       "title": "QUÉ ALEGRÍA ES VENIR",
-      "category": "Canto de entrada / canto de comunión",
       "musicalNotes": "",
       "lyrics": "Qué alegría es venir\na la casa de Dios.\nQué alegría es participar\ndel pan de Dios.\n\nQué alegría es venir\na la casa de Dios.\nQué alegría es participar\ndel pan de Dios.\n\nVayamos todos a la casa de Dios,\ncantad alegres nuestra canción.\n\nQué alegría es venir\na la casa de Dios.\nQué alegría es participar\ndel pan de Dios.\n\nQué alegría es venir\na la casa de Dios.\nQué alegría es participar\ndel pan de Dios.",
       "notes": "",
       "createdAt": "2026-06-13T02:47:11.470Z",
       "updatedAt": "2026-06-13T02:47:11.470Z",
-      "moment": "Entrada"
+      "moment": "Entrada",
+      "songNumber": "",
+      "massStatus": "Permitida"
     },
     {
       "id": "songs-1781318871995-7ed2db342c8d7",
       "title": "QUIERO OFRECERTE SEÑOR",
-      "category": "Canto de ofertorio / presentación de dones",
       "musicalNotes": "",
       "lyrics": "Quiero ofrecerte Señor\neste canto de amor,\ncomo un don de paz.\n\nQue junto con el vino y el pan,\ntu cuerpo y sangre se harán,\ny así vendrás a reinar\ncon amor en nuestro corazón.\n\nLa, la, la, la, la, la.\n(bis)\n\nRecibe con nuestras ofrendas\nel ruego y el clamor\ncomo una oración.\n\nTe presentamos también\nel fruto del trabajo\ny de nuestro afán.",
       "notes": "",
       "createdAt": "2026-06-13T02:47:51.995Z",
       "updatedAt": "2026-06-13T02:47:51.995Z",
-      "moment": "Ofertorio"
+      "moment": "Ofertorio",
+      "songNumber": "",
+      "massStatus": "Permitida"
     },
     {
       "id": "songs-1781318919088-c4923811b1938",
       "title": "SANTO SENTIMIENTO",
-      "category": "Santo / canto litúrgico de aclamación",
       "musicalNotes": "",
       "lyrics": "Santo eres, Señor,\nDios del universo.\n(bis)\n\nHosanna en el cielo,\nHosanna al Señor.\n\nBendito el que viene\nen nombre del Señor.\n\nSanto es su nombre,\nSanto es su nombre,\nSanto es su nombre.\n\nSanto eres, Señor,\nDios del universo.\n(bis)",
       "notes": "",
       "createdAt": "2026-06-13T02:48:39.088Z",
       "updatedAt": "2026-06-13T02:48:39.088Z",
-      "moment": "Santo"
+      "moment": "Santo",
+      "songNumber": "",
+      "massStatus": "Permitida"
     },
     {
       "id": "songs-1781318957093-6be902c035ba",
       "title": "THEOTOKOS",
-      "category": "Canto mariano / canto a la Madre de Dios",
       "musicalNotes": "",
       "lyrics": "Salve, María, Theotokos,\nla Madre de Dios.\n\nSalve, María,\nsiempre Virgen y Madre de Dios.\n\nEn ti vemos ya nuestra resurrección,\nasunta al cielo estás.\n\nSalve, María, Theotokos,\nla Madre de Dios.\n\nSalve, María,\nla Reina del cielo,\nla Madre de Dios.",
       "notes": "",
       "createdAt": "2026-06-13T02:49:17.093Z",
       "updatedAt": "2026-06-13T02:49:17.093Z",
-      "moment": "Mariano"
+      "moment": "Mariano",
+      "songNumber": "",
+      "massStatus": "Permitida"
     },
     {
       "id": "songs-1781319032764-888b863d77c108",
       "title": "UN DÍA CAMINABA",
-      "category": "Canto de conversión / canto de testimonio cristiano",
       "musicalNotes": "",
       "lyrics": "Un día caminaba, muy triste por ahí,\nmi corazón gritaba: ya no quiero vivir.\nSufriendo mi tristeza, oí hablar de ti,\nJesús.\n\nDecían que me amabas,\nque habías muerto por mí en la cruz.\nLloré en ese momento,\nal recordar el tiempo,\nel tiempo que perdí sin saber de ti.\n\nY aquí está mi vida y mi voz,\npara cantar, para alabarte, Señor.\nY aquí están mis ansias de amar,\nde vivir y perdonar.\n\nUn día caminaba.",
       "notes": "",
       "createdAt": "2026-06-13T02:50:32.764Z",
       "updatedAt": "2026-06-13T02:50:32.764Z",
-      "moment": ""
+      "moment": "",
+      "songNumber": "",
+      "massStatus": "Permitida"
     },
     {
       "id": "songs-1781319114095-32c4ee33c5c9c8",
       "title": "VINO Y PAN",
-      "category": "Canto de ofertorio / presentación de dones",
       "musicalNotes": "",
       "lyrics": "Nos acercamos a tu mesa\npara ofrecerte nuestro corazón,\nlas alegrías y tristezas,\nnuestros trabajos y nuestra oración.\n\nVino y pan,\nhoy presentamos aquí en tu altar,\nrecíbelos y transfórmalos\nen tu cuerpo y sangre, Señor.\n\nNos acercamos como hermanos\ncon nuestras luchas en el caminar,\ny levantando a ti las manos,\npedimos que nos cubra tu bondad.\n\nVino y pan,\nhoy presentamos aquí en tu altar,\nrecíbelos y transfórmalos\nen tu cuerpo y sangre, Señor.\n(Bis)",
       "notes": "",
       "createdAt": "2026-06-13T02:51:54.095Z",
       "updatedAt": "2026-06-13T02:51:54.095Z",
-      "moment": "Ofertorio"
+      "moment": "Ofertorio",
+      "songNumber": "",
+      "massStatus": "Permitida"
     },
     {
       "id": "songs-1781319263202-64d1f5752f4eb",
       "title": "VIVIRÉ",
-      "category": "Canto de conversión / canto misionero",
       "musicalNotes": "",
       "lyrics": "Yo no sé qué sucedió,\njamás nadie me habló así.\nFue su palabra, su mirada,\nfue su voz lo que a mí me transformó.\n\nDejé mi cántaro vacío y en soledad,\nen el camino, junto al pozo de Sicar,\ndonde aquel hombre me habló.\n\nDe un amor más allá del infinito,\nde mi sed y del agua que la podía saciar.\nY de un don que yo no conocía\ny de una vida que lleva a la eternidad.\n\nViviré porque Él me dio la vida,\nanunciaré a los hombres su verdad.\nMe eligió para ser su instrumento,\nnuevo apóstol, nueva vida y de nueva luz.\n\nAquel hombre que yo vi\ny que no pude olvidar,\nme dijeron que murió\nen una cruz solo por amor a mí.\n\nHoy quisiera ofrecerle mi libertad,\nuna vida entregada a la misión,\npredicar lo que me habló.",
       "notes": "",
       "createdAt": "2026-06-13T02:54:23.202Z",
       "updatedAt": "2026-06-13T02:54:23.204Z",
-      "moment": ""
+      "moment": "",
+      "songNumber": "",
+      "massStatus": "Permitida"
     },
     {
       "id": "songs-1781319319549-8029aca3b6e8c",
       "title": "YO TENGO UN NUEVO AMOR",
-      "category": "Canto de alabanza / canto de amor a Jesús",
       "musicalNotes": "",
       "lyrics": "Yo tengo un nuevo amor.\nJamás imaginé poder hallar\naquel que le dio a mi vida una razón para amar:\nJesús, mi amor, y más que amor, mi dulce paz.\n\nYo tengo un nuevo amor,\nel corazón me late sin parar.\nHay uno que me ha dicho:\n“Te amo de verdad”.\nJesús, mi amor, y más que amor, mi dulce paz.\n\nEstrofa 1:\nSiento que tengo ganas de volar al firmamento,\ngritarle al mundo entero lo que estoy sintiendo,\nque ya encontré mi dulce amor.\nJesús es toda mi verdad\ny nunca yo me cansaré de repetirlo\nhasta el final y ahora…\nCoro\n\nEstrofa 2:\nSiento su voz dulcísima en respuesta\ncuando llamo.\nSus ojos tiernos, hasta el toque de sus manos.\nPor siempre suya quiero ser.\nJesús es toda mi verdad\ny nunca yo me cansaré de repetirlo\nhasta el final y ahora…\nCoro",
       "notes": "",
       "createdAt": "2026-06-13T02:55:19.549Z",
       "updatedAt": "2026-06-13T02:55:19.549Z",
-      "moment": ""
+      "moment": "",
+      "songNumber": "",
+      "massStatus": "Permitida"
     },
     {
       "id": "songs-1781319508819-c65a24a9f54838",
       "title": "YO TENGO UN NUEVO AMOR 2",
-      "category": "Canto de alabanza / canto de amor a Jesús",
       "musicalNotes": "",
       "lyrics": "Yo tengo un nuevo amor,\nel corazón me late sin parar.\nHay uno que me ha dicho:\n“Te amo de verdad”.\nJesús, mi amor,\ny más que amor, mi dulce paz.\n\nYo tengo un nuevo amor.\nJamás imaginé poder hallar\naquel que le dio a mi vida\nuna razón para amar.\nJesús, mi amor,\ny más que amor, mi dulce paz.\n\nSiento que tengo ganas\nde volar al firmamento,\ngritarle al mundo entero\nlo que estoy sintiendo.\nQue ya encontré mi dulce amor,\nJesús es toda mi verdad,\ny nunca yo me cansaré\nde repetirlo hasta el final.\n\nQue ahora yo tengo un nuevo amor,\nel corazón me late sin parar.\nHay uno que me ha dicho:\n“Te amo de verdad”.\nJesús, mi amor,\ny más que amor, mi dulce paz.\n\nYo tengo un nuevo amor.\nJamás imaginé poder hallar\naquel que le dio a mi vida\nuna razón para amar.\nJesús, mi amor,\ny más que amor, mi dulce paz.\n\nSu voz dulcísima en respuesta cuando llamo,\nsus ojos tiernos, hasta el toque de sus manos.\nPor siempre suyo quiero ser,\nJesús es toda mi verdad,\ny nunca yo me cansaré\nde repetirlo hasta el final.\n\nQue ahora yo tengo un nuevo amor,\nel corazón me late sin parar.\nHay uno que me ha dicho:\n“Te amo de verdad”.\nJesús, mi amor,\ny más que amor, mi dulce paz.",
       "notes": "",
       "createdAt": "2026-06-13T02:58:28.819Z",
       "updatedAt": "2026-06-13T02:58:28.819Z",
-      "moment": ""
+      "moment": "",
+      "songNumber": "",
+      "massStatus": "Permitida"
     }
   ],
   "readings": [],
   "events": [],
-  "members": []
+  "members": [],
+  "liturgy": [
+    {
+      "id": "liturgy-2026-baptism",
+      "title": "Bautismo del Señor 2026",
+      "season": "Tiempo Ordinario",
+      "startDate": "2026-01-11",
+      "endDate": "2026-01-11",
+      "suggestions": "Canciónes de entrada, agua viva, seguimiento de Cristo",
+      "notes": "Primer domingo del Tiempo Ordinario en este calendario de trabajo."
+    },
+    {
+      "id": "liturgy-2026-ordinary-1",
+      "title": "Tiempo Ordinario antes de Cuaresma 2026",
+      "season": "Tiempo Ordinario",
+      "startDate": "2026-01-12",
+      "endDate": "2026-02-17",
+      "suggestions": "Alabanza, seguimiento, misión, confianza en Dios",
+      "notes": "Periodo ordinario hasta antes del Miércoles de Ceniza."
+    },
+    {
+      "id": "liturgy-2026-ash",
+      "title": "Miércoles de Ceniza 2026",
+      "season": "Cuaresma",
+      "startDate": "2026-02-18",
+      "endDate": "2026-02-18",
+      "suggestions": "Perdon, conversion, misericordia",
+      "notes": "Inicio de Cuaresma."
+    },
+    {
+      "id": "liturgy-2026-lent",
+      "title": "Cuaresma 2026",
+      "season": "Cuaresma",
+      "startDate": "2026-02-18",
+      "endDate": "2026-03-28",
+      "suggestions": "Perdon, conversion, oración, camino al Señor",
+      "notes": "Tiempo de preparación para Semana Santa."
+    },
+    {
+      "id": "liturgy-2026-palm",
+      "title": "Domingo de Ramos 2026",
+      "season": "Semana Santa",
+      "startDate": "2026-03-29",
+      "endDate": "2026-03-29",
+      "suggestions": "Hosanna, entrada de Jesus, camino de la cruz",
+      "notes": "Inicio de Semana Santa."
+    },
+    {
+      "id": "liturgy-2026-holy-week",
+      "title": "Semana Santa 2026",
+      "season": "Semana Santa",
+      "startDate": "2026-03-29",
+      "endDate": "2026-04-04",
+      "suggestions": "Ramos, pasion, adoración, cruz, silencio",
+      "notes": "Incluye Domingo de Ramos, Jueves Santo, Viernes Santo y Vigilia Pascual."
+    },
+    {
+      "id": "liturgy-2026-holy-thursday",
+      "title": "Jueves Santo 2026",
+      "season": "Semana Santa",
+      "startDate": "2026-04-02",
+      "endDate": "2026-04-02",
+      "suggestions": "Amor fraterno, eucaristia, servicio, lavatorio",
+      "notes": "Misa de la Cena del Señor."
+    },
+    {
+      "id": "liturgy-2026-good-friday",
+      "title": "Viernes Santo 2026",
+      "season": "Semana Santa",
+      "startDate": "2026-04-03",
+      "endDate": "2026-04-03",
+      "suggestions": "Cruz, pasion, adoración",
+      "notes": "Celebracion de la Pasion del Señor."
+    },
+    {
+      "id": "liturgy-2026-easter-vigil",
+      "title": "Vigilia Pascual 2026",
+      "season": "Pascua",
+      "startDate": "2026-04-04",
+      "endDate": "2026-04-04",
+      "suggestions": "Aleluya, luz, gloria, resurrección",
+      "notes": "Celebracion principal de la Pascua."
+    },
+    {
+      "id": "liturgy-2026-easter",
+      "title": "Domingo de Pascua 2026",
+      "season": "Pascua",
+      "startDate": "2026-04-05",
+      "endDate": "2026-04-05",
+      "suggestions": "Aleluya, resurrección, vida nueva",
+      "notes": "Domingo de Resurreccion."
+    },
+    {
+      "id": "liturgy-2026-easter-season",
+      "title": "Tiempo de Pascua 2026",
+      "season": "Pascua",
+      "startDate": "2026-04-05",
+      "endDate": "2026-05-24",
+      "suggestions": "Aleluya, resurrección, Espíritu Santo, alegría",
+      "notes": "Tiempo pascual hasta Pentecostes."
+    },
+    {
+      "id": "liturgy-2026-pentecost",
+      "title": "Pentecostes 2026",
+      "season": "Pascua",
+      "startDate": "2026-05-24",
+      "endDate": "2026-05-24",
+      "suggestions": "Espíritu Santo, fuego, misión",
+      "notes": "Cierre del Tiempo Pascual."
+    },
+    {
+      "id": "liturgy-2026-ordinary-2",
+      "title": "Tiempo Ordinario despues de Pentecostes 2026",
+      "season": "Tiempo Ordinario",
+      "startDate": "2026-05-25",
+      "endDate": "2026-11-28",
+      "suggestions": "Alabanza, comunión, misión, servicio",
+      "notes": "Periodo ordinario hasta antes de Adviento."
+    },
+    {
+      "id": "liturgy-2026-christ-king",
+      "title": "Cristo Rey 2026",
+      "season": "Solemnidad",
+      "startDate": "2026-11-22",
+      "endDate": "2026-11-22",
+      "suggestions": "Rey de reyes, alabanza, gloria a Cristo",
+      "notes": "Ultimo domingo antes de Adviento."
+    },
+    {
+      "id": "liturgy-2026-advent",
+      "title": "Adviento 2026",
+      "season": "Adviento",
+      "startDate": "2026-11-29",
+      "endDate": "2026-12-24",
+      "suggestions": "Ven Señor no tardes\nEsperando al Señor\nPreparen el camino",
+      "notes": "Inicio del nuevo año litúrgico: cuatro domingos antes de Navidad."
+    },
+    {
+      "id": "liturgy-2026-christmas",
+      "title": "Navidad 2026",
+      "season": "Navidad",
+      "startDate": "2026-12-25",
+      "endDate": "2026-12-31",
+      "suggestions": "Noche de paz, gloria, nacimiento, alegría",
+      "notes": "Tiempo de Navidad desde el 25 de diciembre."
+    },
+    {
+      "id": "liturgy-2026-mary-mother",
+      "title": "Santa Maria Madre de Dios 2026",
+      "season": "Fiesta mariana",
+      "startDate": "2026-01-01",
+      "endDate": "2026-01-01",
+      "suggestions": "Cantos marianos, Madre de Dios",
+      "notes": "Solemnidad mariana."
+    },
+    {
+      "id": "liturgy-2026-annunciation",
+      "title": "Anunciacion del Señor 2026",
+      "season": "Solemnidad",
+      "startDate": "2026-03-25",
+      "endDate": "2026-03-25",
+      "suggestions": "Si de Maria, encarnacion, confianza",
+      "notes": "Solemnidad del Señor con acento mariano."
+    },
+    {
+      "id": "liturgy-2026-assumption",
+      "title": "Asuncion de la Virgen Maria 2026",
+      "season": "Fiesta mariana",
+      "startDate": "2026-08-15",
+      "endDate": "2026-08-15",
+      "suggestions": "Cantos marianos, alegría, esperanza",
+      "notes": "Solemnidad mariana."
+    },
+    {
+      "id": "liturgy-2026-santa-rosa",
+      "title": "Santa Rosa de Lima 2026",
+      "season": "Solemnidad",
+      "startDate": "2026-08-30",
+      "endDate": "2026-08-30",
+      "suggestions": "Santidad, servicio, Perú",
+      "notes": "Fiesta importante en Perú."
+    },
+    {
+      "id": "liturgy-2026-immaculate",
+      "title": "Inmaculada Concepcion 2026",
+      "season": "Fiesta mariana",
+      "startDate": "2026-12-08",
+      "endDate": "2026-12-08",
+      "suggestions": "Cantos marianos, pureza, gracia",
+      "notes": "Solemnidad mariana."
+    },
+    {
+      "id": "liturgy-2027-baptism",
+      "title": "Bautismo del Señor 2027",
+      "season": "Tiempo Ordinario",
+      "startDate": "2027-01-10",
+      "endDate": "2027-01-10",
+      "suggestions": "Canciónes de entrada, agua viva, seguimiento de Cristo",
+      "notes": "Primer domingo del Tiempo Ordinario en este calendario de trabajo."
+    },
+    {
+      "id": "liturgy-2027-ordinary-1",
+      "title": "Tiempo Ordinario antes de Cuaresma 2027",
+      "season": "Tiempo Ordinario",
+      "startDate": "2027-01-11",
+      "endDate": "2027-02-09",
+      "suggestions": "Alabanza, seguimiento, misión, confianza en Dios",
+      "notes": "Periodo ordinario hasta antes del Miércoles de Ceniza."
+    },
+    {
+      "id": "liturgy-2027-ash",
+      "title": "Miércoles de Ceniza 2027",
+      "season": "Cuaresma",
+      "startDate": "2027-02-10",
+      "endDate": "2027-02-10",
+      "suggestions": "Perdon, conversion, misericordia",
+      "notes": "Inicio de Cuaresma."
+    },
+    {
+      "id": "liturgy-2027-lent",
+      "title": "Cuaresma 2027",
+      "season": "Cuaresma",
+      "startDate": "2027-02-10",
+      "endDate": "2027-03-20",
+      "suggestions": "Perdon, conversion, oración, camino al Señor",
+      "notes": "Tiempo de preparación para Semana Santa."
+    },
+    {
+      "id": "liturgy-2027-palm",
+      "title": "Domingo de Ramos 2027",
+      "season": "Semana Santa",
+      "startDate": "2027-03-21",
+      "endDate": "2027-03-21",
+      "suggestions": "Hosanna, entrada de Jesus, camino de la cruz",
+      "notes": "Inicio de Semana Santa."
+    },
+    {
+      "id": "liturgy-2027-holy-week",
+      "title": "Semana Santa 2027",
+      "season": "Semana Santa",
+      "startDate": "2027-03-21",
+      "endDate": "2027-03-27",
+      "suggestions": "Ramos, pasion, adoración, cruz, silencio",
+      "notes": "Incluye Domingo de Ramos, Jueves Santo, Viernes Santo y Vigilia Pascual."
+    },
+    {
+      "id": "liturgy-2027-holy-thursday",
+      "title": "Jueves Santo 2027",
+      "season": "Semana Santa",
+      "startDate": "2027-03-25",
+      "endDate": "2027-03-25",
+      "suggestions": "Amor fraterno, eucaristia, servicio, lavatorio",
+      "notes": "Misa de la Cena del Señor."
+    },
+    {
+      "id": "liturgy-2027-good-friday",
+      "title": "Viernes Santo 2027",
+      "season": "Semana Santa",
+      "startDate": "2027-03-26",
+      "endDate": "2027-03-26",
+      "suggestions": "Cruz, pasion, adoración",
+      "notes": "Celebracion de la Pasion del Señor."
+    },
+    {
+      "id": "liturgy-2027-easter-vigil",
+      "title": "Vigilia Pascual 2027",
+      "season": "Pascua",
+      "startDate": "2027-03-27",
+      "endDate": "2027-03-27",
+      "suggestions": "Aleluya, luz, gloria, resurrección",
+      "notes": "Celebracion principal de la Pascua."
+    },
+    {
+      "id": "liturgy-2027-easter",
+      "title": "Domingo de Pascua 2027",
+      "season": "Pascua",
+      "startDate": "2027-03-28",
+      "endDate": "2027-03-28",
+      "suggestions": "Aleluya, resurrección, vida nueva",
+      "notes": "Domingo de Resurreccion."
+    },
+    {
+      "id": "liturgy-2027-easter-season",
+      "title": "Tiempo de Pascua 2027",
+      "season": "Pascua",
+      "startDate": "2027-03-28",
+      "endDate": "2027-05-16",
+      "suggestions": "Aleluya, resurrección, Espíritu Santo, alegría",
+      "notes": "Tiempo pascual hasta Pentecostes."
+    },
+    {
+      "id": "liturgy-2027-pentecost",
+      "title": "Pentecostes 2027",
+      "season": "Pascua",
+      "startDate": "2027-05-16",
+      "endDate": "2027-05-16",
+      "suggestions": "Espíritu Santo, fuego, misión",
+      "notes": "Cierre del Tiempo Pascual."
+    },
+    {
+      "id": "liturgy-2027-ordinary-2",
+      "title": "Tiempo Ordinario despues de Pentecostes 2027",
+      "season": "Tiempo Ordinario",
+      "startDate": "2027-05-17",
+      "endDate": "2027-11-27",
+      "suggestions": "Alabanza, comunión, misión, servicio",
+      "notes": "Periodo ordinario hasta antes de Adviento."
+    },
+    {
+      "id": "liturgy-2027-christ-king",
+      "title": "Cristo Rey 2027",
+      "season": "Solemnidad",
+      "startDate": "2027-11-21",
+      "endDate": "2027-11-21",
+      "suggestions": "Rey de reyes, alabanza, gloria a Cristo",
+      "notes": "Ultimo domingo antes de Adviento."
+    },
+    {
+      "id": "liturgy-2027-advent",
+      "title": "Adviento 2027",
+      "season": "Adviento",
+      "startDate": "2027-11-28",
+      "endDate": "2027-12-24",
+      "suggestions": "Ven Señor no tardes\nEsperando al Señor\nPreparen el camino",
+      "notes": "Inicio del nuevo año litúrgico: cuatro domingos antes de Navidad."
+    },
+    {
+      "id": "liturgy-2027-christmas",
+      "title": "Navidad 2027",
+      "season": "Navidad",
+      "startDate": "2027-12-25",
+      "endDate": "2027-12-31",
+      "suggestions": "Noche de paz, gloria, nacimiento, alegría",
+      "notes": "Tiempo de Navidad desde el 25 de diciembre."
+    },
+    {
+      "id": "liturgy-2027-mary-mother",
+      "title": "Santa Maria Madre de Dios 2027",
+      "season": "Fiesta mariana",
+      "startDate": "2027-01-01",
+      "endDate": "2027-01-01",
+      "suggestions": "Cantos marianos, Madre de Dios",
+      "notes": "Solemnidad mariana."
+    },
+    {
+      "id": "liturgy-2027-annunciation",
+      "title": "Anunciacion del Señor 2027",
+      "season": "Solemnidad",
+      "startDate": "2027-03-25",
+      "endDate": "2027-03-25",
+      "suggestions": "Si de Maria, encarnacion, confianza",
+      "notes": "Solemnidad del Señor con acento mariano."
+    },
+    {
+      "id": "liturgy-2027-assumption",
+      "title": "Asuncion de la Virgen Maria 2027",
+      "season": "Fiesta mariana",
+      "startDate": "2027-08-15",
+      "endDate": "2027-08-15",
+      "suggestions": "Cantos marianos, alegría, esperanza",
+      "notes": "Solemnidad mariana."
+    },
+    {
+      "id": "liturgy-2027-santa-rosa",
+      "title": "Santa Rosa de Lima 2027",
+      "season": "Solemnidad",
+      "startDate": "2027-08-30",
+      "endDate": "2027-08-30",
+      "suggestions": "Santidad, servicio, Perú",
+      "notes": "Fiesta importante en Perú."
+    },
+    {
+      "id": "liturgy-2027-immaculate",
+      "title": "Inmaculada Concepcion 2027",
+      "season": "Fiesta mariana",
+      "startDate": "2027-12-08",
+      "endDate": "2027-12-08",
+      "suggestions": "Cantos marianos, pureza, gracia",
+      "notes": "Solemnidad mariana."
+    },
+    {
+      "id": "liturgy-2028-baptism",
+      "title": "Bautismo del Señor 2028",
+      "season": "Tiempo Ordinario",
+      "startDate": "2028-01-09",
+      "endDate": "2028-01-09",
+      "suggestions": "Canciónes de entrada, agua viva, seguimiento de Cristo",
+      "notes": "Primer domingo del Tiempo Ordinario en este calendario de trabajo."
+    },
+    {
+      "id": "liturgy-2028-ordinary-1",
+      "title": "Tiempo Ordinario antes de Cuaresma 2028",
+      "season": "Tiempo Ordinario",
+      "startDate": "2028-01-10",
+      "endDate": "2028-02-29",
+      "suggestions": "Alabanza, seguimiento, misión, confianza en Dios",
+      "notes": "Periodo ordinario hasta antes del Miércoles de Ceniza."
+    },
+    {
+      "id": "liturgy-2028-ash",
+      "title": "Miércoles de Ceniza 2028",
+      "season": "Cuaresma",
+      "startDate": "2028-03-01",
+      "endDate": "2028-03-01",
+      "suggestions": "Perdon, conversion, misericordia",
+      "notes": "Inicio de Cuaresma."
+    },
+    {
+      "id": "liturgy-2028-lent",
+      "title": "Cuaresma 2028",
+      "season": "Cuaresma",
+      "startDate": "2028-03-01",
+      "endDate": "2028-04-08",
+      "suggestions": "Perdon, conversion, oración, camino al Señor",
+      "notes": "Tiempo de preparación para Semana Santa."
+    },
+    {
+      "id": "liturgy-2028-palm",
+      "title": "Domingo de Ramos 2028",
+      "season": "Semana Santa",
+      "startDate": "2028-04-09",
+      "endDate": "2028-04-09",
+      "suggestions": "Hosanna, entrada de Jesus, camino de la cruz",
+      "notes": "Inicio de Semana Santa."
+    },
+    {
+      "id": "liturgy-2028-holy-week",
+      "title": "Semana Santa 2028",
+      "season": "Semana Santa",
+      "startDate": "2028-04-09",
+      "endDate": "2028-04-15",
+      "suggestions": "Ramos, pasion, adoración, cruz, silencio",
+      "notes": "Incluye Domingo de Ramos, Jueves Santo, Viernes Santo y Vigilia Pascual."
+    },
+    {
+      "id": "liturgy-2028-holy-thursday",
+      "title": "Jueves Santo 2028",
+      "season": "Semana Santa",
+      "startDate": "2028-04-13",
+      "endDate": "2028-04-13",
+      "suggestions": "Amor fraterno, eucaristia, servicio, lavatorio",
+      "notes": "Misa de la Cena del Señor."
+    },
+    {
+      "id": "liturgy-2028-good-friday",
+      "title": "Viernes Santo 2028",
+      "season": "Semana Santa",
+      "startDate": "2028-04-14",
+      "endDate": "2028-04-14",
+      "suggestions": "Cruz, pasion, adoración",
+      "notes": "Celebracion de la Pasion del Señor."
+    },
+    {
+      "id": "liturgy-2028-easter-vigil",
+      "title": "Vigilia Pascual 2028",
+      "season": "Pascua",
+      "startDate": "2028-04-15",
+      "endDate": "2028-04-15",
+      "suggestions": "Aleluya, luz, gloria, resurrección",
+      "notes": "Celebracion principal de la Pascua."
+    },
+    {
+      "id": "liturgy-2028-easter",
+      "title": "Domingo de Pascua 2028",
+      "season": "Pascua",
+      "startDate": "2028-04-16",
+      "endDate": "2028-04-16",
+      "suggestions": "Aleluya, resurrección, vida nueva",
+      "notes": "Domingo de Resurreccion."
+    },
+    {
+      "id": "liturgy-2028-easter-season",
+      "title": "Tiempo de Pascua 2028",
+      "season": "Pascua",
+      "startDate": "2028-04-16",
+      "endDate": "2028-06-04",
+      "suggestions": "Aleluya, resurrección, Espíritu Santo, alegría",
+      "notes": "Tiempo pascual hasta Pentecostes."
+    },
+    {
+      "id": "liturgy-2028-pentecost",
+      "title": "Pentecostes 2028",
+      "season": "Pascua",
+      "startDate": "2028-06-04",
+      "endDate": "2028-06-04",
+      "suggestions": "Espíritu Santo, fuego, misión",
+      "notes": "Cierre del Tiempo Pascual."
+    },
+    {
+      "id": "liturgy-2028-ordinary-2",
+      "title": "Tiempo Ordinario despues de Pentecostes 2028",
+      "season": "Tiempo Ordinario",
+      "startDate": "2028-06-05",
+      "endDate": "2028-12-02",
+      "suggestions": "Alabanza, comunión, misión, servicio",
+      "notes": "Periodo ordinario hasta antes de Adviento."
+    },
+    {
+      "id": "liturgy-2028-christ-king",
+      "title": "Cristo Rey 2028",
+      "season": "Solemnidad",
+      "startDate": "2028-11-26",
+      "endDate": "2028-11-26",
+      "suggestions": "Rey de reyes, alabanza, gloria a Cristo",
+      "notes": "Ultimo domingo antes de Adviento."
+    },
+    {
+      "id": "liturgy-2028-advent",
+      "title": "Adviento 2028",
+      "season": "Adviento",
+      "startDate": "2028-12-03",
+      "endDate": "2028-12-24",
+      "suggestions": "Ven Señor no tardes\nEsperando al Señor\nPreparen el camino",
+      "notes": "Inicio del nuevo año litúrgico: cuatro domingos antes de Navidad."
+    },
+    {
+      "id": "liturgy-2028-christmas",
+      "title": "Navidad 2028",
+      "season": "Navidad",
+      "startDate": "2028-12-25",
+      "endDate": "2028-12-31",
+      "suggestions": "Noche de paz, gloria, nacimiento, alegría",
+      "notes": "Tiempo de Navidad desde el 25 de diciembre."
+    },
+    {
+      "id": "liturgy-2028-mary-mother",
+      "title": "Santa Maria Madre de Dios 2028",
+      "season": "Fiesta mariana",
+      "startDate": "2028-01-01",
+      "endDate": "2028-01-01",
+      "suggestions": "Cantos marianos, Madre de Dios",
+      "notes": "Solemnidad mariana."
+    },
+    {
+      "id": "liturgy-2028-annunciation",
+      "title": "Anunciacion del Señor 2028",
+      "season": "Solemnidad",
+      "startDate": "2028-03-25",
+      "endDate": "2028-03-25",
+      "suggestions": "Si de Maria, encarnacion, confianza",
+      "notes": "Solemnidad del Señor con acento mariano."
+    },
+    {
+      "id": "liturgy-2028-assumption",
+      "title": "Asuncion de la Virgen Maria 2028",
+      "season": "Fiesta mariana",
+      "startDate": "2028-08-15",
+      "endDate": "2028-08-15",
+      "suggestions": "Cantos marianos, alegría, esperanza",
+      "notes": "Solemnidad mariana."
+    },
+    {
+      "id": "liturgy-2028-santa-rosa",
+      "title": "Santa Rosa de Lima 2028",
+      "season": "Solemnidad",
+      "startDate": "2028-08-30",
+      "endDate": "2028-08-30",
+      "suggestions": "Santidad, servicio, Perú",
+      "notes": "Fiesta importante en Perú."
+    },
+    {
+      "id": "liturgy-2028-immaculate",
+      "title": "Inmaculada Concepcion 2028",
+      "season": "Fiesta mariana",
+      "startDate": "2028-12-08",
+      "endDate": "2028-12-08",
+      "suggestions": "Cantos marianos, pureza, gracia",
+      "notes": "Solemnidad mariana."
+    },
+    {
+      "id": "liturgy-2029-baptism",
+      "title": "Bautismo del Señor 2029",
+      "season": "Tiempo Ordinario",
+      "startDate": "2029-01-07",
+      "endDate": "2029-01-07",
+      "suggestions": "Canciónes de entrada, agua viva, seguimiento de Cristo",
+      "notes": "Primer domingo del Tiempo Ordinario en este calendario de trabajo."
+    },
+    {
+      "id": "liturgy-2029-ordinary-1",
+      "title": "Tiempo Ordinario antes de Cuaresma 2029",
+      "season": "Tiempo Ordinario",
+      "startDate": "2029-01-08",
+      "endDate": "2029-02-13",
+      "suggestions": "Alabanza, seguimiento, misión, confianza en Dios",
+      "notes": "Periodo ordinario hasta antes del Miércoles de Ceniza."
+    },
+    {
+      "id": "liturgy-2029-ash",
+      "title": "Miércoles de Ceniza 2029",
+      "season": "Cuaresma",
+      "startDate": "2029-02-14",
+      "endDate": "2029-02-14",
+      "suggestions": "Perdon, conversion, misericordia",
+      "notes": "Inicio de Cuaresma."
+    },
+    {
+      "id": "liturgy-2029-lent",
+      "title": "Cuaresma 2029",
+      "season": "Cuaresma",
+      "startDate": "2029-02-14",
+      "endDate": "2029-03-24",
+      "suggestions": "Perdon, conversion, oración, camino al Señor",
+      "notes": "Tiempo de preparación para Semana Santa."
+    },
+    {
+      "id": "liturgy-2029-palm",
+      "title": "Domingo de Ramos 2029",
+      "season": "Semana Santa",
+      "startDate": "2029-03-25",
+      "endDate": "2029-03-25",
+      "suggestions": "Hosanna, entrada de Jesus, camino de la cruz",
+      "notes": "Inicio de Semana Santa."
+    },
+    {
+      "id": "liturgy-2029-holy-week",
+      "title": "Semana Santa 2029",
+      "season": "Semana Santa",
+      "startDate": "2029-03-25",
+      "endDate": "2029-03-31",
+      "suggestions": "Ramos, pasion, adoración, cruz, silencio",
+      "notes": "Incluye Domingo de Ramos, Jueves Santo, Viernes Santo y Vigilia Pascual."
+    },
+    {
+      "id": "liturgy-2029-holy-thursday",
+      "title": "Jueves Santo 2029",
+      "season": "Semana Santa",
+      "startDate": "2029-03-29",
+      "endDate": "2029-03-29",
+      "suggestions": "Amor fraterno, eucaristia, servicio, lavatorio",
+      "notes": "Misa de la Cena del Señor."
+    },
+    {
+      "id": "liturgy-2029-good-friday",
+      "title": "Viernes Santo 2029",
+      "season": "Semana Santa",
+      "startDate": "2029-03-30",
+      "endDate": "2029-03-30",
+      "suggestions": "Cruz, pasion, adoración",
+      "notes": "Celebracion de la Pasion del Señor."
+    },
+    {
+      "id": "liturgy-2029-easter-vigil",
+      "title": "Vigilia Pascual 2029",
+      "season": "Pascua",
+      "startDate": "2029-03-31",
+      "endDate": "2029-03-31",
+      "suggestions": "Aleluya, luz, gloria, resurrección",
+      "notes": "Celebracion principal de la Pascua."
+    },
+    {
+      "id": "liturgy-2029-easter",
+      "title": "Domingo de Pascua 2029",
+      "season": "Pascua",
+      "startDate": "2029-04-01",
+      "endDate": "2029-04-01",
+      "suggestions": "Aleluya, resurrección, vida nueva",
+      "notes": "Domingo de Resurreccion."
+    },
+    {
+      "id": "liturgy-2029-easter-season",
+      "title": "Tiempo de Pascua 2029",
+      "season": "Pascua",
+      "startDate": "2029-04-01",
+      "endDate": "2029-05-20",
+      "suggestions": "Aleluya, resurrección, Espíritu Santo, alegría",
+      "notes": "Tiempo pascual hasta Pentecostes."
+    },
+    {
+      "id": "liturgy-2029-pentecost",
+      "title": "Pentecostes 2029",
+      "season": "Pascua",
+      "startDate": "2029-05-20",
+      "endDate": "2029-05-20",
+      "suggestions": "Espíritu Santo, fuego, misión",
+      "notes": "Cierre del Tiempo Pascual."
+    },
+    {
+      "id": "liturgy-2029-ordinary-2",
+      "title": "Tiempo Ordinario despues de Pentecostes 2029",
+      "season": "Tiempo Ordinario",
+      "startDate": "2029-05-21",
+      "endDate": "2029-12-01",
+      "suggestions": "Alabanza, comunión, misión, servicio",
+      "notes": "Periodo ordinario hasta antes de Adviento."
+    },
+    {
+      "id": "liturgy-2029-christ-king",
+      "title": "Cristo Rey 2029",
+      "season": "Solemnidad",
+      "startDate": "2029-11-25",
+      "endDate": "2029-11-25",
+      "suggestions": "Rey de reyes, alabanza, gloria a Cristo",
+      "notes": "Ultimo domingo antes de Adviento."
+    },
+    {
+      "id": "liturgy-2029-advent",
+      "title": "Adviento 2029",
+      "season": "Adviento",
+      "startDate": "2029-12-02",
+      "endDate": "2029-12-24",
+      "suggestions": "Ven Señor no tardes\nEsperando al Señor\nPreparen el camino",
+      "notes": "Inicio del nuevo año litúrgico: cuatro domingos antes de Navidad."
+    },
+    {
+      "id": "liturgy-2029-christmas",
+      "title": "Navidad 2029",
+      "season": "Navidad",
+      "startDate": "2029-12-25",
+      "endDate": "2029-12-31",
+      "suggestions": "Noche de paz, gloria, nacimiento, alegría",
+      "notes": "Tiempo de Navidad desde el 25 de diciembre."
+    },
+    {
+      "id": "liturgy-2029-mary-mother",
+      "title": "Santa Maria Madre de Dios 2029",
+      "season": "Fiesta mariana",
+      "startDate": "2029-01-01",
+      "endDate": "2029-01-01",
+      "suggestions": "Cantos marianos, Madre de Dios",
+      "notes": "Solemnidad mariana."
+    },
+    {
+      "id": "liturgy-2029-annunciation",
+      "title": "Anunciacion del Señor 2029",
+      "season": "Solemnidad",
+      "startDate": "2029-03-25",
+      "endDate": "2029-03-25",
+      "suggestions": "Si de Maria, encarnacion, confianza",
+      "notes": "Solemnidad del Señor con acento mariano."
+    },
+    {
+      "id": "liturgy-2029-assumption",
+      "title": "Asuncion de la Virgen Maria 2029",
+      "season": "Fiesta mariana",
+      "startDate": "2029-08-15",
+      "endDate": "2029-08-15",
+      "suggestions": "Cantos marianos, alegría, esperanza",
+      "notes": "Solemnidad mariana."
+    },
+    {
+      "id": "liturgy-2029-santa-rosa",
+      "title": "Santa Rosa de Lima 2029",
+      "season": "Solemnidad",
+      "startDate": "2029-08-30",
+      "endDate": "2029-08-30",
+      "suggestions": "Santidad, servicio, Perú",
+      "notes": "Fiesta importante en Perú."
+    },
+    {
+      "id": "liturgy-2029-immaculate",
+      "title": "Inmaculada Concepcion 2029",
+      "season": "Fiesta mariana",
+      "startDate": "2029-12-08",
+      "endDate": "2029-12-08",
+      "suggestions": "Cantos marianos, pureza, gracia",
+      "notes": "Solemnidad mariana."
+    },
+    {
+      "id": "liturgy-2030-baptism",
+      "title": "Bautismo del Señor 2030",
+      "season": "Tiempo Ordinario",
+      "startDate": "2030-01-06",
+      "endDate": "2030-01-06",
+      "suggestions": "Canciónes de entrada, agua viva, seguimiento de Cristo",
+      "notes": "Primer domingo del Tiempo Ordinario en este calendario de trabajo."
+    },
+    {
+      "id": "liturgy-2030-ordinary-1",
+      "title": "Tiempo Ordinario antes de Cuaresma 2030",
+      "season": "Tiempo Ordinario",
+      "startDate": "2030-01-07",
+      "endDate": "2030-03-05",
+      "suggestions": "Alabanza, seguimiento, misión, confianza en Dios",
+      "notes": "Periodo ordinario hasta antes del Miércoles de Ceniza."
+    },
+    {
+      "id": "liturgy-2030-ash",
+      "title": "Miércoles de Ceniza 2030",
+      "season": "Cuaresma",
+      "startDate": "2030-03-06",
+      "endDate": "2030-03-06",
+      "suggestions": "Perdon, conversion, misericordia",
+      "notes": "Inicio de Cuaresma."
+    },
+    {
+      "id": "liturgy-2030-lent",
+      "title": "Cuaresma 2030",
+      "season": "Cuaresma",
+      "startDate": "2030-03-06",
+      "endDate": "2030-04-13",
+      "suggestions": "Perdon, conversion, oración, camino al Señor",
+      "notes": "Tiempo de preparación para Semana Santa."
+    },
+    {
+      "id": "liturgy-2030-palm",
+      "title": "Domingo de Ramos 2030",
+      "season": "Semana Santa",
+      "startDate": "2030-04-14",
+      "endDate": "2030-04-14",
+      "suggestions": "Hosanna, entrada de Jesus, camino de la cruz",
+      "notes": "Inicio de Semana Santa."
+    },
+    {
+      "id": "liturgy-2030-holy-week",
+      "title": "Semana Santa 2030",
+      "season": "Semana Santa",
+      "startDate": "2030-04-14",
+      "endDate": "2030-04-20",
+      "suggestions": "Ramos, pasion, adoración, cruz, silencio",
+      "notes": "Incluye Domingo de Ramos, Jueves Santo, Viernes Santo y Vigilia Pascual."
+    },
+    {
+      "id": "liturgy-2030-holy-thursday",
+      "title": "Jueves Santo 2030",
+      "season": "Semana Santa",
+      "startDate": "2030-04-18",
+      "endDate": "2030-04-18",
+      "suggestions": "Amor fraterno, eucaristia, servicio, lavatorio",
+      "notes": "Misa de la Cena del Señor."
+    },
+    {
+      "id": "liturgy-2030-good-friday",
+      "title": "Viernes Santo 2030",
+      "season": "Semana Santa",
+      "startDate": "2030-04-19",
+      "endDate": "2030-04-19",
+      "suggestions": "Cruz, pasion, adoración",
+      "notes": "Celebracion de la Pasion del Señor."
+    },
+    {
+      "id": "liturgy-2030-easter-vigil",
+      "title": "Vigilia Pascual 2030",
+      "season": "Pascua",
+      "startDate": "2030-04-20",
+      "endDate": "2030-04-20",
+      "suggestions": "Aleluya, luz, gloria, resurrección",
+      "notes": "Celebracion principal de la Pascua."
+    },
+    {
+      "id": "liturgy-2030-easter",
+      "title": "Domingo de Pascua 2030",
+      "season": "Pascua",
+      "startDate": "2030-04-21",
+      "endDate": "2030-04-21",
+      "suggestions": "Aleluya, resurrección, vida nueva",
+      "notes": "Domingo de Resurreccion."
+    },
+    {
+      "id": "liturgy-2030-easter-season",
+      "title": "Tiempo de Pascua 2030",
+      "season": "Pascua",
+      "startDate": "2030-04-21",
+      "endDate": "2030-06-09",
+      "suggestions": "Aleluya, resurrección, Espíritu Santo, alegría",
+      "notes": "Tiempo pascual hasta Pentecostes."
+    },
+    {
+      "id": "liturgy-2030-pentecost",
+      "title": "Pentecostes 2030",
+      "season": "Pascua",
+      "startDate": "2030-06-09",
+      "endDate": "2030-06-09",
+      "suggestions": "Espíritu Santo, fuego, misión",
+      "notes": "Cierre del Tiempo Pascual."
+    },
+    {
+      "id": "liturgy-2030-ordinary-2",
+      "title": "Tiempo Ordinario despues de Pentecostes 2030",
+      "season": "Tiempo Ordinario",
+      "startDate": "2030-06-10",
+      "endDate": "2030-11-30",
+      "suggestions": "Alabanza, comunión, misión, servicio",
+      "notes": "Periodo ordinario hasta antes de Adviento."
+    },
+    {
+      "id": "liturgy-2030-christ-king",
+      "title": "Cristo Rey 2030",
+      "season": "Solemnidad",
+      "startDate": "2030-11-24",
+      "endDate": "2030-11-24",
+      "suggestions": "Rey de reyes, alabanza, gloria a Cristo",
+      "notes": "Ultimo domingo antes de Adviento."
+    },
+    {
+      "id": "liturgy-2030-advent",
+      "title": "Adviento 2030",
+      "season": "Adviento",
+      "startDate": "2030-12-01",
+      "endDate": "2030-12-24",
+      "suggestions": "Ven Señor no tardes\nEsperando al Señor\nPreparen el camino",
+      "notes": "Inicio del nuevo año litúrgico: cuatro domingos antes de Navidad."
+    },
+    {
+      "id": "liturgy-2030-christmas",
+      "title": "Navidad 2030",
+      "season": "Navidad",
+      "startDate": "2030-12-25",
+      "endDate": "2030-12-31",
+      "suggestions": "Noche de paz, gloria, nacimiento, alegría",
+      "notes": "Tiempo de Navidad desde el 25 de diciembre."
+    },
+    {
+      "id": "liturgy-2030-mary-mother",
+      "title": "Santa Maria Madre de Dios 2030",
+      "season": "Fiesta mariana",
+      "startDate": "2030-01-01",
+      "endDate": "2030-01-01",
+      "suggestions": "Cantos marianos, Madre de Dios",
+      "notes": "Solemnidad mariana."
+    },
+    {
+      "id": "liturgy-2030-annunciation",
+      "title": "Anunciacion del Señor 2030",
+      "season": "Solemnidad",
+      "startDate": "2030-03-25",
+      "endDate": "2030-03-25",
+      "suggestions": "Si de Maria, encarnacion, confianza",
+      "notes": "Solemnidad del Señor con acento mariano."
+    },
+    {
+      "id": "liturgy-2030-assumption",
+      "title": "Asuncion de la Virgen Maria 2030",
+      "season": "Fiesta mariana",
+      "startDate": "2030-08-15",
+      "endDate": "2030-08-15",
+      "suggestions": "Cantos marianos, alegría, esperanza",
+      "notes": "Solemnidad mariana."
+    },
+    {
+      "id": "liturgy-2030-santa-rosa",
+      "title": "Santa Rosa de Lima 2030",
+      "season": "Solemnidad",
+      "startDate": "2030-08-30",
+      "endDate": "2030-08-30",
+      "suggestions": "Santidad, servicio, Perú",
+      "notes": "Fiesta importante en Perú."
+    },
+    {
+      "id": "liturgy-2030-immaculate",
+      "title": "Inmaculada Concepcion 2030",
+      "season": "Fiesta mariana",
+      "startDate": "2030-12-08",
+      "endDate": "2030-12-08",
+      "suggestions": "Cantos marianos, pureza, gracia",
+      "notes": "Solemnidad mariana."
+    },
+    {
+      "id": "liturgy-2026-papal-visit-peru",
+      "title": "Visita del Papa León XIV al Perú (agenda por confirmar)",
+      "season": "Otro",
+      "startDate": "2026-11-01",
+      "endDate": "2026-12-07",
+      "suggestions": "Cantos al Espíritu Santo\nCantos de unidad\nCantos por el Perú\nCantos de bienvenida",
+      "notes": "La Conferencia Episcopal Perúana informó visita entre noviembre y diciembre de 2026, probablemente noviembre o máximo la primera semana de diciembre. Falta agenda oficial con fecha y ciudades."
+    }
+  ]
 }

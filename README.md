@@ -1,61 +1,46 @@
-# Coro Paz en Jesús - Version 3.7
+# Coro Paz en Jesús - Version 3.9.0
 
-Aplicacion web instalable para celular y laptop.
+Aplicacion web instalable para celular y laptop del Coro Paz en Jesús.
 
-Esta version viene en blanco para canciones, miembros, lecturas y eventos manuales.
+## Que trae esta version
 
-Todo se agrega desde `Administrador`.
-
-## Pantalla de carga y actualizacion
-
-La app muestra el logo con `Cargando...` durante 10 segundos cuando abre y cuando detecta una actualizacion.
-
-Durante la carga hace tareas reales: borra cache anterior, carga datos, revisa la version publicada y prepara la pantalla.
-
-La app revisa cambios automaticamente cada 1 minuto, asi queda por debajo de 3 minutos despues de que GitHub Pages termine de publicar.
-
-## Navegacion
-
-Cuando abres una seccion o una letra, la app sube automaticamente al inicio de la pantalla.
-
-## Nuevas funciones
-
-- `Domingo`: repertorio personal por celular, armado con selects por momento de misa.
-- `Favoritos`: cada celular puede marcar sus canciones favoritas.
-- `Letra grande`: al abrir una letra puedes aumentar el tamaño para cantar mas comodo.
-- `Momento de misa`: cada cancion puede tener momento como Entrada, Ofertorio, Santo, Paz, Comunion o Salida.
-
-## Administrador
-
-El apartado `Admin` abre directo.
-
-No tiene clave. Solo quien tenga el enlace y sepa administrar debe hacer cambios.
+- Canciones conservadas, con numero, momento y estado para misa.
+- Buscador de canciones por numero, nombre o momento de misa.
+- Numero de cancion editable de 0 a 1000.
+- Estado para misa: Permitida o No permitida.
+- Domingo personal por celular con hasta 3 canciones por momento.
+- Botones para compartir Mi Domingo por WhatsApp, copiar texto y descargar/imprimir PDF.
+- Lecturas y Salmos por fecha.
+- Calendario liturgico editable con Adviento, Cuaresma, Semana Santa, Pascua, Tiempo Ordinario, fiestas marianas y solemnidades.
+- Miembros con tipo, cargo, grupo liturgico y estado.
+- Modo oscuro con lectura revisada para letras, eventos, calendario y formularios.
+- Calendario liturgico con colores por tiempo.
 
 ## Como editar datos
 
 1. Abre la app.
 2. Entra a `Admin`.
-3. Agrega o edita canciones, lecturas y salmos, eventos o miembros.
+3. Agrega o edita canciones, lecturas, calendario, eventos o miembros.
 4. En `Ajustes`, presiona `Descargar app-data.json`.
 5. Sube ese archivo a GitHub dentro de la carpeta `data`.
 
-## Como agregar desde el celular
+## Como subir cambios a GitHub
 
-1. Abre la app instalada o el enlace de GitHub Pages.
-2. Entra a `Admin`.
-3. Elige la seccion que quieres editar.
-4. Escribe la informacion.
-5. Presiona `Agregar` o `Guardar cambios`.
-6. Cuando termines, entra a `Ajustes`.
-7. Presiona `Descargar app-data.json`.
-8. Ese archivo queda descargado en el celular.
-9. Para que todos vean los cambios, sube ese `app-data.json` a GitHub en la carpeta `data`.
+1. Abre el repositorio en GitHub.
+2. Entra a `Code`.
+3. Presiona `Add file`.
+4. Presiona `Upload files`.
+5. Arrastra todos los archivos que estan dentro de `C:\Users\carri\Desktop\app del coro`.
+6. No subas la carpeta completa; sube los archivos de adentro.
+7. Presiona `Commit changes`.
+8. Espera 1 a 3 minutos.
+9. Abre la pagina de GitHub Pages o cierra y abre la app instalada.
 
-## Avisos de eventos
+## Pantalla de carga y actualizacion
 
-La app usa la fecha del celular o laptop. Si hay eventos de hoy sin leer, el boton `Avisos` muestra un contador.
+La app muestra el logo con `Cargando...` durante 10 segundos. Durante ese tiempo borra cache anterior, carga datos, revisa la version publicada y prepara la pantalla.
 
-Al tocar `Avisos`, aparece la lista de eventos del dia y el contador desaparece porque queda marcado como leido en ese dispositivo.
+La app revisa cambios automaticamente cada 1 minuto. Si GitHub Pages ya publico la version nueva, la app deberia actualizarse en menos de 3 minutos.
 
 ## Eventos fijos
 
@@ -65,33 +50,6 @@ La app muestra automaticamente:
 - Misa dominical: domingos desde las 6:30 p. m. hasta aproximadamente 8:30-9:00 p. m.
 
 Tambien puedes agregar mas eventos desde `Admin > Eventos`.
-
-## Como subir la app a GitHub
-
-1. Abre el repositorio en GitHub.
-2. Entra a `Code`.
-3. Presiona `Add file`.
-4. Presiona `Upload files`.
-5. Arrastra todos los archivos que estan dentro de esta carpeta:
-   `C:\Users\carri\Desktop\app del coro`
-6. No subas la carpeta completa; sube los archivos de adentro.
-7. Presiona `Commit changes`.
-8. Espera 1 a 3 minutos.
-9. Abre la pagina de GitHub Pages.
-
-## Como publicar cambios futuros
-
-Cuando ya tengas datos agregados desde la app:
-
-1. Entra a `Admin`.
-2. Edita lo que necesites.
-3. Entra a `Ajustes`.
-4. Descarga `app-data.json`.
-5. En GitHub abre la carpeta `data`.
-6. Abre o reemplaza `app-data.json`.
-7. Presiona `Commit changes`.
-8. Espera 1 a 3 minutos.
-9. En el celular, cierra y abre la app otra vez. La app tambien revisa cambios cada 1 minuto.
 
 ## Nota para celular
 
