@@ -1,31 +1,33 @@
-const APP_VERSION = "3.3.0";
+const APP_VERSION = "3.4.0";
 const VERSION_PATH = "version.json";
 const DATA_PATH = "data/app-data.json";
 const STORAGE_KEY = "coro-paz-en-jesus-data-v2";
+const EVENT_READ_KEY = "coro-paz-en-jesus-read-events-v1";
 const UPDATE_CHECK_INTERVAL = 60 * 1000;
+const MINIMUM_STARTUP_MS = 10000;
+const APP_CACHE_PREFIX = "coro-paz-en-jesus-";
+const CURRENT_CACHE_NAME = "coro-paz-en-jesus-v3-4-0";
 
 const defaultData = {
   version: APP_VERSION,
   updatedAt: new Date().toISOString(),
   settings: {
-    choirName: "Coro Paz en Jesus",
+    choirName: "Coro Paz en Jesús",
     subtitle: "Aplicación del Coro Paz en Jesús",
     parishPlace: "Salon parroquial"
   },
   songs: [],
   readings: [],
   events: [],
-  members: [],
-  inventory: []
+  members: []
 };
 
 const viewTitles = {
-  home: "Coro Paz en Jesus",
+  home: "Coro Paz en Jesús",
   songs: "Canciones",
   readings: "Lecturas y Salmos",
   events: "Eventos",
   members: "Miembros",
-  inventory: "Inventario",
   admin: "Administrador"
 };
 
@@ -104,23 +106,6 @@ const entityConfig = {
       { key: "role", label: "Cargo" },
       { key: "group", label: "Grupo liturgico" }
     ]
-  },
-  inventory: {
-    label: "Inventario",
-    singular: "item",
-    emptyTitle: "Todavia no hay inventario",
-    emptyText: "Agrega materiales del coro desde el Administrador.",
-    fields: [
-      { name: "name", label: "Objeto", required: true },
-      { name: "status", label: "Estado", type: "select", options: ["Bueno", "Regular", "Reparar", "Prestado", "Perdido"] },
-      { name: "location", label: "Ubicacion" },
-      { name: "note", label: "Nota", type: "textarea", full: true }
-    ],
-    columns: [
-      { key: "name", label: "Objeto" },
-      { key: "status", label: "Estado" },
-      { key: "location", label: "Ubicacion" }
-    ]
   }
 };
 
@@ -133,8 +118,7 @@ const editIds = {
   songs: null,
   readings: null,
   events: null,
-  members: null,
-  inventory: null
+  members: null
 };
 
 const content = document.querySelector("#appContent");
@@ -153,8 +137,16 @@ let updateCheckRunning = false;
 document.addEventListener("DOMContentLoaded", init);
 
 async function init() {
-  showUpdateOverlay("Cargando datos de la app", 5);
+  const startupStartedAt = Date.now();
+  showUpdateOverlay("Borrando cache anterior", 10);
+  await clearOldAppCaches();
+
+  setUpdateMessage("Cargando datos de la app", "Tiempo estimado: unos segundos");
   appData = await loadData();
+
+  setUpdateMessage("Revisando actualizacion desde la web", "Tiempo estimado: unos segundos");
+  await checkRemoteVersionBeforeStart();
+
   setUpdateMessage("Preparando pantalla de inicio", "Tiempo estimado: unos segundos");
   bindNavigation();
   bindMoreMenu();
@@ -162,7 +154,9 @@ async function init() {
   bindEventBell();
   registerServiceWorker();
   render();
-  window.setTimeout(() => hideUpdateOverlay(), 900);
+  setUpdateMessage("Terminando carga de la app", "Tiempo estimado: unos segundos");
+  await waitForMinimumStartup(startupStartedAt);
+  hideUpdateOverlay();
 }
 
 async function loadData() {
@@ -180,6 +174,44 @@ async function loadData() {
     console.warn(error);
     return normalizeData(defaultData);
   }
+}
+
+async function checkRemoteVersionBeforeStart() {
+  try {
+    const response = await fetch(`${VERSION_PATH}?t=${Date.now()}`, {
+      cache: "no-store"
+    });
+    if (!response.ok) return;
+    const remote = await response.json();
+    if (remote.version && remote.version !== APP_VERSION) {
+      setUpdateMessage("Borrando cache anterior", "Tiempo estimado: unos segundos");
+      await clearAppCaches();
+      setUpdateMessage("Actualizando desde la web", "Tiempo estimado: unos segundos");
+      window.location.reload();
+    }
+  } catch (error) {
+    console.warn(error);
+  }
+}
+
+async function clearOldAppCaches() {
+  if (!("caches" in window)) return;
+  const keys = await caches.keys();
+  await Promise.all(
+    keys
+      .filter((key) => key.startsWith(APP_CACHE_PREFIX) && key !== CURRENT_CACHE_NAME)
+      .map((key) => caches.delete(key))
+  );
+}
+
+function waitForMinimumStartup(startedAt) {
+  const elapsed = Date.now() - startedAt;
+  const remaining = Math.max(0, MINIMUM_STARTUP_MS - elapsed);
+  return delay(remaining);
+}
+
+function delay(ms) {
+  return new Promise((resolve) => window.setTimeout(resolve, ms));
 }
 
 function readLocalData() {
@@ -208,12 +240,15 @@ function normalizeData(raw) {
       : [];
   });
   normalized.members = normalized.members.map(normalizeMember);
+  delete normalized.inventory;
 
   normalized.version = APP_VERSION;
   normalized.updatedAt = raw && raw.updatedAt ? raw.updatedAt : new Date().toISOString();
   if (normalized.settings.subtitle.includes("administrar repertorio") && normalized.settings.subtitle.includes("inventario")) {
     normalized.settings.subtitle = defaultData.settings.subtitle;
   }
+  normalized.settings.choirName = fixJesusAccent(normalized.settings.choirName || defaultData.settings.choirName);
+  normalized.settings.subtitle = fixJesusAccent(normalized.settings.subtitle || defaultData.settings.subtitle);
   return normalized;
 }
 
@@ -371,7 +406,7 @@ function render() {
     button.classList.toggle("active", button.dataset.view === currentView);
   });
   if (moreToggle) {
-    moreToggle.classList.toggle("active", ["events", "members", "inventory", "admin"].includes(currentView));
+    moreToggle.classList.toggle("active", ["events", "members", "admin"].includes(currentView));
   }
   screenTitle.textContent = viewTitles[currentView] || viewTitles.home;
 
@@ -380,7 +415,6 @@ function render() {
   if (currentView === "readings") renderPublicList("readings");
   if (currentView === "events") renderPublicList("events");
   if (currentView === "members") renderPublicList("members");
-  if (currentView === "inventory") renderPublicList("inventory");
   if (currentView === "admin") renderAdmin();
 }
 
@@ -433,16 +467,18 @@ function formatRemainingTime(seconds) {
 function updateEventBell() {
   if (!eventBell || !eventCount) return;
   const todayEvents = getTodayEvents();
-  eventCount.textContent = String(todayEvents.length);
-  eventCount.classList.toggle("hidden", todayEvents.length === 0);
-  eventBell.classList.toggle("active", todayEvents.length > 0);
+  const readIds = getReadEventIdsForToday();
+  const unreadEvents = todayEvents.filter((event) => !readIds.includes(event.id));
+  eventCount.textContent = String(unreadEvents.length);
+  eventCount.classList.toggle("hidden", unreadEvents.length === 0);
+  eventBell.classList.toggle("active", unreadEvents.length > 0);
 }
 
 function renderHome() {
   const settings = appData.settings;
   content.innerHTML = `
     <section class="hero">
-      <img class="hero-logo" src="assets/logo-coro.jpeg" alt="Logo Coro Paz en Jesus">
+      <img class="hero-logo" src="assets/logo-coro.jpeg" alt="Logo Coro Paz en Jesús">
       <div>
         <h2>${escapeHtml(settings.choirName)}</h2>
         <p>${escapeHtml(settings.subtitle)}</p>
@@ -454,7 +490,6 @@ function renderHome() {
       ${statCard(appData.readings.length, "Lecturas y Salmos")}
       ${statCard(appData.events.length, "Eventos")}
       ${statCard(appData.members.length, "Miembros")}
-      ${statCard(appData.inventory.length, "Inventario")}
     </section>
 
     <section>
@@ -469,7 +504,6 @@ function renderHome() {
         ${homeCard("Lecturas y Salmos", "Lecturas, salmos, citas, oraciones y reflexiones.", "readings")}
         ${homeCard("Eventos", "Ensayos, misas y actividades especiales.", "events")}
         ${homeCard("Miembros", "Integrantes, roles y ubicacion musical.", "members")}
-        ${homeCard("Inventario", "Materiales y ubicaciones.", "inventory")}
         ${homeCard("Administrador", "Agregar, editar, borrar y descargar JSON.", "admin")}
       </div>
     </section>
@@ -579,8 +613,7 @@ function publicSubtitle(key) {
     songs: "Letras y notas musicales agregadas por el administrador.",
     readings: "Lecturas, salmos y reflexiones disponibles para el coro.",
     events: "Agenda general con hora, lugar y nota.",
-    members: "Listado de integrantes, miembros y cargos.",
-    inventory: "Materiales del coro."
+    members: "Listado de integrantes, miembros y cargos."
   };
   return subtitles[key] || "";
 }
@@ -658,19 +691,6 @@ function renderPublicCard(key, item) {
     `;
   }
 
-  if (key === "inventory") {
-    return `
-      <article class="card">
-        <h3>${escapeHtml(item.name || "Sin objeto")}</h3>
-        <p>${escapeHtml(item.location || "Sin ubicacion")}</p>
-        <div class="card-meta">
-          ${item.status ? `<span class="tag">${escapeHtml(item.status)}</span>` : ""}
-        </div>
-        ${item.note ? `<p class="help-text">${escapeHtml(item.note)}</p>` : ""}
-      </article>
-    `;
-  }
-
   if (key === "readings") {
     return `
       <article class="card">
@@ -731,7 +751,6 @@ function renderAdmin() {
           ${adminTab("readings", "Lecturas y Salmos")}
           ${adminTab("events", "Eventos")}
           ${adminTab("members", "Miembros")}
-          ${adminTab("inventory", "Inventario")}
         </nav>
         <div class="admin-workspace" id="adminWorkspace">
           ${currentAdminTab === "settings" ? renderSettingsAdmin() : renderEntityAdmin(currentAdminTab)}
@@ -900,8 +919,8 @@ function renderAdminRow(key, item) {
 function saveSettings(form) {
   const formData = new FormData(form);
   appData.settings = {
-    choirName: cleanValue(formData.get("choirName")) || defaultData.settings.choirName,
-    subtitle: cleanValue(formData.get("subtitle")),
+    choirName: fixJesusAccent(cleanValue(formData.get("choirName")) || defaultData.settings.choirName),
+    subtitle: fixJesusAccent(cleanValue(formData.get("subtitle"))),
     parishPlace: cleanValue(formData.get("parishPlace"))
   };
   persistData();
@@ -1015,12 +1034,36 @@ function showTodayEvents() {
     return `${event.title || "Evento"}\n${time}${place}${note}`;
   }).join("\n\n");
 
+  markTodayEventsAsRead(todayEvents);
+  updateEventBell();
   alert(`Eventos de hoy:\n\n${message}`);
+}
+
+function getReadEventIdsForToday() {
+  try {
+    const raw = localStorage.getItem(EVENT_READ_KEY);
+    if (!raw) return [];
+    const parsed = JSON.parse(raw);
+    if (parsed.date !== todayLocalDateString()) return [];
+    return Array.isArray(parsed.ids) ? parsed.ids : [];
+  } catch (error) {
+    console.warn(error);
+    return [];
+  }
+}
+
+function markTodayEventsAsRead(events) {
+  const ids = events.map((event) => event.id).filter(Boolean);
+  localStorage.setItem(EVENT_READ_KEY, JSON.stringify({
+    date: todayLocalDateString(),
+    ids
+  }));
 }
 
 function downloadJson() {
   const dataToDownload = normalizeData(appData);
   dataToDownload.updatedAt = new Date().toISOString();
+  delete dataToDownload.inventory;
   const blob = new Blob([JSON.stringify(dataToDownload, null, 2)], {
     type: "application/json"
   });
@@ -1081,6 +1124,12 @@ function createId(prefix) {
 
 function cleanValue(value) {
   return String(value || "").trim();
+}
+
+function fixJesusAccent(value) {
+  return String(value || "")
+    .replaceAll("JesÃºs", "Jesús")
+    .replaceAll("Jesus", "Jesús");
 }
 
 function formatDateTime(value) {
@@ -1198,7 +1247,7 @@ async function clearAppCaches() {
   const keys = await caches.keys();
   await Promise.all(
     keys
-      .filter((key) => key.startsWith("coro-paz-en-jesus-"))
+      .filter((key) => key.startsWith(APP_CACHE_PREFIX))
       .map((key) => caches.delete(key))
   );
 }

@@ -1,16 +1,16 @@
-# Coro Paz en Jesus - Version 3.3
+# Coro Paz en Jesús - Version 3.4
 
 Aplicacion web instalable para celular y laptop.
 
-Esta version viene en blanco para canciones, miembros, inventario, lecturas y eventos manuales.
+Esta version viene en blanco para canciones, miembros, lecturas y eventos manuales.
 
 Todo se agrega desde `Administrador`.
 
 ## Pantalla de carga y actualizacion
 
-La app muestra el logo con `Cargando...` cuando abre y cuando detecta una actualizacion.
+La app muestra el logo con `Cargando...` durante 10 segundos cuando abre y cuando detecta una actualizacion.
 
-Durante una actualizacion puede mostrar mensajes como `Borrando cache anterior` y `Actualizando desde la web`.
+Durante la carga hace tareas reales: borra cache anterior, carga datos, revisa la version publicada y prepara la pantalla.
 
 La app revisa cambios automaticamente cada 1 minuto, asi queda por debajo de 3 minutos despues de que GitHub Pages termine de publicar.
 
@@ -24,7 +24,7 @@ No tiene clave. Solo quien tenga el enlace y sepa administrar debe hacer cambios
 
 1. Abre la app.
 2. Entra a `Admin`.
-3. Agrega o edita canciones, lecturas y salmos, eventos, miembros o inventario.
+3. Agrega o edita canciones, lecturas y salmos, eventos o miembros.
 4. En `Ajustes`, presiona `Descargar app-data.json`.
 5. Sube ese archivo a GitHub dentro de la carpeta `data`.
 
@@ -42,9 +42,9 @@ No tiene clave. Solo quien tenga el enlace y sepa administrar debe hacer cambios
 
 ## Avisos de eventos
 
-La app usa la fecha del celular o laptop. Si hay eventos con fecha de hoy, el boton `Avisos` muestra un contador.
+La app usa la fecha del celular o laptop. Si hay eventos de hoy sin leer, el boton `Avisos` muestra un contador.
 
-Al tocar `Avisos`, aparece la lista de eventos del dia.
+Al tocar `Avisos`, aparece la lista de eventos del dia y el contador desaparece porque queda marcado como leido en ese dispositivo.
 
 ## Eventos fijos
 

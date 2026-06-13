@@ -1,8 +1,8 @@
 {
-  "version": "3.3.0",
+  "version": "3.4.0",
   "updatedAt": "2026-06-13T03:10:34.280Z",
   "settings": {
-    "choirName": "Coro Paz en Jesus",
+    "choirName": "Coro Paz en Jesús",
     "subtitle": "Aplicación del Coro Paz en Jesús",
     "parishPlace": "Salon parroquial"
   },
@@ -230,6 +230,5 @@
   ],
   "readings": [],
   "events": [],
-  "members": [],
-  "inventory": []
+  "members": []
 }
