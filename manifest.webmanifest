@@ -1,7 +1,7 @@
 {
   "name": "Coro Paz en Jesus",
   "short_name": "Coro Paz",
-  "description": "Aplicacion limpia del Coro Paz en Jesus.",
+  "description": "Aplicacion del Coro Paz en Jesus.",
   "start_url": "./",
   "scope": "./",
   "display": "standalone",

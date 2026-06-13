@@ -1,15 +1,13 @@
-const APP_VERSION = "2.0.0";
-const ADMIN_PASSWORD = "EQIP";
+const APP_VERSION = "2.7.0";
 const DATA_PATH = "data/app-data.json";
 const STORAGE_KEY = "coro-paz-en-jesus-data-v2";
-const ADMIN_SESSION_KEY = "coro-paz-en-jesus-admin-v2";
 
 const defaultData = {
   version: APP_VERSION,
   updatedAt: new Date().toISOString(),
   settings: {
     choirName: "Coro Paz en Jesus",
-    subtitle: "Aplicacion limpia para administrar repertorio, eventos, miembros, lecturas e inventario patrimonial.",
+    subtitle: "Aplicación del Coro Paz en Jesús",
     parishPlace: "Salon parroquial"
   },
   songs: [],
@@ -23,10 +21,10 @@ const defaultData = {
 const viewTitles = {
   home: "Coro Paz en Jesus",
   songs: "Canciones",
-  readings: "Lecturas",
+  readings: "Lecturas y Salmos",
   events: "Eventos",
   members: "Miembros",
-  inventory: "Inventario patrimonial",
+  inventory: "Inventario",
   admin: "Administrador"
 };
 
@@ -38,7 +36,7 @@ const entityConfig = {
     emptyText: "Entra al Administrador para agregar el repertorio, letras y notas musicales.",
     fields: [
       { name: "title", label: "Titulo", required: true },
-      { name: "category", label: "Categoria" },
+      { name: "category", label: "Categoria / tipo de cancion" },
       { name: "musicalNotes", label: "Notas musicales", type: "textarea", full: true },
       { name: "lyrics", label: "Letra", type: "textarea", full: true, tall: true },
       { name: "notes", label: "Notas internas", type: "textarea", full: true }
@@ -50,12 +48,13 @@ const entityConfig = {
     ]
   },
   readings: {
-    label: "Lecturas",
+    label: "Lecturas y Salmos",
     singular: "lectura",
-    emptyTitle: "Todavia no hay lecturas",
-    emptyText: "Agrega lecturas, citas o reflexiones desde el Administrador.",
+    emptyTitle: "Todavia no hay lecturas ni salmos",
+    emptyText: "Agrega lecturas, salmos, citas o reflexiones desde el Administrador.",
     fields: [
       { name: "title", label: "Titulo", required: true },
+      { name: "type", label: "Tipo", type: "select", options: ["Lectura", "Salmo", "Reflexion", "Oracion"] },
       { name: "date", label: "Fecha", type: "date" },
       { name: "reference", label: "Cita o referencia" },
       { name: "text", label: "Texto", type: "textarea", full: true, tall: true },
@@ -63,6 +62,7 @@ const entityConfig = {
     ],
     columns: [
       { key: "title", label: "Titulo" },
+      { key: "type", label: "Tipo" },
       { key: "date", label: "Fecha" },
       { key: "reference", label: "Referencia" }
     ]
@@ -88,25 +88,27 @@ const entityConfig = {
     label: "Miembros",
     singular: "miembro",
     emptyTitle: "Todavia no hay miembros",
-    emptyText: "Agrega nombres, roles y ubicacion musical desde el Administrador.",
+    emptyText: "Agrega nombres, tipo de miembro, cargos y ubicacion musical desde el Administrador.",
     fields: [
       { name: "name", label: "Nombre", required: true },
-      { name: "role", label: "Rol o voz" },
+      { name: "memberType", label: "Tipo", type: "select", options: ["Miembro", "Cargo", "Administrador", "Miembro y cargo"] },
+      { name: "role", label: "Cargos, voces o instrumentos" },
       { name: "group", label: "Grupo / ubicacion" },
       { name: "contact", label: "Contacto" },
       { name: "note", label: "Nota", type: "textarea", full: true }
     ],
     columns: [
       { key: "name", label: "Nombre" },
-      { key: "role", label: "Rol" },
+      { key: "memberType", label: "Tipo" },
+      { key: "role", label: "Cargos o roles" },
       { key: "group", label: "Ubicacion" }
     ]
   },
   inventory: {
-    label: "Inventario patrimonial",
+    label: "Inventario",
     singular: "item",
     emptyTitle: "Todavia no hay inventario",
-    emptyText: "Agrega materiales patrimoniales del coro desde el Administrador.",
+    emptyText: "Agrega materiales del coro desde el Administrador.",
     fields: [
       { name: "name", label: "Objeto", required: true },
       { name: "status", label: "Estado", type: "select", options: ["Bueno", "Regular", "Reparar", "Prestado", "Perdido"] },
@@ -143,6 +145,7 @@ let appData = structuredClone(defaultData);
 let currentView = "home";
 let currentAdminTab = "settings";
 let currentSearch = "";
+let currentSongCategory = "";
 const editIds = {
   songs: null,
   readings: null,
@@ -155,6 +158,8 @@ const editIds = {
 const content = document.querySelector("#appContent");
 const screenTitle = document.querySelector("#screenTitle");
 const dataStatus = document.querySelector("#dataStatus");
+const eventBell = document.querySelector("#eventBell");
+const eventCount = document.querySelector("#eventCount");
 
 document.addEventListener("DOMContentLoaded", init);
 
@@ -162,6 +167,7 @@ async function init() {
   appData = await loadData();
   bindNavigation();
   bindContentEvents();
+  bindEventBell();
   registerServiceWorker();
   render();
 }
@@ -211,6 +217,9 @@ function normalizeData(raw) {
 
   normalized.version = APP_VERSION;
   normalized.updatedAt = raw && raw.updatedAt ? raw.updatedAt : new Date().toISOString();
+  if (normalized.settings.subtitle.includes("administrar repertorio") && normalized.settings.subtitle.includes("inventario")) {
+    normalized.settings.subtitle = defaultData.settings.subtitle;
+  }
   return normalized;
 }
 
@@ -226,9 +235,15 @@ function bindNavigation() {
     button.addEventListener("click", () => {
       currentView = button.dataset.view;
       currentSearch = "";
+      currentSongCategory = "";
       render();
     });
   });
+}
+
+function bindEventBell() {
+  if (!eventBell) return;
+  eventBell.addEventListener("click", showTodayEvents);
 }
 
 function bindContentEvents() {
@@ -287,11 +302,6 @@ function bindContentEvents() {
   content.addEventListener("submit", (event) => {
     event.preventDefault();
 
-    if (event.target.matches("[data-admin-login]")) {
-      handleAdminLogin(event.target);
-      return;
-    }
-
     if (event.target.matches("[data-settings-form]")) {
       saveSettings(event.target);
       return;
@@ -312,6 +322,12 @@ function bindContentEvents() {
   content.addEventListener("change", (event) => {
     if (event.target.matches("[data-import-json]")) {
       importJson(event.target.files[0]);
+      return;
+    }
+
+    if (event.target.matches("[data-category-filter]")) {
+      currentSongCategory = event.target.value;
+      renderPublicList("songs");
     }
   });
 }
@@ -334,6 +350,15 @@ function render() {
 
 function updateStatus() {
   dataStatus.textContent = `Version ${APP_VERSION}`;
+  updateEventBell();
+}
+
+function updateEventBell() {
+  if (!eventBell || !eventCount) return;
+  const todayEvents = getTodayEvents();
+  eventCount.textContent = String(todayEvents.length);
+  eventCount.classList.toggle("hidden", todayEvents.length === 0);
+  eventBell.classList.toggle("active", todayEvents.length > 0);
 }
 
 function renderHome() {
@@ -342,7 +367,6 @@ function renderHome() {
     <section class="hero">
       <img class="hero-logo" src="assets/logo-coro.jpeg" alt="Logo Coro Paz en Jesus">
       <div>
-        <p class="eyebrow">Version limpia 2.0</p>
         <h2>${escapeHtml(settings.choirName)}</h2>
         <p>${escapeHtml(settings.subtitle)}</p>
       </div>
@@ -350,7 +374,7 @@ function renderHome() {
 
     <section class="stats-grid" aria-label="Resumen">
       ${statCard(appData.songs.length, "Canciones")}
-      ${statCard(appData.readings.length, "Lecturas")}
+      ${statCard(appData.readings.length, "Lecturas y Salmos")}
       ${statCard(appData.events.length, "Eventos")}
       ${statCard(appData.members.length, "Miembros")}
       ${statCard(appData.inventory.length, "Inventario")}
@@ -365,10 +389,10 @@ function renderHome() {
       </div>
       <div class="section-grid">
         ${homeCard("Canciones", "Repertorio, letras y notas musicales.", "songs")}
-        ${homeCard("Lecturas", "Textos, citas, oraciones y reflexiones.", "readings")}
+        ${homeCard("Lecturas y Salmos", "Lecturas, salmos, citas, oraciones y reflexiones.", "readings")}
         ${homeCard("Eventos", "Ensayos, misas y actividades especiales.", "events")}
         ${homeCard("Miembros", "Integrantes, roles y ubicacion musical.", "members")}
-        ${homeCard("Inventario", "Material patrimonial y ubicaciones.", "inventory")}
+        ${homeCard("Inventario", "Materiales y ubicaciones.", "inventory")}
         ${homeCard("Administrador", "Agregar, editar, borrar y descargar JSON.", "admin")}
       </div>
     </section>
@@ -405,11 +429,12 @@ function renderPublicList(key) {
         </div>
       </div>
       <div class="toolbar">
-        <input class="search-input" data-search="${key}" type="search" value="${escapeAttribute(currentSearch)}" placeholder="Buscar">
+        <input class="search-input" data-search="${key}" type="search" value="${escapeAttribute(currentSearch)}" placeholder="${escapeAttribute(searchPlaceholder(key))}">
+        ${key === "songs" ? renderSongCategoryFilter() : ""}
         <button class="primary-button" type="button" data-view-link="admin">Editar en Admin</button>
       </div>
       <div id="publicListMount">
-        ${items.length ? renderCards(key, items) : renderEmpty(config.emptyTitle, config.emptyText)}
+      ${items.length ? (key === "members" ? renderMembersPublicTable(items) : renderCards(key, items)) : renderEmpty(config.emptyTitle, config.emptyText)}
       </div>
     </section>
   `;
@@ -417,27 +442,87 @@ function renderPublicList(key) {
 
 function getFilteredItems(key) {
   const search = currentSearch.trim().toLowerCase();
-  const items = [...appData[key]];
+  const items = key === "events"
+    ? [...appData.events, ...getUpcomingFixedEvents()]
+    : [...appData[key]];
   if (key === "events") {
     items.sort((a, b) => String(a.date || "").localeCompare(String(b.date || "")));
   }
   if (!search) return items;
+  if (key === "songs") {
+    return items.filter((item) => {
+      const title = String(item.title || "").toLowerCase();
+      const category = String(item.category || "").toLowerCase();
+      const matchesSearch = !search || title.includes(search) || category.includes(search);
+      const matchesCategory = !currentSongCategory || item.category === currentSongCategory;
+      return matchesSearch && matchesCategory;
+    });
+  }
   return items.filter((item) => JSON.stringify(item).toLowerCase().includes(search));
+}
+
+function searchPlaceholder(key) {
+  if (key === "songs") return "Buscar cancion por nombre o categoria";
+  return "Buscar";
+}
+
+function renderSongCategoryFilter() {
+  const categories = getSongCategories();
+  return `
+    <select class="search-input" data-category-filter aria-label="Filtrar canciones por categoria">
+      <option value="">Todas las categorias</option>
+      ${categories.map((category) => (
+        `<option value="${escapeAttribute(category)}" ${category === currentSongCategory ? "selected" : ""}>${escapeHtml(category)}</option>`
+      )).join("")}
+    </select>
+  `;
+}
+
+function getSongCategories() {
+  return [...new Set(appData.songs.map((song) => cleanValue(song.category)).filter(Boolean))]
+    .sort((a, b) => a.localeCompare(b, "es"));
 }
 
 function publicSubtitle(key) {
   const subtitles = {
     songs: "Letras y notas musicales agregadas por el administrador.",
-    readings: "Lecturas y reflexiones disponibles para el coro.",
+    readings: "Lecturas, salmos y reflexiones disponibles para el coro.",
     events: "Agenda general con hora, lugar y nota.",
-    members: "Listado de integrantes y roles.",
-    inventory: "Material patrimonial del coro."
+    members: "Listado de integrantes, miembros y cargos.",
+    inventory: "Materiales del coro."
   };
   return subtitles[key] || "";
 }
 
 function renderCards(key, items) {
   return `<div class="cards-grid">${items.map((item) => renderPublicCard(key, item)).join("")}</div>`;
+}
+
+function renderMembersPublicTable(items) {
+  return `
+    <div class="table-wrap">
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>Nombre</th>
+            <th>Tipo</th>
+            <th>Cargos o roles</th>
+            <th>Ubicacion</th>
+          </tr>
+        </thead>
+        <tbody>
+          ${items.map((member) => `
+            <tr>
+              <td>${escapeHtml(member.name || "Sin nombre")}</td>
+              <td>${escapeHtml(member.memberType || "")}</td>
+              <td>${escapeHtml(member.role || "")}</td>
+              <td>${escapeHtml(member.group || "")}</td>
+            </tr>
+          `).join("")}
+        </tbody>
+      </table>
+    </div>
+  `;
 }
 
 function renderPublicCard(key, item) {
@@ -460,6 +545,7 @@ function renderPublicCard(key, item) {
         <h3>${escapeHtml(item.title || "Sin actividad")}</h3>
         <p>${escapeHtml(formatDateTime(item.date))}</p>
         <div class="card-meta">
+          ${item.fixed ? `<span class="tag">Fijo</span>` : ""}
           ${item.place ? `<span class="tag">${escapeHtml(item.place)}</span>` : ""}
         </div>
         ${item.note ? `<p class="help-text">${escapeHtml(item.note)}</p>` : ""}
@@ -471,8 +557,9 @@ function renderPublicCard(key, item) {
     return `
       <article class="card">
         <h3>${escapeHtml(item.name || "Sin nombre")}</h3>
-        <p>${escapeHtml(item.role || "Sin rol")}</p>
+        <p>${escapeHtml(item.role || "Sin cargo o rol")}</p>
         <div class="card-meta">
+          ${item.memberType ? `<span class="tag">${escapeHtml(item.memberType)}</span>` : ""}
           ${item.group ? `<span class="tag">${escapeHtml(item.group)}</span>` : ""}
         </div>
         ${item.note ? `<p class="help-text">${escapeHtml(item.note)}</p>` : ""}
@@ -498,6 +585,9 @@ function renderPublicCard(key, item) {
       <article class="card">
         <h3>${escapeHtml(item.title || "Sin titulo")}</h3>
         <p>${escapeHtml(item.reference || item.date || "Sin referencia")}</p>
+        <div class="card-meta">
+          ${item.type ? `<span class="tag">${escapeHtml(item.type)}</span>` : ""}
+        </div>
         ${item.text ? `<p class="help-text">${escapeHtml(item.text)}</p>` : ""}
       </article>
     `;
@@ -533,25 +623,6 @@ function renderSongDetail(songId) {
 }
 
 function renderAdmin() {
-  if (sessionStorage.getItem(ADMIN_SESSION_KEY) !== "ok") {
-    content.innerHTML = `
-      <section class="login-card">
-        <h2>Administrador</h2>
-        <p class="help-text">Ingresa la clave de seguridad para editar la aplicacion.</p>
-        <form data-admin-login>
-          <div class="form-field">
-            <label for="adminPassword">Clave</label>
-            <input id="adminPassword" name="password" type="password" autocomplete="current-password" required>
-          </div>
-          <div class="button-row">
-            <button class="primary-button" type="submit">Entrar</button>
-          </div>
-        </form>
-      </section>
-    `;
-    return;
-  }
-
   content.innerHTML = `
     <section>
       <div class="section-title">
@@ -566,7 +637,7 @@ function renderAdmin() {
         <nav class="admin-menu" aria-label="Editor">
           ${adminTab("settings", "Ajustes")}
           ${adminTab("songs", "Canciones")}
-          ${adminTab("readings", "Lecturas")}
+          ${adminTab("readings", "Lecturas y Salmos")}
           ${adminTab("events", "Eventos")}
           ${adminTab("members", "Miembros")}
           ${adminTab("inventory", "Inventario")}
@@ -684,12 +755,17 @@ function renderField(field, values) {
     `;
   }
 
-  const type = field.type === "date" ? "date" : field.type === "datetime" ? "datetime-local" : "text";
-  const inputValue = field.type === "datetime" ? toDateTimeInput(value) : value;
+  const type = field.type === "date" ? "date" : field.type === "datetime" ? "datetime-local" : field.type === "number" ? "number" : "text";
+  const inputValue = field.type === "datetime"
+    ? toDateTimeInput(value)
+    : field.type === "date" && field.defaultToday && !value
+      ? todayLocalDateString()
+      : value;
+  const numberAttrs = field.type === "number" ? 'min="0" step="0.01"' : "";
   return `
     <div class="${classes}">
       <label for="${field.name}">${field.label}</label>
-      <input id="${field.name}" name="${field.name}" type="${type}" value="${escapeAttribute(inputValue)}" ${placeholder} ${required}>
+      <input id="${field.name}" name="${field.name}" type="${type}" value="${escapeAttribute(inputValue)}" ${placeholder} ${required} ${numberAttrs}>
     </div>
   `;
 }
@@ -718,7 +794,7 @@ function renderAdminRow(key, item) {
   return `
     <tr>
       ${config.columns.map((column) => {
-        const value = column.formatter ? column.formatter(item[column.key]) : item[column.key];
+        const value = column.formatter ? column.formatter(item[column.key], item) : item[column.key];
         return `<td>${escapeHtml(value || "")}</td>`;
       }).join("")}
       <td>
@@ -729,16 +805,6 @@ function renderAdminRow(key, item) {
       </td>
     </tr>
   `;
-}
-
-function handleAdminLogin(form) {
-  const password = new FormData(form).get("password");
-  if (password === ADMIN_PASSWORD) {
-    sessionStorage.setItem(ADMIN_SESSION_KEY, "ok");
-    renderAdmin();
-    return;
-  }
-  alert("Clave incorrecta.");
 }
 
 function saveSettings(form) {
@@ -796,6 +862,70 @@ function deleteEntity(key, id) {
   if (editIds[key] === id) editIds[key] = null;
   persistData();
   renderAdmin();
+}
+
+function getTodayEvents() {
+  const today = todayLocalDateString();
+  const savedEvents = appData.events.filter((event) => String(event.date || "").slice(0, 10) === today);
+  return [...savedEvents, ...getFixedEventsForDate(today)];
+}
+
+function getUpcomingFixedEvents() {
+  const events = [];
+  const start = parseDateOnly(todayLocalDateString());
+  for (let offset = 0; offset < 56; offset += 1) {
+    const date = new Date(start);
+    date.setDate(start.getDate() + offset);
+    events.push(...getFixedEventsForDate(dateToInputValue(date)));
+  }
+  return events;
+}
+
+function getFixedEventsForDate(dateString) {
+  const date = parseDateOnly(dateString);
+  if (!date) return [];
+
+  const day = date.getDay();
+  if (day === 6) {
+    return [{
+      id: `fixed-rehearsal-${dateString}`,
+      fixed: true,
+      title: "Ensayo general",
+      date: `${dateString}T16:00:00`,
+      place: "Salon parroquial",
+      note: "Ensayo fijo de 4:00 p. m. a 7:30-8:30 p. m."
+    }];
+  }
+
+  if (day === 0) {
+    return [{
+      id: `fixed-mass-${dateString}`,
+      fixed: true,
+      title: "Misa dominical",
+      date: `${dateString}T18:30:00`,
+      place: "Templo parroquial",
+      note: "Participacion fija de 6:30 p. m. a 8:30-9:00 p. m."
+    }];
+  }
+
+  return [];
+}
+
+function showTodayEvents() {
+  const todayEvents = getTodayEvents();
+  if (!todayEvents.length) {
+    alert("No hay eventos para hoy.");
+    return;
+  }
+
+  const message = todayEvents.map((event) => {
+    const time = event.date ? formatDateTime(event.date) : "Sin hora";
+    const place = event.place ? ` - ${event.place}` : "";
+    const note = event.note ? `\n${event.note}` : "";
+    return `${event.title || "Evento"}\n${time}${place}${note}`;
+  }).join("\n\n");
+
+  alert(`Eventos de hoy:\n\n${message}`);
 }
 
 function downloadJson() {
@@ -871,6 +1001,27 @@ function formatDateTime(value) {
     dateStyle: "medium",
     timeStyle: "short"
   }).format(date);
+}
+
+function parseDateOnly(value) {
+  if (!value) return null;
+  const parts = String(value).slice(0, 10).split("-").map(Number);
+  if (parts.length !== 3 || parts.some((part) => !Number.isFinite(part))) {
+    return null;
+  }
+  const [year, month, day] = parts;
+  return new Date(year, month - 1, day);
+}
+
+function todayLocalDateString() {
+  return dateToInputValue(new Date());
+}
+
+function dateToInputValue(date) {
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, "0");
+  const day = String(date.getDate()).padStart(2, "0");
+  return `${year}-${month}-${day}`;
 }
 
 function toDateTimeInput(value) {

@@ -1,31 +1,53 @@
-# Coro Paz en Jesus - Version limpia 2.0
+# Coro Paz en Jesus - Version 2.7
 
 Aplicacion web instalable para celular y laptop.
 
-Esta version viene en blanco:
-
-- Sin canciones cargadas.
-- Sin eventos cargados.
-- Sin miembros cargados.
-- Sin inventario cargado.
-- Sin documentos cargados.
+Esta version viene en blanco para canciones, miembros, inventario, lecturas y documentos.
 
 Todo se agrega desde `Administrador`.
 
-## Clave de administrador
+## Administrador
 
-`EQIP`
+El apartado `Admin` abre directo.
+
+No tiene clave. Solo quien tenga el enlace y sepa administrar debe hacer cambios.
 
 ## Como editar datos
 
 1. Abre la app.
 2. Entra a `Admin`.
-3. Escribe la clave `EQIP`.
-4. Agrega o edita canciones, lecturas, eventos, miembros, inventario o documentacion.
-5. En `Ajustes`, presiona `Descargar app-data.json`.
-6. Sube ese archivo a GitHub dentro de la carpeta `data`.
+3. Agrega o edita canciones, lecturas y salmos, eventos, miembros, inventario o documentacion.
+4. En `Ajustes`, presiona `Descargar app-data.json`.
+5. Sube ese archivo a GitHub dentro de la carpeta `data`.
 
-## Como subir la app limpia a GitHub
+## Como agregar desde el celular
+
+1. Abre la app instalada o el enlace de GitHub Pages.
+2. Entra a `Admin`.
+3. Elige la seccion que quieres editar.
+4. Escribe la informacion.
+5. Presiona `Agregar` o `Guardar cambios`.
+6. Cuando termines, entra a `Ajustes`.
+7. Presiona `Descargar app-data.json`.
+8. Ese archivo queda descargado en el celular.
+9. Para que todos vean los cambios, sube ese `app-data.json` a GitHub en la carpeta `data`.
+
+## Avisos de eventos
+
+La app usa la fecha del celular o laptop. Si hay eventos con fecha de hoy, el boton `Avisos` muestra un contador.
+
+Al tocar `Avisos`, aparece la lista de eventos del dia.
+
+## Eventos fijos
+
+La app muestra automaticamente:
+
+- Ensayo general: sabados desde las 4:00 p. m. hasta aproximadamente 7:30-8:30 p. m.
+- Misa dominical: domingos desde las 6:30 p. m. hasta aproximadamente 8:30-9:00 p. m.
+
+Tambien puedes agregar mas eventos desde `Admin > Eventos`.
+
+## Como subir la app a GitHub
 
 1. Abre el repositorio en GitHub.
 2. Entra a `Code`.

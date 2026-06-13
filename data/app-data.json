@@ -1,9 +1,9 @@
 {
-  "version": "2.0.0",
+  "version": "2.7.0",
   "updatedAt": "2026-06-12T00:00:00.000Z",
   "settings": {
     "choirName": "Coro Paz en Jesus",
-    "subtitle": "Aplicacion limpia para administrar repertorio, eventos, miembros, lecturas e inventario patrimonial.",
+    "subtitle": "Aplicación del Coro Paz en Jesús",
     "parishPlace": "Salon parroquial"
   },
   "songs": [],
