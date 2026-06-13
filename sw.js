@@ -1,9 +1,10 @@
-const CACHE_NAME = "coro-paz-en-jesus-v3-1-0";
+const CACHE_NAME = "coro-paz-en-jesus-v3-3-0";
 const APP_SHELL = [
   "./",
   "index.html",
   "styles.css",
   "app.js",
+  "version.json",
   "manifest.webmanifest",
   "assets/logo-coro.jpeg",
   "assets/icon.svg",

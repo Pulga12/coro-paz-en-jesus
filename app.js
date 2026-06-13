@@ -1,6 +1,8 @@
-const APP_VERSION = "3.1.0";
+const APP_VERSION = "3.3.0";
+const VERSION_PATH = "version.json";
 const DATA_PATH = "data/app-data.json";
 const STORAGE_KEY = "coro-paz-en-jesus-data-v2";
+const UPDATE_CHECK_INTERVAL = 60 * 1000;
 
 const defaultData = {
   version: APP_VERSION,
@@ -142,17 +144,25 @@ const eventBell = document.querySelector("#eventBell");
 const eventCount = document.querySelector("#eventCount");
 const moreToggle = document.querySelector("[data-more-toggle]");
 const moreMenu = document.querySelector("#moreMenu");
+const updateOverlay = document.querySelector("#updateOverlay");
+const updateStep = document.querySelector("#updateStep");
+const updateEta = document.querySelector("#updateEta");
+let updateCountdownTimer = null;
+let updateCheckRunning = false;
 
 document.addEventListener("DOMContentLoaded", init);
 
 async function init() {
+  showUpdateOverlay("Cargando datos de la app", 5);
   appData = await loadData();
+  setUpdateMessage("Preparando pantalla de inicio", "Tiempo estimado: unos segundos");
   bindNavigation();
   bindMoreMenu();
   bindContentEvents();
   bindEventBell();
   registerServiceWorker();
   render();
+  window.setTimeout(() => hideUpdateOverlay(), 900);
 }
 
 async function loadData() {
@@ -377,6 +387,47 @@ function render() {
 function updateStatus() {
   dataStatus.textContent = `Version ${APP_VERSION}`;
   updateEventBell();
+}
+
+function showUpdateOverlay(message, seconds = 20) {
+  if (!updateOverlay) return;
+  setUpdateMessage(message, "");
+  updateOverlay.classList.remove("hidden");
+  startUpdateCountdown(seconds);
+}
+
+function hideUpdateOverlay() {
+  if (!updateOverlay) return;
+  window.clearInterval(updateCountdownTimer);
+  updateCountdownTimer = null;
+  updateOverlay.classList.add("hidden");
+}
+
+function setUpdateMessage(message, etaText) {
+  if (updateStep) updateStep.textContent = message;
+  if (updateEta && etaText) updateEta.textContent = etaText;
+}
+
+function startUpdateCountdown(seconds) {
+  if (!updateEta) return;
+  window.clearInterval(updateCountdownTimer);
+  let remaining = seconds;
+  updateEta.textContent = formatRemainingTime(remaining);
+  updateCountdownTimer = window.setInterval(() => {
+    remaining = Math.max(0, remaining - 1);
+    updateEta.textContent = formatRemainingTime(remaining);
+    if (remaining === 0) {
+      window.clearInterval(updateCountdownTimer);
+      updateCountdownTimer = null;
+    }
+  }, 1000);
+}
+
+function formatRemainingTime(seconds) {
+  if (seconds <= 0) return "Terminando...";
+  if (seconds < 60) return `Tiempo estimado: ${seconds} segundos`;
+  const minutes = Math.ceil(seconds / 60);
+  return `Tiempo estimado: ${minutes} minuto${minutes === 1 ? "" : "s"}`;
 }
 
 function updateEventBell() {
@@ -1088,11 +1139,66 @@ function escapeAttribute(value) {
 function registerServiceWorker() {
   if (!("serviceWorker" in navigator)) return;
   window.addEventListener("load", () => {
-    navigator.serviceWorker.register("sw.js").then((registration) => {
-      registration.update().catch((error) => console.warn(error));
+    navigator.serviceWorker.register(`sw.js?v=${APP_VERSION}`, { updateViaCache: "none" }).then((registration) => {
+      checkForAppUpdate(registration);
       window.setInterval(() => {
-        registration.update().catch((error) => console.warn(error));
-      }, 60 * 60 * 1000);
+        checkForAppUpdate(registration);
+      }, UPDATE_CHECK_INTERVAL);
+
+      document.addEventListener("visibilitychange", () => {
+        if (!document.hidden) {
+          checkForAppUpdate(registration);
+        }
+      });
+
+      window.addEventListener("focus", () => {
+        checkForAppUpdate(registration);
+      });
+
+      window.addEventListener("pageshow", () => {
+        checkForAppUpdate(registration);
+      });
     }).catch((error) => console.warn(error));
   });
+
+  navigator.serviceWorker.addEventListener("controllerchange", () => {
+    if (sessionStorage.getItem("coro-paz-reloaded-for-update") === APP_VERSION) return;
+    sessionStorage.setItem("coro-paz-reloaded-for-update", APP_VERSION);
+    window.location.reload();
+  });
+}
+
+async function checkForAppUpdate(registration) {
+  if (updateCheckRunning) return;
+  updateCheckRunning = true;
+  try {
+    setUpdateMessage("Revisando actualizacion desde la web", "Tiempo estimado: unos segundos");
+    await registration.update();
+    const response = await fetch(`${VERSION_PATH}?t=${Date.now()}`, {
+      cache: "no-store"
+    });
+    if (!response.ok) return;
+    const remote = await response.json();
+    if (remote.version && remote.version !== APP_VERSION) {
+      showUpdateOverlay("Borrando cache anterior", 25);
+      await clearAppCaches();
+      setUpdateMessage("Actualizando desde la web", "Tiempo estimado: unos segundos");
+      window.setTimeout(() => window.location.reload(), 500);
+    }
+  } catch (error) {
+    console.warn(error);
+  } finally {
+    updateCheckRunning = false;
+  }
+}
+
+async function clearAppCaches() {
+  if (!("caches" in window)) return;
+  setUpdateMessage("Borrando cache anterior", "Tiempo estimado: unos segundos");
+  const keys = await caches.keys();
+  await Promise.all(
+    keys
+      .filter((key) => key.startsWith("coro-paz-en-jesus-"))
+      .map((key) => caches.delete(key))
+  );
 }

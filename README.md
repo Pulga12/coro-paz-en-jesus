@@ -1,10 +1,18 @@
-# Coro Paz en Jesus - Version 3.1
+# Coro Paz en Jesus - Version 3.3
 
 Aplicacion web instalable para celular y laptop.
 
 Esta version viene en blanco para canciones, miembros, inventario, lecturas y eventos manuales.
 
 Todo se agrega desde `Administrador`.
+
+## Pantalla de carga y actualizacion
+
+La app muestra el logo con `Cargando...` cuando abre y cuando detecta una actualizacion.
+
+Durante una actualizacion puede mostrar mensajes como `Borrando cache anterior` y `Actualizando desde la web`.
+
+La app revisa cambios automaticamente cada 1 minuto, asi queda por debajo de 3 minutos despues de que GitHub Pages termine de publicar.
 
 ## Administrador
 
@@ -72,7 +80,7 @@ Cuando ya tengas datos agregados desde la app:
 6. Abre o reemplaza `app-data.json`.
 7. Presiona `Commit changes`.
 8. Espera 1 a 3 minutos.
-9. En el celular, cierra y abre la app otra vez.
+9. En el celular, cierra y abre la app otra vez. La app tambien revisa cambios cada 1 minuto.
 
 ## Nota para celular
 
